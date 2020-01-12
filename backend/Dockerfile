@@ -24,4 +24,4 @@ RUN apt-get update && apt-get install -y netcat
 COPY backend $APP_HOME
 COPY backend/.docker/entrypoint.sh $APP_HOME
 
-ENTRYPOINT ["/roshambo/entrypoint.sh"]
+ENTRYPOINT ["/roshambo/.docker/entrypoint.sh"]
