@@ -30,5 +30,20 @@ services:
     volumes:
       - ./backend/:/roshambo
 
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/roshambo-ui/
+      - /roshambo-ui/node_modules
+    
+
 volumes:
   postgres:
+  backend:
