@@ -5,7 +5,7 @@ Roshambo is a full-stack web app, designed to be the premiere destination for hi
 
 ## Prerequisites
 
- - [Docker 19.03.5+ & docker-compose 1.24.1+](https://docs.docker.com/compose/install/)
+ - [Docker 19.03.5+ & docker-compose 1.24.1+](https://medium.com/@yutafujii_59175/a-complete-one-by-one-guide-to-install-docker-on-your-mac-os-using-homebrew-e818eb4cfc3)
 
 ## Usage
 
