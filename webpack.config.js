@@ -25,10 +25,10 @@ const common = {
   },
   resolve: { extensions: ["*", ".js", ".jsx"] },
   plugins: [
-    new CleanWebpackPlugin(["build/bundle"])
+    new CleanWebpackPlugin(["frontend/scaffold/bundle"])
   ],
   output: {
-    path: path.resolve(__dirname, "frontend/build/bundle/"),
+    path: path.resolve(__dirname, "frontend/scaffold/bundle/"),
     publicPath: "/",
     filename: "bundle.js"
   },
@@ -54,7 +54,7 @@ switch (process.env.NODE_ENV) {
       mode: "development",
       devtool: "inline-source-map",
       devServer: {
-        contentBase: path.join(__dirname, "frontend/build/"),
+        contentBase: path.join(__dirname, "frontend/scaffold/"),
         port: 3000,
         hotOnly: true
       }
