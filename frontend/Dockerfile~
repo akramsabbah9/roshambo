@@ -13,7 +13,6 @@ COPY .babelrc $APP_HOME
 
 RUN ls -lah
 
-RUN npm install react-bootstrap bootstrap
 RUN npm install
 
 CMD ["npm", "run", "start"]
