@@ -16,7 +16,7 @@ Roshambo is a full-stack web app, designed to be the premiere destination for hi
 
 ## Adding React-Bootstrap
 
-1. cd into your working directory and run `npm install react-bootstrap bootstrap`.
+1. Add `RUN npm install react-bootstrap bootstrap` to your docker file under the frontend folder.
 2. import "bootstrap/dist/css/bootstrap.min.css" in your javascript file in the component folder and in the index.js that is used to render React.
 
 ## Testing
