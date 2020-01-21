@@ -2,7 +2,11 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Button, Form, Container,
 Col} from 'react-bootstrap';
+import {Link, Router, Route, BrowserRouter, Switch} from 'react-router-dom';
 import './LoginPage.css'
+import './HelloWorld'
+import HelloWorld from './HelloWorld';
+
 
 const LoginPage = () => {
   return (
@@ -35,7 +39,10 @@ const LoginPage = () => {
         <Button variant="primary" type="submit">
           Submit
         </Button>
-        <Link></Link>
+        <Link to="/HelloWorld" class="offset-md-2">Register</Link>
+        <Switch>
+          <Route path="/HelloWorld" component={HelloWorld}/>
+        </Switch>
       </Form>
     </Container>
   );
