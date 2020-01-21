@@ -13,6 +13,8 @@ COPY .babelrc $APP_HOME
 
 RUN ls -lah
 
+RUN npm install --save react-bootstrap bootstrap
+RUN npm install --save react-router-dom
 RUN npm install
 
 CMD ["npm", "run", "start"]

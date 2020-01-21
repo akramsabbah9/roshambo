@@ -1,8 +1,8 @@
 import React from 'react';
-import HelloWorld from '../../components/HelloWorld';
+import LoginPage from '../../components/LoginPage';
 
 const App = () => (
-  <HelloWorld /> // TODO: delete me
+  <LoginPage/> // TODO: delete me
 );
 
 export default App;
