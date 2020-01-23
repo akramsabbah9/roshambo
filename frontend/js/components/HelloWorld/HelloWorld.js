@@ -3,8 +3,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import {Button, Form, Container,
 Col} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
-import './LoginPage.css'
-import { DropdownDivider } from 'react-bootstrap/Dropdown';
 
 class HelloWorld extends Component{
     render(){

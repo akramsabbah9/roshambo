@@ -4,8 +4,6 @@ import {Button, Form, Container,
 Col} from 'react-bootstrap';
 import {Link, Router, Route, BrowserRouter, Switch} from 'react-router-dom';
 import './LoginPage.css'
-import './HelloWorld'
-import HelloWorld from './HelloWorld';
 
 
 const LoginPage = () => {
@@ -40,9 +38,6 @@ const LoginPage = () => {
           Submit
         </Button>
         <Link to="/HelloWorld" class="offset-md-2">Register</Link>
-        <Switch>
-          <Route path="/HelloWorld" component={HelloWorld}/>
-        </Switch>
       </Form>
     </Container>
   );
