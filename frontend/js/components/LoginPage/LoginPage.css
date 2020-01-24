@@ -1,6 +1,35 @@
+.main {
+  background-color: white;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.1);
+}
+.label{
+  font-family: 'Signika', sans-serif;
+}
 .mid{
     margin-top: 10%;
   }
+
+.sign{
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-weight: bold;
+  text-align: center;
+  font-size: 25px;
+  color: #b30bbf;
+}
+
+.button{
+  border: 0px;
+  font-size: 15px;
+  border-radius: 15px;
+  background: linear-gradient(to right, #9C27B0, #E040FB);
+}
+
+.unpw{
+  border-radius: 30px;
+  text-align: center;
+  background-color: #f5f2f5;
+}
 
 .HelloWorld{
   text-align: center;

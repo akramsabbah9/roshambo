@@ -1,19 +1,27 @@
-import React from 'react';
+import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Button, Form, Container,
 Col} from 'react-bootstrap';
 import {Link, Router, Route, BrowserRouter, Switch} from 'react-router-dom';
 import './LoginPage.css'
 
+// const handleClick = () => {
+//   this.props.history.push('/HelloWorld');
+// }
 
-const LoginPage = () => {
+
+class LoginPage extends Component{
+  componentDidMount() {
+    document.body.style.backgroundColor = '#e1edfc';
+  }
+  render(){
   return (
-    <Container className="border rounded p-3 mid col-5">
+    <Container className="main border rounded p-3 mid col-4">
       <Form>
+        <p className="sign">Sign In</p>
         <Col>
           <Form.Group controlId="formBasicEmail">
-            <Form.Label>Email address</Form.Label>
-            <Form.Control type="email" placeholder="Enter email" />
+            <Form.Control type="email" placeholder="Enter email" className="unpw"/>
             <Form.Text className="text-muted">
               We'll never share your email with anyone else.
             </Form.Text>
@@ -21,26 +29,29 @@ const LoginPage = () => {
           </Col>
           <Col>
           <Form.Group controlId="formBasicUsername">
-            <Form.Label>Username</Form.Label>
-            <Form.Control type="text" placeholder="Username"/>  
+            <Form.Control type="text" placeholder="Username" className="unpw"/>  
           </Form.Group>
           </Col>
           <Col>
           <Form.Group controlId="formBasicPassword">
-            <Form.Label>Password</Form.Label>
-            <Form.Control type="password" placeholder="Password" />
+            <Form.Control type="password" placeholder="Password" className="unpw"/>
           </Form.Group>
           <Form.Group controlId="formBasicCheckbox">
             <Form.Check type="checkbox" label="Check me out" />
           </Form.Group>
           </Col>
-        <Button variant="primary" type="submit">
+        <Button variant="primary" type="submit" className="offset-md-3 button">
           Submit
         </Button>
-        <Link to="/HelloWorld" class="offset-md-2">Register</Link>
+          <Link to="/HelloWorld" className="offset-md-2">
+            <Button className="button">
+            Register
+            </Button>
+          </Link>
       </Form>
     </Container>
   );
+  }
 }
 
 export default LoginPage;
