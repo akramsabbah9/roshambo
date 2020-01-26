@@ -14,11 +14,6 @@ Roshambo is a full-stack web app, designed to be the premiere destination for hi
 2. From there, http://localhost:8000 will link to the API, and http://localhost:3000 will link to the frontend.
 4. Refer to `docker-compose` documentation for further options, such as running in detached mode.
 
-## Adding React-Bootstrap
-
-1. Add `RUN npm install react-bootstrap bootstrap` to your docker file under the frontend folder.
-2. import "bootstrap/dist/css/bootstrap.min.css" in your javascript file in the component folder and in the index.js that is used to render React.
-
 ## Testing
 
 -  To test frontend components, run `npm run test`.
