@@ -9,6 +9,11 @@
     "Johnson Chou",
     "Jakin Wang"
   ],
+  "license" : "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/cs188-software-design-security-w20/roshambo"
+  },
   "scripts": {
     "lint": "eslint ./src/js --ext .js",
     "lint-fix": "eslint ./src/js --ext .js --fix",
@@ -43,9 +48,15 @@
   },
   "dependencies": {
     "acorn": "^6.0.0",
+    "bootstrap": "^4.4.1",
+    "bufferutil": "^4.0.1",
+    "canvas": "^2.6.1",
     "clsx": "^1.0.4",
+    "jquery": "^3.4.1",
     "prop-types": "^15.6.2",
     "react": "^16.8.0",
-    "react-dom": "^16.8.0"
+    "react-bootstrap": "^1.0.0-beta.16",
+    "react-dom": "^16.8.0",
+    "utf-8-validate": "^5.0.2"
   }
 }
