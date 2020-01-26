@@ -14,6 +14,14 @@ Roshambo is a full-stack web app, designed to be the premiere destination for hi
 2. From there, http://localhost:8000 will link to the API, and http://localhost:3000 will link to the frontend.
 4. Refer to `docker-compose` documentation for further options, such as running in detached mode.
 
+#### Running Commands within the Containers
+
+For some purposes (such as creating a Django superuser temporarily), it's easiest to head into the Docker container's shell to perform actions. This is easy. Follow these steps:
+
+1. After starting the containers via `docker-compose up`, run `docker ps` to see the name of the available containers. Roshambo's should be named `roshambo_backend` and `roshambo_frontend`.
+2. Run `docker exec -it <mycontainer> bash` to obtain shell access to the container.
+3. Voila.
+
 ## Testing
 
 -  To test frontend components, run `npm run test`.
