@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Button, Form, Container,
 Col} from 'react-bootstrap';
-import {Link, Router, Route, BrowserRouter, Switch} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import './LoginPage.css'
 
 // const handleClick = () => {
@@ -19,14 +19,6 @@ class LoginPage extends Component{
     <Container className="main border rounded p-3 mid col-4">
       <Form>
         <p className="sign">Sign In</p>
-        <Col>
-          <Form.Group controlId="formBasicEmail">
-            <Form.Control type="email" placeholder="Enter email" className="unpw"/>
-            <Form.Text className="text-muted">
-              We'll never share your email with anyone else.
-            </Form.Text>
-          </Form.Group>
-          </Col>
           <Col>
           <Form.Group controlId="formBasicUsername">
             <Form.Control type="text" placeholder="Username" className="unpw"/>  
@@ -43,9 +35,9 @@ class LoginPage extends Component{
         <Button variant="primary" type="submit" className="offset-md-3 button">
           Submit
         </Button>
-          <Link to="/HelloWorld" className="offset-md-2">
+          <Link to="/Register" className="offset-md-2">
             <Button className="button">
-            Register
+             Register
             </Button>
           </Link>
       </Form>
