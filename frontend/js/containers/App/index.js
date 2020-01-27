@@ -1,8 +1,8 @@
 import React from 'react';
 import {browserHistory, BrowserRouter, Route, Switch, Router} from 'react-router-dom';
 import Another from '../../components/HelloWorld/Another';
-import LoginPage from '../../components/LoginPage';
-import Register from '../../components/LoginPage';
+import LoginPage from '../../components/LoginPage/index';
+import Register from '../../components/LoginPage/Register';
 
 
 const App = () => (

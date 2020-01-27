@@ -6,7 +6,7 @@ import './LoginPage.css';
 
 class Register extends Component{
     componentDidMount() {
-        document.body.style.backgroundColor = '#e1edfc';
+        document.body.style.backgroundColor = '#fcc092';
     }
     render(){
     return (
@@ -34,7 +34,7 @@ class Register extends Component{
                 <Form.Check type="checkbox" label="Check me out" />
             </Form.Group>
             </Col>
-            <Button variant="primary" type="submit" className="offset-md-3 button">
+            <Button variant="primary" type="submit" className="offset-md-5 button">
                 Submit
             </Button>
         </Form>
