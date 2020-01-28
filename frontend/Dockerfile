@@ -13,10 +13,6 @@ COPY .babelrc $APP_HOME
 
 RUN ls -lah
 
-RUN npm install react-router --save
-RUN npm install react-router-dom --save
-RUN npm install react-bootstrap bootstrap --save
-RUN npm install Formik --save
 RUN npm install
 
 CMD ["npm", "run", "start"]

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Button, Form, Container,
 Col} from 'react-bootstrap';
-import './LoginPage.css';
+import './Pages.css';
 
 class Register extends Component{
     componentDidMount() {

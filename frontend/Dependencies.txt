@@ -1,0 +1,4 @@
+react : npm install react --save
+react-bootstrap : npm install react-bootstrap bootstrap --save
+react-router : npm install react-router-dom --save
+formik : npm install formik --save
