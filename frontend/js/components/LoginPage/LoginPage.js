@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import {Button, Form, Container,
 Col} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
-import {Formik, ErrorMessage, Field} from 'formik';
+import {Formik} from 'formik';
 import * as yup from 'yup';
 import './Pages.css';
 
@@ -26,23 +26,6 @@ class LoginPage extends Component{
       <p className="sign">Sign In</p>
       <Formik
         initialValues = {{username: '', password: ''}}
-        // validate = {values => {
-        //   let errors = {};
-        //   if(!values.username){
-        //     errors.username = "Required";
-        //   }else if(!/^[A-Z0-9]/i.test(values.username)){ 
-        //     errors.username = "Username has to start with an alphanumeric character";
-        //   }else if(values.username.length < 3){
-        //     errors.username = "The length of username must be larger or equal to 3";
-        //   }
-
-        //   if(!values.password){
-        //     errors.password = "Required";
-        //   }else if(values.password.length < 5){
-        //     errors.password = "The length of password must be larger or equal to 5";
-        //   }
-        //   return errors;
-        // }}
         onSubmit={(values, {setSubmitting}) => {
           setTimeout(() => {
             alert(JSON.stringify(values, null, 2)); //Can do some encryption here to showcase security.
@@ -64,7 +47,7 @@ class LoginPage extends Component{
           <Form.Group controlId = "Username">
             <Form.Control 
               type="text" 
-              className="unpw" 
+              className="inputbox" 
               name="username"
               placeholder="Username"
               value={values.username}
@@ -83,7 +66,7 @@ class LoginPage extends Component{
             <Form.Control 
               type="password"
               placeholder="Password" 
-              className="unpw" 
+              className="inputbox" 
               name="password"
               value={values.password}
               onChange={handleChange}
