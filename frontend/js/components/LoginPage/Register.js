@@ -161,7 +161,7 @@ class Register extends Component{
                         </Form.Control.Feedback>
                     </Form.Group>
                 </Col>
-                <Button variant="primary" type="submit" className="offset-md-5 button" disabled={isSubmitting}>
+                <Button variant="primary" type="submit" className="offset-lg-5 button" disabled={isSubmitting}>
                     Submit
                 </Button>
               </Form>

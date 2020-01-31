@@ -22,7 +22,7 @@ class LoginPage extends Component{
   }
   render(){
   return (
-    <Container className="main border rounded p-3 mid col-5">
+    <Container className="main border rounded p-3 mid col-4">
       <p className="sign">Sign In</p>
       <Formik
         initialValues = {{username: '', password: ''}}
