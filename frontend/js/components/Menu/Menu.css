@@ -1,0 +1,24 @@
+.Menu{
+    font-family: 'Bangers', cursive;
+    margin-left: 20%;
+    margin-top: 5%;
+}
+
+.Logo{
+    font-size: 75px;
+    margin-top: 10%;
+    text-shadow: -2px 2px black;
+}
+
+.Link{
+    font-size: 40px;
+}
+
+.Paper{
+    margin-top: 8%;
+}
+
+.Scissor{
+    margin-top: 4%;
+}
+

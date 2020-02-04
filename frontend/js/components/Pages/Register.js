@@ -36,6 +36,9 @@ const schema = yup.object({
 });  
 
 class Register extends Component{
+    constructor(props){
+      super();
+    }
     componentDidMount() {
         document.body.style.backgroundColor = '#fcc092';
     }
@@ -45,10 +48,8 @@ class Register extends Component{
           <Formik
             initialValues={{firstName:"", lastName:"", phone:"", email:"", username:"", password:""}}
             onSubmit={(values, {setSubmitting}) => {
-                setTimeout(() => {
-                  alert(JSON.stringify(values, null, 6)); //Can do some encryption here to showcase security.
-                  setSubmitting(false);
-                }, 400)
+                this.props.history.push("/Login");
+                document.body.style.backgroundColor = 'white';
               }}
             validationSchema={schema}
           >

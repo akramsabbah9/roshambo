@@ -16,7 +16,7 @@ const schema = yup.object({
   password : yup.string().required("Required")
 });
 
-class LoginPage extends Component{
+class Login extends Component{
   componentDidMount() {
     document.body.style.backgroundColor = '#e1edfc';
   }
@@ -27,10 +27,8 @@ class LoginPage extends Component{
       <Formik
         initialValues = {{username: '', password: ''}}
         onSubmit={(values, {setSubmitting}) => {
-          setTimeout(() => {
-            alert(JSON.stringify(values, null, 2)); //Can do some encryption here to showcase security.
-            setSubmitting(false);
-          }, 400)
+          this.props.history.push("/UserDashBoard");
+          document.body.style.backgroundColor = 'white';
         }}
         validationSchema={schema}
       >
@@ -96,4 +94,4 @@ class LoginPage extends Component{
   }
 }
 
-export default LoginPage;
+export default Login;

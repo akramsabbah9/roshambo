@@ -3,4 +3,9 @@ react-bootstrap : npm install react-bootstrap bootstrap --save
 react-router : npm install react-router-dom --save
 formik : npm install formik --save
 Yup : npm install yup --save
-Font-Awesome: npm i --save @fortawesome/fontawesome-svg-core  @fortawesome/free-solid-svg-icons @fortawesome/react-fontawesome
+Font-Awesome: 
+npm i --save @fortawesome/fontawesome-svg-core  
+@fortawesome/free-solid-svg-icons 
+@fortawesome/react-fontawesome
+@fortawesome/free-regular-svg-icons
+@fortawesome/free-brands-svg-icons
