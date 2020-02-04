@@ -5,10 +5,6 @@ import { faMehRollingEyes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-
-
-
-
 /* DATA FOR TESTING ONLY DELETE AFTER! */
 const userData = [{
     name: "jerry1",
@@ -63,12 +59,14 @@ class UserDashBoard extends Component {
             myself: myself,
             userData: userData
         }
+        this.handleSignOut = this.handleSignOut.bind(this);
     }
 
     componentDidMount() {
     }
 
-    handleSignOut() {
+    handleSignOut(e) {
+        e.preventDefault();
         this.props.history.push('/login');
     }
 
@@ -125,7 +123,7 @@ class UserDashBoard extends Component {
             <Container>
                 <Navbar bg="light">       
                     <Navbar.Brand style={{marginLeft:8}}href="#home">Roshambo</Navbar.Brand>
-                    <Button style={styles.signOutBtn} variant="outline-danger" onClick={this.handleSignOut()}>Sign Out</Button>
+                    <Button style={styles.signOutBtn} variant="outline-danger" onClick={this.handleSignOut}>Sign Out</Button>
                 </Navbar>
                 <Row>
                     <Col sm={3}>
@@ -163,8 +161,7 @@ class UserDashBoard extends Component {
                         
                         
                     </Col>
-                </Row>
-                
+                </Row>  
             </Container>
         );
     }
