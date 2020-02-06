@@ -59,15 +59,29 @@ class UserDashBoard extends Component {
             myself: myself,
             userData: userData
         }
+<<<<<<< HEAD
         this.handleSignOut = this.handleSignOut.bind(this);
+=======
+        this.handleSignOut = this.handleSignOut.bind(this)
+        this.handleMatch = this.handleMatch.bind(this)
+>>>>>>> gamePage
     }
 
     componentDidMount() {
     }
 
     handleSignOut(e) {
+<<<<<<< HEAD
         e.preventDefault();
+=======
+        e.preventDefault()
+>>>>>>> gamePage
         this.props.history.push('/login');
+    }
+
+    handleMatch(e) {
+        e.preventDefault()
+        this.props.history.push('/gamelobby')
     }
 
     buildOnlineUserTable () {
@@ -155,7 +169,7 @@ class UserDashBoard extends Component {
                                 {this.buildOnlineUserTable()}
                             </Card.Body>
                             <Card.Footer style={{backgroundColor: 'transparent', border:'none'}} className="d-flex flex-column">
-                                <Button variant="outline-success">MATCH</Button>
+                                <Button variant="outline-success" onClick={this.handleMatch}>MATCH</Button>
                             </Card.Footer>
                         </Card>
                         
