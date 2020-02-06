@@ -1,8 +1,8 @@
 import React from 'react';
 import {BrowserRouter, Route, Switch, Router} from 'react-router-dom';
-import LoginPage from '../../components/LoginPage/LoginPage';
-import Register from '../../components/LoginPage/Register';
-import Menu from '../../components/Menu';
+import LoginPage from '../../components/Pages/Login';
+import Register from '../../components/Pages/Register';
+import Menu from '../../components/Menu/Menu';
 import GameLobby from '../../components/Game/GameLobby';
 import UserDashBoard from '../../components/UserDashBoard/UserDashBoard';
 import GamePage from '../../components/Game/GamePage';

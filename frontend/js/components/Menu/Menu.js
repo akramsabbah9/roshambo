@@ -8,7 +8,7 @@ import './Menu.css';
 
 class Menu extends Component{
     componentDidMount(){
-        document.body.style.backgroundColor = '#fab6b6';
+        document.body.style.backgroundColor = '#74A499';
     }
     render(){
         return(
@@ -26,8 +26,8 @@ class Menu extends Component{
               <Row>
                 <Col sm={5}>
                   <div className="Link">
-                    <Link to="/Register" className="mr-5">Register</Link>
-                    <Link to="/Login">Login</Link>
+                    <Link to="/Register" className="mr-5" style={{color: '#b3d7ff'}}>Register</Link>
+                    <Link to="/Login" style={{color: '#b3d7ff'}}>Login</Link>
                   </div>
                   </Col>
                   <Col sm={2}>
