@@ -63,13 +63,21 @@ class UserDashBoard extends Component {
             myself: myself,
             userData: userData
         }
+        this.handleSignOut = this.handleSignOut.bind(this)
+        this.handleMatch = this.handleMatch.bind(this)
     }
 
     componentDidMount() {
     }
 
-    handleSignOut() {
+    handleSignOut(e) {
+        e.preventDefault()
         this.props.history.push('/login');
+    }
+
+    handleMatch(e) {
+        e.preventDefault()
+        this.props.history.push('/gamelobby')
     }
 
     buildOnlineUserTable () {
@@ -125,7 +133,7 @@ class UserDashBoard extends Component {
             <Container>
                 <Navbar bg="light">       
                     <Navbar.Brand style={{marginLeft:8}}href="#home">Roshambo</Navbar.Brand>
-                    <Button style={styles.signOutBtn} variant="outline-danger" onClick={this.handleSignOut()}>Sign Out</Button>
+                    <Button style={styles.signOutBtn} variant="outline-danger" onClick={this.handleSignOut}>Sign Out</Button>
                 </Navbar>
                 <Row>
                     <Col sm={3}>
@@ -157,7 +165,7 @@ class UserDashBoard extends Component {
                                 {this.buildOnlineUserTable()}
                             </Card.Body>
                             <Card.Footer style={{backgroundColor: 'transparent', border:'none'}} className="d-flex flex-column">
-                                <Button variant="outline-success">MATCH</Button>
+                                <Button variant="outline-success" onClick={this.handleMatch}>MATCH</Button>
                             </Card.Footer>
                         </Card>
                         
