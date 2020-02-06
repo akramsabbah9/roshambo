@@ -59,23 +59,15 @@ class UserDashBoard extends Component {
             myself: myself,
             userData: userData
         }
-<<<<<<< HEAD
-        this.handleSignOut = this.handleSignOut.bind(this);
-=======
         this.handleSignOut = this.handleSignOut.bind(this)
         this.handleMatch = this.handleMatch.bind(this)
->>>>>>> gamePage
     }
 
     componentDidMount() {
     }
 
     handleSignOut(e) {
-<<<<<<< HEAD
         e.preventDefault();
-=======
-        e.preventDefault()
->>>>>>> gamePage
         this.props.history.push('/login');
     }
 
