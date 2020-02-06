@@ -4,6 +4,7 @@ import Table from 'react-bootstrap/Table';
 import { faMehRollingEyes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Link } from 'react-router-dom';
 
 /* DATA FOR TESTING ONLY DELETE AFTER! */
 const userData = [{
@@ -128,7 +129,7 @@ class UserDashBoard extends Component {
         return (
             <Container>
                 <Navbar bg="light">       
-                    <Navbar.Brand style={{marginLeft:8}}href="#home">Roshambo</Navbar.Brand>
+                    <Navbar.Brand style={{marginLeft:8, fontFamily:"'Bangers', cursive", fontSize:"30px"}}href="#home">Roshambo</Navbar.Brand>
                     <Button style={styles.signOutBtn} variant="outline-danger" onClick={this.handleSignOut}>Sign Out</Button>
                 </Navbar>
                 <Row>
@@ -149,7 +150,9 @@ class UserDashBoard extends Component {
                         </Card>
                         <div className="d-flex flex-column" style={{marginTop:50}}>
                             <ButtonGroup>
-                                <Button variant="outline-secondary">Settings</Button>
+                                <Button variant="outline-secondary">
+                                    <Link to="/Settings">Settings</Link>  
+                                </Button>
                                 <Button variant="outline-secondary">Store</Button>
                             </ButtonGroup>
                         </div>
@@ -164,8 +167,6 @@ class UserDashBoard extends Component {
                                 <Button variant="outline-success" onClick={this.handleMatch}>MATCH</Button>
                             </Card.Footer>
                         </Card>
-                        
-                        
                     </Col>
                 </Row>  
             </Container>

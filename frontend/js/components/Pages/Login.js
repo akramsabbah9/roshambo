@@ -112,8 +112,7 @@ class Login extends Component{
             </Button>
           </Link>
       </Form>
-
-        )}
+      )}
 
       </Formik>
     </Container>

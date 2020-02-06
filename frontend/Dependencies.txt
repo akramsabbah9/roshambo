@@ -11,3 +11,4 @@ npm i --save @fortawesome/fontawesome-svg-core
 @fortawesome/free-brands-svg-icons
 
 axios: npm install axios --save
+file-loader: npm install file-loader --save-dev
