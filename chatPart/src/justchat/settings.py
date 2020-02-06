@@ -131,3 +131,6 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+# Cannot import BACKEND 'channels_redis.core.RedisChannelLayer' specified for default
+# this was solved on local machine by pip install channels_redis
