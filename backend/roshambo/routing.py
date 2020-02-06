@@ -7,8 +7,8 @@
 # :: Created By: Benji Brandt <benjibrandt@ucla.edu>
 # :: Creation Date: 12 January 2020
 
-from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
+from channels.auth import AuthMiddlewareStack
 import matchup.routing
 
 application = ProtocolTypeRouter({
