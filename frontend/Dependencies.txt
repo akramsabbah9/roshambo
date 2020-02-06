@@ -9,3 +9,5 @@ npm i --save @fortawesome/fontawesome-svg-core
 @fortawesome/react-fontawesome
 @fortawesome/free-regular-svg-icons
 @fortawesome/free-brands-svg-icons
+
+axios: npm install axios --save

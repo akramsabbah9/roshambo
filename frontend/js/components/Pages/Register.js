@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Button, Form, Container,
-Col} from 'react-bootstrap';
+Col, Nav} from 'react-bootstrap';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import './Pages.css';
@@ -44,6 +44,12 @@ class Register extends Component{
     }
     render(){
     return (
+      <>
+        <Nav variant="pills" onSelect={this.onSelect}>
+          <Nav.Item>
+            <Nav.Link className="sign" href="/">ROSHAMBO</Nav.Link>
+          </Nav.Item>
+        </Nav>
         <Container className="main border rounded p-3 mid col-5">
           <Formik
             initialValues={{firstName:"", lastName:"", phone:"", email:"", username:"", password:""}}
@@ -169,6 +175,7 @@ class Register extends Component{
             )}
             </Formik>
         </Container>
+        </>
     );
     }
 }
