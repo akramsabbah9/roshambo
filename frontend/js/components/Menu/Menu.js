@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Button, Form, Container, Col, Row} from 'react-bootstrap';
+import {Container, Col, Row, Image} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHandPaper, faHandScissors, faHandRock} from '@fortawesome/free-regular-svg-icons'
-import './Menu.css'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHandPaper, faHandScissors, faHandRock, faHandPeace} from '@fortawesome/free-regular-svg-icons';
+import './Menu.css';
 
 class Menu extends Component{
     componentDidMount(){
@@ -15,26 +15,25 @@ class Menu extends Component{
             <div>
             <Container className="Menu">
               <Row>
-                <Col sm={{offset: 7}}>
-                <FontAwesomeIcon className="Paper" icon={faHandPaper} size="7x"/>
-                </Col>
-              </Row>
-              <Row>
-                <Col sm={7}>
+                <Col sm={5}>
                 <p className="Logo">Roshambo</p>
                 </Col>
-                <FontAwesomeIcon className="Scissor" icon={faHandScissors} size="7x"/>
+                <Col sm={2}>
+                <FontAwesomeIcon className="toRight" icon={faHandPaper} size="7x"/>
+                </Col>
+                <FontAwesomeIcon className="toLeft" icon={faHandPeace} size="7x"/>
               </Row>
               <Row>
-                <Col sm={7}>
+                <Col sm={5}>
                   <div className="Link">
                     <Link to="/Register" className="mr-5">Register</Link>
                     <Link to="/Login">Login</Link>
                   </div>
                   </Col>
-                  <Col>
-                  <FontAwesomeIcon icon={faHandRock} size="7x"/>
+                  <Col sm={2}>
+                  <FontAwesomeIcon icon={faHandRock} className="toRight" size="7x"/>
                   </Col>
+                  <FontAwesomeIcon className="toLeft" icon={faHandPaper} size="7x"/>
               </Row>
             </Container>
                 
