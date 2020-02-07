@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Navbar, Button, Container, Row, Col, Card} from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import placeHolder from 'file-loader!../src/placeholder.png';
+import './Settings.css';
 
 class Settings extends Component{
     constructor(){
@@ -30,18 +31,24 @@ class Settings extends Component{
                 </Row>
                 <Row style={{marginTop: "5%"}}>
                     <Col>
-                        <Card style={{width: '18rem', height: '18rem', borderStyle: 'hidden'}}>
-                            <Card.Title style={{textAlign: "Center", fontFamily:'Raleway, sans-serif', fontSize: '2rem'}}>Basic Info</Card.Title>
+                        <Card className="SettingCards">
+                                <Card.Title className="CardTitle">Basic Info</Card.Title>
+                                <Card.Link className="CardLinks" style={{margin:"0.25em auto"}}>Name</Card.Link>
+                                <Card.Link className="CardLinks" style={{margin:"0.25em auto"}}>Email</Card.Link>
                         </Card>
                     </Col>   
                     <Col>
-                        <Card style={{width: '18rem', height: '18rem', borderStyle: 'hidden'}}>
-                            <Card.Title  style={{textAlign: "Center", fontFamily:'Raleway, sans-serif', fontSize: '2rem'}}>Payment Settings</Card.Title>
+                        <Card className="SettingCards">
+                            <Card.Title className="CardTitle">Payment Settings</Card.Title>
+                            <Card.Link className="CardLinks" style={{margin:"0.25em auto"}}>Credit Cards</Card.Link>
                         </Card>
                     </Col>   
                     <Col>
-                        <Card style={{width: '18rem', height: '18rem', borderStyle: 'hidden'}}>
-                            <Card.Title  style={{textAlign: "Center",  fontFamily:'Raleway, sans-serif', fontSize: '2rem'}}>Privacy Settings</Card.Title>
+                        <Card className="SettingCards">
+                            <Card.Title  className="CardTitle">Privacy Settings</Card.Title>
+                            <Card.Link className="CardLinks" style={{margin:"0.25em auto"}}>Email Preferences</Card.Link>
+                            <Card.Link className="CardLinks" style={{margin:"0.25em auto"}}>Display Settings</Card.Link>
+                            <Card.Link className="CardLinks" style={{margin:"0.25em auto"}}>Password</Card.Link>
                         </Card>
                     </Col>   
                 </Row>
@@ -49,4 +56,5 @@ class Settings extends Component{
         );
     }
 }
+
 export default Settings;

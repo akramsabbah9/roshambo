@@ -1,0 +1,31 @@
+.SettingCards{
+    width: 18rem;
+    height: 18rem;
+    border: hidden;
+}
+
+.CardTitle{
+    text-align: center;
+    font-family: 'Raleway', sans-serif;
+    font-size: 2rem;
+}
+
+.CardTitle:after{
+    content: "";  
+    display: block;
+    margin: auto; 
+    width: 75%;
+    padding-top: 0.75em;
+    border-bottom: 2px solid #707070;
+}
+
+.CardContents{
+    text-align: center;
+    font-family: 'Raleway', sans-serif;
+    font-size: 2rem;
+}
+
+.CardLinks{
+    font-family: 'Raleway', sans-serif;
+    font-size: 1.25rem;
+}
