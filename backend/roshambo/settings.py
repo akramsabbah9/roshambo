@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'accounts',
 ]
 
@@ -114,15 +115,16 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ),
 }
 
-JWT_AUTH = {
-    'JWT_RESPONSE_PAYLOAD_HANDLER': 'roshambo.utils.user_jwt_response_handler'
-}
+AUTH_USER_MODEL = 'accounts.RoshamboUser'
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'accounts.backends.RoshamboUserBackend',
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
@@ -150,5 +152,4 @@ ASGI_APPLICATION = 'roshambo.routing.application'
 CORS_ORIGIN_WHITELIST = (
         'http://localhost:3000',
         'http://localhost:8000',
-        'http://localhost:8080',
     )

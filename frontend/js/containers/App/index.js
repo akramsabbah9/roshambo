@@ -4,7 +4,7 @@ import LoginForm from '../../components/LoginForm';
 import NavHeader from '../../components/NavHeader';
 import SignupForm from '../../components/SignupForm';
 
-import {currentUser, login, signup} from '../../utils/api';
+import {currentUser, login, signup, logout, allUsers, activeUsers} from '../../utils/api';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -31,10 +31,14 @@ class App extends Component {
     e.preventDefault();
     login(data).then(json => {
       localStorage.setItem('token', json.token);
-      this.setState({
-        logged_in: true,
-        displayed_form: '',
-        username: json.user.username
+      allUsers().then(json => {console.log(json)})
+      activeUsers().then(json => {console.log(json)})
+      currentUser().then(json => {
+        this.setState({
+          logged_in: true,
+          displayed_form: '',
+          username: json.username
+        });
       });
     });
   };
@@ -52,8 +56,10 @@ class App extends Component {
   };
 
   handleLogout = () => {
-    localStorage.removeItem('token');
-    this.setState({ ...this.state, logged_in: false, username: '' });
+    logout().then(() => {
+      localStorage.removeItem('token');
+      this.setState({ ...this.state, logged_in: false, username: '' });
+    });
   };
 
   displayForm = form => {

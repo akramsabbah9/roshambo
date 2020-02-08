@@ -10,6 +10,7 @@ const propTypes = {
 class SignupForm extends Component {
   state = {
     username: '',
+    email: '',
     password: ''
   };
 
@@ -26,6 +27,14 @@ class SignupForm extends Component {
   render() {
     return (
       <Form>
+        <Form.Group controlId="email">
+          <Form.Label>Email</Form.Label>
+          <Form.Control name="email" onChange={this.handleChange} placeholder="roshambolicious@roshambo.bo" />
+          <Form.Text className="text-muted">
+            Say, where do you get your mail?
+          </Form.Text>
+        </Form.Group>
+
         <Form.Group controlId="username">
           <Form.Label>Username</Form.Label>
           <Form.Control name="username" onChange={this.handleChange} placeholder="roshambolicious" />

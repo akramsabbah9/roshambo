@@ -13,7 +13,12 @@ const _request = (url, options = {}) => {
 
   return fetch(url, defaultedOptions)
     .then(checkFetchResponse)
-    .then(res => res.json());
+    .then(res => {
+      if (res.status == 204) // HTTP_NO_CONTENT
+        return;
+      else 
+        return res.json();
+    });
 };
 
 export default _request;
