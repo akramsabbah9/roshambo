@@ -25,15 +25,9 @@ services:
   
   redis:
     container_name: roshambo_redis
-    image: redis:5.0.7
+    image: redis:latest
     ports:
       - 6379:6379
-    # command: ["redis-server", "--appendonly", "yes"]
-    # hostname: redis
-    networks:
-      - redis-net
-    volumes:
-      - redis-data:/data
 
   backend:
     build:
@@ -70,10 +64,6 @@ services:
 volumes:
   postgres:
   backend:
-  redis-data:
-
-networks:
-  redis-net:
 
 
   
