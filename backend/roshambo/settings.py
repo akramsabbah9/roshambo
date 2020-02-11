@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'chat'
+    'chat',
+    'payments.apps.PaymentsConfig'
 ]
 
 MIDDLEWARE = [
@@ -147,3 +148,6 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+STRIPE_SECRET_KEY = 'sk_test_cpnWw7EDAwNoJN89JVde1DXY002fOniVkX'
+STRIPE_PUBLISHABLE_KEY = 'pk_test_Ux3dsI7uw62rLZ2Ni5TvoSV400Pjv0N2Sn'
