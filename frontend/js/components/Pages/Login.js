@@ -14,8 +14,11 @@ import {axios} from 'axios';
 // }
 
 const schema = yup.object({
-  username : yup.string().required("Required"),
-  password : yup.string().required("Required")
+  password : yup.string().required("Required"),
+  email: yup.string()
+  .email("Must be a valid email address")
+  .max(50, "Email must be less than 50 characters")
+  .required("Required")
 });
 
 class Login extends Component{
@@ -37,7 +40,7 @@ class Login extends Component{
     <Container className="main border rounded p-3 mid col-4">
       <p className="sign">Sign In</p>
       <Formik
-        initialValues = {{username: '', password: ''}}
+        initialValues = {{email: '', password: ''}}
 
         onSubmit={values => {
           // axios.post('/Test',{
@@ -71,14 +74,14 @@ class Login extends Component{
           <Col>
           <Form.Group controlId = "Username">
             <Form.Control 
-              type="text" 
+              type="email" 
               className="inputbox" 
-              name="username"
-              placeholder="Username"
+              name="email"
+              placeholder="Email"
               value={values.username}
               onChange={handleChange}
               onBlur={handleBlur}
-              isInvalid={(touched.username && errors.username)}
+              isInvalid={(touched.email && errors.email)}
             />
             
           <Form.Control.Feedback type="invalid">

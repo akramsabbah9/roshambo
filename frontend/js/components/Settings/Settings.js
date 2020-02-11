@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Navbar, Button, Container, Row, Col, Card} from 'react-bootstrap';
+import {Navbar, Button, Container, Row, Col, Card, Link} from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import placeHolder from 'file-loader!../src/placeholder.png';
 import './Settings.css';
@@ -7,6 +7,15 @@ import './Settings.css';
 class Settings extends Component{
     constructor(){
         super();
+        this.handleSignOut = this.handleSignOut.bind(this);
+    }
+    componentDidMount(){
+        document.body.style.backgroundColor = "white";
+    }
+
+    handleSignOut(e){
+        e.preventDefault();
+        this.props.history.push('/login');
     }
 
     render(){
@@ -30,27 +39,20 @@ class Settings extends Component{
                     </Col>
                 </Row>
                 <Row style={{marginTop: "5%"}}>
-                    <Col>
+                    <Col sm={{offset: 3, span: 3}}>
                         <Card className="SettingCards">
                                 <Card.Title className="CardTitle">Basic Info</Card.Title>
                                 <Card.Link className="CardLinks" style={{margin:"0.25em auto"}}>Name</Card.Link>
                                 <Card.Link className="CardLinks" style={{margin:"0.25em auto"}}>Email</Card.Link>
                         </Card>
-                    </Col>   
-                    <Col>
-                        <Card className="SettingCards">
-                            <Card.Title className="CardTitle">Payment Settings</Card.Title>
-                            <Card.Link className="CardLinks" style={{margin:"0.25em auto"}}>Credit Cards</Card.Link>
-                        </Card>
-                    </Col>   
+                    </Col>
                     <Col>
                         <Card className="SettingCards">
                             <Card.Title  className="CardTitle">Privacy Settings</Card.Title>
-                            <Card.Link className="CardLinks" style={{margin:"0.25em auto"}}>Email Preferences</Card.Link>
-                            <Card.Link className="CardLinks" style={{margin:"0.25em auto"}}>Display Settings</Card.Link>
-                            <Card.Link className="CardLinks" style={{margin:"0.25em auto"}}>Password</Card.Link>
+                            <Card.Link className="CardLinks" style={{margin:"0.25em auto"}} href="/Settings/Email">Email Preferences</Card.Link>
+                            <Card.Link className="CardLinks" style={{margin:"0.25em auto"}} href="/Settings/Password">Password</Card.Link>
                         </Card>
-                    </Col>   
+                    </Col>
                 </Row>
             </Container>
         );

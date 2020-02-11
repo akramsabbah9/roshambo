@@ -9,8 +9,6 @@ import GamePage from '../../components/Game/GamePage';
 import Settings from '../../components/Settings/Settings';
 import Password from '../../components/Settings/Password';
 import Email from '../../components/Settings/Email';
-import Display from '../../components/Settings/Display';
-import CreditCards from '../../components/Settings/CreditCards';
 
 const App = () => (
   <BrowserRouter>
@@ -24,8 +22,6 @@ const App = () => (
         <Route exact path="/Settings" component={Settings} />  
         <Route exact path="/Settings/Password" component={Password} />
         <Route exact path="/Settings/Email" component={Email} />    
-        <Route exact path="/Settings/CreditCards" component={CreditCards} />    
-        <Route exact path="/Settings/Display" component={Display} />    
     </Switch>
   </BrowserRouter>
 );
