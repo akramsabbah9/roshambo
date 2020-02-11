@@ -128,7 +128,7 @@ class PaymentPage extends Component {
                     <h1 style={{marginTop: 50}}>Checkout</h1>
                     <Card style={{margin: 50}}>
                     <Card.Body>
-                    <Card.Title style={{marginTop:20}}>Cart Items</Card.Title>
+                    <Card.Title style={{marginTop:20}}>Items</Card.Title>
                         <Table>
                             <thead>
                                 <tr>

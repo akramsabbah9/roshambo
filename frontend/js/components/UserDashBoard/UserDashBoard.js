@@ -76,6 +76,10 @@ class UserDashBoard extends Component {
         this.props.history.push('/gamelobby')
     }
 
+    handleStore() {
+        this.props.history.push('/store')
+    }
+
     buildOnlineUserTable () {
         return (
             <Table striped hover responsive size="sm">
@@ -150,7 +154,7 @@ class UserDashBoard extends Component {
                         <div className="d-flex flex-column" style={{marginTop:50}}>
                             <ButtonGroup>
                                 <Button variant="outline-secondary">Settings</Button>
-                                <Button variant="outline-secondary">Store</Button>
+                                <Button variant="outline-secondary" onClick={this.handleStore.bind(this)}>Store</Button>
                             </ButtonGroup>
                         </div>
                     </Col>

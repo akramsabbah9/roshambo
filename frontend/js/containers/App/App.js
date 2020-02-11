@@ -8,6 +8,7 @@ import UserDashBoard from '../../components/UserDashBoard/UserDashBoard';
 import GamePage from '../../components/Game/GamePage';
 import BettingPage from '../../components/Betting/BettingPage';
 import Payment from '../../components/Payment/payment';
+import OnlineStore from '../../components/Store/Store';
 
 
 
@@ -22,6 +23,7 @@ const App = () => (
         <Route exact path="/GamePage" component={GamePage} />   
         <Route exact path="/Betting" component={BettingPage} />
         <Route exact path="/Payment" component={Payment} />
+        <Route exact path="/Store" component={OnlineStore} />
     </Switch>
   </BrowserRouter>
 );
