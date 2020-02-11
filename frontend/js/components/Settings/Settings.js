@@ -5,7 +5,7 @@ import placeHolder from 'file-loader!../src/placeholder.png';
 import './Settings.css';
 
 class Settings extends Component{
-    constructor(){
+    constructor(props){
         super();
         this.handleSignOut = this.handleSignOut.bind(this);
     }
@@ -49,8 +49,8 @@ class Settings extends Component{
                     <Col>
                         <Card className="SettingCards">
                             <Card.Title  className="CardTitle">Privacy Settings</Card.Title>
-                            <Card.Link className="CardLinks" style={{margin:"0.25em auto"}} href="/Settings/Email">Email Preferences</Card.Link>
-                            <Card.Link className="CardLinks" style={{margin:"0.25em auto"}} href="/Settings/Password">Password</Card.Link>
+                            <Card.Link className="CardLinks" style={{margin:"0.25em auto"}} href="/Settings/Email">Email Change</Card.Link>
+                            <Card.Link className="CardLinks" style={{margin:"0.25em auto"}} href="/Settings/Password">Password Change</Card.Link>
                         </Card>
                     </Col>
                 </Row>

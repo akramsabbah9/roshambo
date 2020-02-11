@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Button, Form, Container,
-Col, Nav} from 'react-bootstrap';
+Col, Nav, Navbar} from 'react-bootstrap';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import './Pages.css';
@@ -18,7 +18,7 @@ const schema = yup.object({
     .required("Required"),
     email: yup.string()
     .email("Must be a valid email address")
-    .max(50, "Email must be less than 50 characters")
+    .max(25, "Email must be less than 25 characters")
     .required("Required"),
     phone: yup.string()
     .matches(/^(\+?\d)?\(\d{3}\)\d{3}-\d{4}$/, "phone number must be in the form of +x(xxx)xxx-xxxx")
@@ -32,6 +32,9 @@ const schema = yup.object({
     .matches(/^\D/, "username or password must start with an alphabet letter")
     .min(5, "username or password must be at least 5 letters long")
     .max(30, "username or password cannot exceed 30 characters")
+    .required("Required"),
+    confirmPassword : yup.string()
+    .oneOf([yup.ref('password'), null], "Does not match with password")
     .required("Required")
 });  
 
@@ -52,7 +55,7 @@ class Register extends Component{
         </Nav>
         <Container className="main border rounded p-3 mid col-5">
           <Formik
-            initialValues={{firstName:"", lastName:"", phone:"", email:"", username:"", password:""}}
+            initialValues={{firstName:"", lastName:"", phone:"", email:"", username:"", password:"", confirmPassword: ""}}
             onSubmit={(values, {setSubmitting}) => {
                 this.props.history.push("/Login");
                 document.body.style.backgroundColor = 'white';
@@ -154,7 +157,7 @@ class Register extends Component{
                 <Col>
                     <Form.Group controlId="formPassword">
                         <Form.Control 
-                        type="text" 
+                        type="password" 
                         placeholder="Password"
                         name="password"
                         className="inputbox"
@@ -165,6 +168,23 @@ class Register extends Component{
                         />
                         <Form.Control.Feedback type="invalid">
                             {errors.password}
+                        </Form.Control.Feedback>
+                    </Form.Group>
+                </Col>
+                <Col>
+                    <Form.Group controlId="formConfirmPassword">
+                        <Form.Control 
+                        type="password" 
+                        placeholder="Confirm Password"
+                        name="confirmPassword"
+                        className="inputbox"
+                        value={values.confirmPassword}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        isInvalid={touched.confirmPassword && errors.confirmPassword}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                            {errors.confirmPassword}
                         </Form.Control.Feedback>
                     </Form.Group>
                 </Col>

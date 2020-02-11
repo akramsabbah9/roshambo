@@ -25,7 +25,7 @@ class Login extends Component{
   componentDidMount() {
     document.body.style.backgroundColor = '#e1edfc';
   }
-  constructor(){
+  constructor(props){
     super();
   }
 
@@ -57,7 +57,7 @@ class Login extends Component{
           // .catch(function (error) {
           //   console.log(error);
           // });
-          this.props.history.push("/UserDashBoard");
+          this.props.history.push("/UserDashBoard", {email: values.email});
           document.body.style.backgroundColor = 'white';
         }}
         validationSchema={schema}

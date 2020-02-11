@@ -58,10 +58,13 @@ class UserDashBoard extends Component {
         super(props)
         this.state = {
             myself: myself,
-            userData: userData
+            userData: userData,
+            email: this.props.history.location.state.email,
+            password: this.props.history.location.state.password
         }
         this.handleSignOut = this.handleSignOut.bind(this)
         this.handleMatch = this.handleMatch.bind(this)
+        console.log(JSON.stringify({email: this.state.email, password: this.state.password}))
     }
 
     componentDidMount() {

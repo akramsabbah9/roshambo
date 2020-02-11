@@ -29,3 +29,11 @@
     font-family: 'Raleway', sans-serif;
     font-size: 1.25rem;
 }
+
+.emailMain{
+    margin: 15% auto;
+}
+
+.passwordMain{
+    margin: 12.5% auto;
+}
