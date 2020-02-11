@@ -9,6 +9,11 @@ import GamePage from '../../components/Game/GamePage';
 import Settings from '../../components/Settings/Settings';
 import Password from '../../components/Settings/Password';
 import Email from '../../components/Settings/Email';
+import BettingPage from '../../components/Betting/BettingPage';
+import Payment from '../../components/Payment/payment';
+import OnlineStore from '../../components/Store/Store';
+
+
 
 const App = () => (
   <BrowserRouter>
@@ -22,6 +27,10 @@ const App = () => (
         <Route exact path="/Settings" component={Settings} />  
         <Route exact path="/Settings/Password" component={Password} />
         <Route exact path="/Settings/Email" component={Email} />    
+        <Route exact path="/GamePage" component={GamePage} />   
+        <Route exact path="/Betting" component={BettingPage} />
+        <Route exact path="/Payment" component={Payment} />
+        <Route exact path="/Store" component={OnlineStore} />
     </Switch>
   </BrowserRouter>
 );
