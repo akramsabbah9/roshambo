@@ -2,6 +2,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from .models import Room
 from .utils import get_room_name
+from .utils import leave_room
 import json
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -22,6 +23,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         # Leave room group
+        await leave_room(self.room_name)
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
