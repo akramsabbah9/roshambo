@@ -1,4 +1,4 @@
-import React, { Component, useRef } from 'react';
+import React, { Component } from 'react';
 import { Container, Navbar, Button, Row, Col, Image, Card, ListGroup, Title, ButtonGroup, Overlay } from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMehRollingEyes, faDragon, faAlignJustify } from "@fortawesome/free-solid-svg-icons";
@@ -15,11 +15,17 @@ class GameLobby extends Component {
         }
         this.handleExit = this.handleExit.bind(this)
         this.handleReady = this.handleReady.bind(this)
+        this.handleBet = this.handleBet.bind(this)
     }
 
     handleExit(e) {
         e.preventDefault()
         this.props.history.push('/userdashboard')
+    }
+
+    handleBet(e) {
+        e.preventDefault()
+        this.props.history.push('/betting')
     }
 
     handleReady(e) {
@@ -110,7 +116,7 @@ class GameLobby extends Component {
                                 <Button variant="outline-success" style={styles.btn} block size="lg" onClick={this.handleReady}>Ready</Button>      
                         </Row>
                         <Row>
-                                <Button variant="outline-success"style={styles.btn} block size="lg">Bet</Button>                       
+                                <Button variant="outline-success"style={styles.btn} block size="lg" onClick={this.handleBet}>Bet</Button>                       
                         </Row>
                         <Row>                          
                                 <Button variant="outline-danger" style={styles.btn} block size="lg" onClick={this.handleExit}>Exit</Button>

@@ -6,7 +6,7 @@ import {Link} from 'react-router-dom';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import './Pages.css';
-import {axios} from 'axios';
+//import {axios} from 'axios';
 
 
 // const handleClick = () => {
