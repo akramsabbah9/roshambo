@@ -10,6 +10,7 @@ class RoshamboUser(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(_('email address'), unique=True) # changes email to unique and blank to false
     country_code = models.PositiveSmallIntegerField(default=0)
+    guild = models.CharField(max_length=30, default='')
 
     # remove unnecessary fields from AbstractUser
     is_superuser = None

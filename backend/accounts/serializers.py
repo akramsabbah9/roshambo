@@ -21,6 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
         write_only=True
     )
     country_code = serializers.IntegerField(required=False)
+    guild = serializers.CharField(max_length=30, required=False)
 
     def create(self, validated_data):
         if validated_data.get('country_code'):
@@ -33,4 +34,4 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RoshamboUser
-        fields = ('id', 'username', 'email', 'password', 'country_code')
+        fields = ('id', 'username', 'email', 'password', 'country_code', 'guild')
