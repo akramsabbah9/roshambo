@@ -3,8 +3,9 @@ import React, { Component } from 'react';
 import LoginForm from '../../components/LoginForm';
 import NavHeader from '../../components/NavHeader';
 import SignupForm from '../../components/SignupForm';
+import EditForm from '../../components/EditForm';
 
-import {currentUser, login, signup, logout, allUsers, activeUsers} from '../../utils/api';
+import {currentUser, login, signup, logout, allUsers, activeUsers, editUser} from '../../utils/api';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -15,7 +16,8 @@ class App extends Component {
     this.state = {
       displayed_form: '',
       logged_in: localStorage.getItem('token') ? true : false,
-      username: ''
+      username: '',
+      edit_results: ''
     };
   }
 
@@ -37,7 +39,8 @@ class App extends Component {
         this.setState({
           logged_in: true,
           displayed_form: '',
-          username: json.username
+          username: json.username,
+          edit_results: ''
         });
       });
     });
@@ -50,15 +53,29 @@ class App extends Component {
       this.setState({
         logged_in: true,
         displayed_form: '',
-        username: json.username
+        username: json.username,
+        edit_results: ''
       });
     });
   };
 
+  handleEdit = (e, data) => {
+    e.preventDefault();
+    let sendData = {};
+    sendData[data['field-type']] = data['field-value'];
+    console.log(sendData);
+    editUser(sendData).then(json => {
+      this.setState({
+        display_form: 'edit',
+        edit_results: JSON.stringify(json, null, 2)
+      })
+    })
+  }
+
   handleLogout = () => {
     logout().then(() => {
       localStorage.removeItem('token');
-      this.setState({ ...this.state, logged_in: false, username: '' });
+      this.setState({ ...this.state, logged_in: false, username: '', edit_results: '' });
     });
   };
 
@@ -80,6 +97,10 @@ class App extends Component {
         header = <h3>Please sign up...</h3>
         form = <SignupForm handleSignup={this.handleSignup} />;
         break;
+      case 'edit':
+        header = <h3>Edit your deets...</h3>
+        form = <EditForm handleEdit={this.handleEdit} />;
+        break;
       default:
         form = <h3>Home page!</h3>;
         header = null;
@@ -91,14 +112,17 @@ class App extends Component {
           loggedIn={this.state.logged_in}
           displayForm={this.displayForm}
           handleLogout={this.handleLogout}
+          handleEdit={this.handleEdit}
         />
-        {header}
         <h3>
           {this.state.logged_in
             ? `Hello, ${this.state.username}`
             : null }
         </h3>
+        {header}
         {form}
+        <p>{this.state.edit_results != '' ? this.state.edit_results : null}</p>
+
       </React.Fragment>
     );
   }

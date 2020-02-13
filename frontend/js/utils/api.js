@@ -36,6 +36,7 @@ export const signup = (data) => {
   });
 };
 
+
 //-------------------------------------------------------------
 // GET Methods
 //-------------------------------------------------------------
@@ -64,5 +65,20 @@ export const activeUsers = () => {
       'Content-Type': 'application/json',
       Authorization: `Token ${localStorage.getItem('token')}`
     }
+  });
+};
+
+//-------------------------------------------------------------
+// PATCH Methods
+//-------------------------------------------------------------
+
+export const editUser = (data) => {
+  return _request('http://localhost:8000/accounts/users/edit/', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Token ${localStorage.getItem('token')}`
+    },
+    body: JSON.stringify(data)
   });
 };

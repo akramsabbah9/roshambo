@@ -6,7 +6,8 @@ import { Button, Nav, Navbar } from 'react-bootstrap';
 const propTypes = {
   loggedIn: PropTypes.bool.isRequired,
   displayForm: PropTypes.func.isRequired,
-  handleLogout: PropTypes.func.isRequired
+  handleLogout: PropTypes.func.isRequired,
+  handleEdit: PropTypes.func.isRequired
 }
 
 const NavHeader = (props) => {
@@ -18,7 +19,10 @@ const NavHeader = (props) => {
   );
 
   const loggedInNav = (
-    <Button onClick={props.handleLogout} variant="outline-light">Log Out</Button>
+    <React.Fragment>
+      <Nav.Link onClick={() => props.displayForm('edit')} className="mr-sm-2">Edit Details</Nav.Link>
+      <Button onClick={props.handleLogout} variant="outline-light">Log Out</Button>
+    </React.Fragment>
   );
 
   return (
