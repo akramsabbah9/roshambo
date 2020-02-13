@@ -6,12 +6,10 @@ import {Link} from 'react-router-dom';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import './Pages.css';
-//import {axios} from 'axios';
 
 
-// const handleClick = () => {
-//   this.props.history.push('/HelloWorld');
-// }
+import { connect } from 'react-redux';
+import { userActions } from '../../redux/actions/UsersActions';
 
 const schema = yup.object({
   password : yup.string().required("Required"),
@@ -26,12 +24,29 @@ class Login extends Component{
     document.body.style.backgroundColor = '#e1edfc';
   }
   constructor(props){
-    super();
+    super(props);
+
+    this.props.logout();
+
+    this.state = {
+      username: '',
+      password: '',
+      submitted: false
+    };
+
+    this.handleLogin = this.handleLogin.bind(this)
+  }
+
+  handleLogin(values){
+    this.setState({submitted: true });
+    const { username, password } = values
+    this.props.login(username, password)
+
   }
 
   render(){
   return (
-    <>
+    <div>
     <Nav variant="pills">
       <Nav.Item>
         <Nav.Link className="sign" href="/">ROSHAMBO</Nav.Link>
@@ -57,8 +72,9 @@ class Login extends Component{
           // .catch(function (error) {
           //   console.log(error);
           // });
-          this.props.history.push("/UserDashBoard", {email: values.email});
-          document.body.style.backgroundColor = 'white';
+          //this.props.history.push("/UserDashBoard");
+          //document.body.style.backgroundColor = 'white';
+          this.handleLogin(values)
         }}
         validationSchema={schema}
       >
@@ -119,9 +135,21 @@ class Login extends Component{
 
       </Formik>
     </Container>
-    </>
+    </div>
   );
   }
 }
 
-export default Login;
+function mapState(state) {
+  const { loggingIn } = state.auth;
+  return { loggingIn };
+}
+
+const actionCreators = {
+  login: userActions.login,
+  logout: userActions.logout
+}
+
+
+
+export default connect(mapState, actionCreators)(Login);
