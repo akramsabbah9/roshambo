@@ -6,10 +6,12 @@ from rest_framework import permissions, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView
 from rest_framework.authtoken.models import Token
+from rest_framework.mixins import UpdateModelMixin
 
 from .models import RoshamboUser as User
-from .serializers import UserSerializer
+from .serializers import UserSerializer, EditUserSerializer
 
 
 @api_view(['GET'])
@@ -38,6 +40,24 @@ def active_users(request):
     usernames = User.objects.filter(is_active=True).values_list('username', flat=True)
     return Response({'users': usernames})
 
+
+class EditUser(GenericAPIView, UpdateModelMixin):
+    """
+    Edits a valid field for a user.
+    """
+    queryset = User.objects.all()
+    serializer_class = EditUserSerializer
+
+    def get_object(self):
+        queryset = self.filter_queryset(self.get_queryset())
+        # make sure to catch 404's below
+        obj = queryset.get(pk=self.request.user.id)
+        self.check_object_permissions(self.request, obj)
+        return obj
+
+    def put(self, request, format='json'):
+        return self.partial_update(request)
+        
 
 class Register(APIView):
     """ 
