@@ -94,11 +94,11 @@ class Login(APIView):
                         status=status.HTTP_400_BAD_REQUEST)
         user = authenticate(email=email, password=password)
         if user is not None:
-            token = self.login(request, user, email)
+            token = self._login(request, user, email)
             return Response({'token': token.key}, status=status.HTTP_200_OK)
         return Response({'error': 'Invalid Credentials'}, status=status.HTTP_404_NOT_FOUND)
 
-    def login(self, request, user, email):
+    def _login(self, request, user, email):
         user_state = User.objects.get(email=email)
         user_state.is_active = True
         user_state.save()
@@ -106,11 +106,10 @@ class Login(APIView):
         token, _ = Token.objects.get_or_create(user=user)
         return token
 
-class Logout(APIView):
-
-    def post(self, request, format=None):  
-        # simply delete the token to force a login  
-        request.user.is_active = False
-        request.user.auth_token.delete()  
-        request.user.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+@api_view(['POST'])
+def logout(request, format=None):  
+    # simply delete the token to force a login  
+    request.user.is_active = False
+    request.user.auth_token.delete()  
+    request.user.save()
+    return Response(status=status.HTTP_204_NO_CONTENT)
