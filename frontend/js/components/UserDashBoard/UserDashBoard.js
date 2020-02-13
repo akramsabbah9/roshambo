@@ -66,6 +66,7 @@ class UserDashBoard extends Component {
 
     componentDidMount() {
         document.body.backgroundColor = "white";
+        // dispatch to get all users
     }
 
     handleSignOut(e) {
