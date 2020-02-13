@@ -75,7 +75,7 @@ class App extends Component {
   handleLogout = () => {
     logout().then(() => {
       localStorage.removeItem('token');
-      this.setState({ ...this.state, logged_in: false, username: '', edit_results: '' });
+      this.setState({ ...this.state, logged_in: false, username: '', edit_results: '', display_form: '' });
     });
   };
 
