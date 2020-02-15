@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'chat'
+    'rest_framework.authtoken',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -54,6 +55,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'roshambo.urls'
+
+APPEND_SLASH = True
 
 TEMPLATES = [
     {
@@ -107,6 +110,24 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Authentication via REST
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+}
+
+AUTH_USER_MODEL = 'accounts.RoshamboUser'
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'accounts.backends.RoshamboUserBackend',
+]
+
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
@@ -130,7 +151,6 @@ STATIC_URL = '/static/'
 CORS_ORIGIN_WHITELIST = (
         'http://localhost:3000',
         'http://localhost:8000',
-        'http://localhost:8080',
     )
 
 import channels.layers

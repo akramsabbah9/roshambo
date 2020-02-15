@@ -1,0 +1,20 @@
+[
+  {
+    "model": "accounts.SkinsInventory",
+    "fields": {
+      "skin": 0
+    }
+  },
+  {
+    "model": "accounts.SkinsInventory",
+    "fields": {
+      "skin": 1
+    }
+  },
+  {
+    "model": "accounts.SkinsInventory",
+    "fields": {
+      "skin": 2
+    }
+  }
+]
