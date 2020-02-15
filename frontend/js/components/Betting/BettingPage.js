@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Container, Navbar, Button, Row, Col, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { history } from '../../utils/history';
+import '../Game.css'
 
 
 
@@ -19,6 +20,10 @@ class Betting extends Component {
 
         }
         //this.handleContinue = this.handleContinue.bind(this)
+    }
+
+    componentDidMount(){
+        document.body.style.backgroundColor = "white";
     }
 
     handleMatchBet() {
@@ -75,12 +80,14 @@ class Betting extends Component {
             }
         }
         return(
-            <Container>
+            <Container className="Words">
                 <Navbar bg="light"> 
                     <Link to='/userdashboard'>       
-                        <Navbar.Brand style={{marginLeft:8, fontFamily:"'Bangers', cursive", fontSize:"30px"}}>Roshambo</Navbar.Brand>
-                    </Link>  
-                    <Button style={{marginLeft:'76%', justifyCenter:'Center'}} variant="outline-danger" onClick={this.handleSignOut}>Sign Out</Button>
+                        <Navbar.Brand className="Buttons" style={{fontSize:"30px"}}>Roshambo</Navbar.Brand>
+                    </Link>
+                    <Navbar.Collapse className="justify-content-end">
+                        <Button className="Buttons" variant="outline-danger" onClick={this.handleSignOut}>Sign Out</Button>
+                    </Navbar.Collapse>
                 </Navbar>
                 <div style={{margin:50}} />
                 <Row>
@@ -103,13 +110,13 @@ class Betting extends Component {
                 </Col>
                 </Row>
                 <div style={{margin:50}} />
-                <Row className="col d-flex align-items-center justify-content-center">
+                <Row className="col d-flex align-items-center justify-content-center Buttons">
                     <Button style={styles.button} variant="success" onClick={this.handleMatchBet.bind(this)}>Match</Button>
                     <Button style={styles.button} variant="success" onClick={this.handleAddFive.bind(this)}>Add $5</Button>
                     <Button style={styles.button} variant="success" onClick={this.handleReset.bind(this)}>Reset</Button>
                 </Row>
-                <Row className="col d-flex align-items-center justify-content-center">
-                    <Button style={styles.button} variant="outline-success" disabled={!this.state.ready} onClick={this.handleContinue.bind(this)}>Continue</Button>
+                <Row className="col d-flex align-items-center justify-content-center Buttons">
+                    <Button style={styles.button} variant="warning" disabled={!this.state.ready} onClick={this.handleContinue.bind(this)}>Continue</Button>
                     <Button style={styles.button} variant="outline-danger" onClick={this.handleCancel.bind(this)}>Cancel</Button>
                 </Row>
             </Container>

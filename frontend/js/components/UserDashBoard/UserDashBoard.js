@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Navbar, Button, Row, Col, Image, Card, ListGroup, Title, ButtonGroup } from 'react-bootstrap';
+import { Container, Navbar, Button, Row, Col, Image, Card, ListGroup, Title, ButtonGroup, Nav } from 'react-bootstrap';
 import Table from 'react-bootstrap/Table';
 import { faMehRollingEyes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,6 +9,7 @@ import { history } from '../../utils/history';
 import { userActions } from '../../redux/actions/UsersActions';
 import { connect } from 'react-redux';
 import { skins } from '../Settings/Skins';
+import '../Game.css'
 
 
 class UserDashBoard extends Component {
@@ -26,12 +27,11 @@ class UserDashBoard extends Component {
     }
     
     componentDidMount() {
+        document.body.style.backgroundColor = "white";
         // add functionality for rendering custom skins
-
         // dispatch to get all users
         this.props.getCurrent()
-        this.props.getAll()
-        
+        this.props.getAll()  
     }
 
     handleSignOut(e) {
@@ -103,20 +103,24 @@ class UserDashBoard extends Component {
             },
             signOutBtn: {
                 marginLeft: '76%',
-                justifySelf: 'center'
+                justifySelf: 'center',
+                fontFamily:"'Bangers', cursive", 
+                fontSize:"20px"
             }
         }
 
         return (
-            <Container>
+            <Container className="Words">
                 <Navbar bg="light"> 
                     <Link to='/userdashboard'>     
                         <Navbar.Brand style={{marginLeft:8, fontFamily:"'Bangers', cursive", fontSize:"30px"}}>Roshambo</Navbar.Brand>
-                    </Link> 
-                    <Button style={styles.signOutBtn} variant="outline-danger" onClick={this.handleSignOut}>Sign Out</Button>
+                    </Link>
+                    <Navbar.Collapse className="justify-content-end">
+                        <Button variant="outline-danger"  style={styles.signOutBtn} onClick={this.handleSignOut}>Sign Out</Button>
+                    </Navbar.Collapse>
                 </Navbar>
                 <Row>
-                    <Col sm={3}>
+                    <Col xs={3}>
                         <div style={styles.profilePic} className="d-flex flex-column">
                             <FontAwesomeIcon  style={mySkin.avatar.style} icon={mySkin.avatar.name} size='6x' />
                         </div>
@@ -127,21 +131,22 @@ class UserDashBoard extends Component {
                             </ListGroup>
 
                         </Card>
-                        <div className="d-flex flex-column" style={{marginTop:50}}>
-                            <ButtonGroup>
-                                <Button variant="outline-secondary" onClick={this.handleSettings}>Settings</Button>
-                                <Button variant="outline-secondary" onClick={this.handleStore.bind(this)}>Store</Button>
+                        <div className="d-flex flex-column" style={{marginTop: '4%', marginRight: '5%'}}>
+                            <ButtonGroup className="Buttons">
+                                <Button variant="outline-info" onClick={this.handleSettings}>Settings</Button>
+                                <Button variant="outline-info" onClick={this.handleStore.bind(this)}>Store</Button>
                             </ButtonGroup>
                         </div>
                     </Col>
-                    <Col sm={9} >
+                    <Col xs={9} >
                         <Card style={styles.tableCard}>
                             <Card.Title style={styles.title}>Online Users</Card.Title>
                             <Card.Body>
                                 {this.buildOnlineUserTable(users)}
                             </Card.Body>
                             <Card.Footer style={{backgroundColor: 'transparent', border:'none'}} className="d-flex flex-column">
-                                <Button variant="outline-success" onClick={this.handleMatch}>MATCH</Button>
+                                <Button variant="outline-success" onClick={this.handleMatch} className=
+                                "Buttons">MATCH</Button>
                             </Card.Footer>
                         </Card>
                     </Col>

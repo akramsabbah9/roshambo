@@ -3,6 +3,7 @@ import { Container, ToggleButton, Row, Col, Card, ToggleButtonGroup,
          ButtonToolbar, Button, ButtonGroup} from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMehRollingEyes, faDragon, faHandPaper, faHandScissors, faHandRock, faHandPeace } from "@fortawesome/free-solid-svg-icons";
+import "../Game.css"
 
 const ROCK = 0;
 const PAPER = 1;
@@ -138,9 +139,9 @@ render() {
 
     }
     return (
-        <Container>
+        <Container className="Words">
             <Row style={{margin:50, marginTop:'15%'}}>
-                <Col>
+                <Col sm={4}>
                     <div className="col d-flex align-items-center justify-content-center">
                         <FontAwesomeIcon  style={styles.profilePic} icon={faMehRollingEyes} size='6x' />
                     </div>
@@ -151,7 +152,7 @@ render() {
                         <p>WINS: 2</p>
                 </div>
                 </Col>
-                <Col>
+                <Col sm={4}>
                     <div className="col d-flex align-items-center justify-content-center">
                         <p style={styles.versus}>Game: {this.state.gameCount}</p>
                     </div>
@@ -166,7 +167,7 @@ render() {
                         </Card>
                     
                 </Col>
-                <Col>
+                <Col sm={4}>
                     <div className="col d-flex align-items-center justify-content-center">
                         <FontAwesomeIcon  style={styles.profilePic} icon={faDragon} size='6x' />
                     </div>

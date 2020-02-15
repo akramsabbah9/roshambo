@@ -11,11 +11,11 @@ import { Link } from 'react-router-dom';
 class Appearance extends Component {
     constructor(props) {
         super(props)
-
         this.handleSignOut = this.handleSignOut.bind(this)
         this.handleBack = this.handleBack.bind(this)
         this.handleChangeDefault = this.handleChangeDefault.bind(this)
     }
+
 
     addProductCards(skins, activeSkin) {
         const cards = skins.map((skin, index) => (
@@ -68,6 +68,7 @@ class Appearance extends Component {
         const styles = {
             signOutBtn: {
                 marginLeft: '76%',
+                marginRight: '24%',
                 justifySelf: 'center'
             }
         }

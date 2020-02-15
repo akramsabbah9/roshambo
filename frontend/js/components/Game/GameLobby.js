@@ -6,6 +6,7 @@ import { history } from '../../utils/history';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { skins } from '../Settings/Skins';
+import '../Game.css';
 
 
 
@@ -82,15 +83,17 @@ class GameLobby extends Component {
         
 
         return(
-            <Container>
+            <Container className="Words">
                 <Navbar bg="light"> 
                     <Link to='/userdashboard'>       
-                        <Navbar.Brand style={{marginLeft:8, fontFamily:"'Bangers', cursive", fontSize:"30px"}}>Roshambo</Navbar.Brand>
+                        <Navbar.Brand className="Buttons" style={{fontSize: '30px'}}>Roshambo</Navbar.Brand>
                     </Link>  
-                    <Button style={{marginLeft:'76%', justifyCenter:'Center'}} variant="outline-danger" onClick={this.handleSignOut}>Sign Out</Button>
+                    <Navbar.Collapse className="justify-content-end">
+                        <Button variant="outline-danger" className="Buttons" onClick={this.handleSignOut}>Sign Out</Button>
+                    </Navbar.Collapse>
                 </Navbar>
                 <Row>
-                    <Col>
+                    <Col xs={4}>
                         <div style={styles.profilePic} className="col d-flex align-items-center justify-content-center">
                             <FontAwesomeIcon  style={mySkin.avatar.style} icon={mySkin.avatar.name} size='6x' />
                              {this.state.myselfReady ? <p>READY</p> : null}   
@@ -99,7 +102,7 @@ class GameLobby extends Component {
                             <h5>ME: {myself.name}</h5>
                         </div>
                     </Col>
-                    <Col>
+                    <Col xs={4}>
                         <div className="col d-flex align-items-center justify-content-center">
                             <p style={styles.versus}>VS</p>
                             </div>
@@ -109,7 +112,7 @@ class GameLobby extends Component {
                                 </div>
                             </Card>
                     </Col>
-                    <Col>
+                    <Col xs={4}>
                         <div style={styles.profilePic} className="col d-flex align-items-center justify-content-center">
                             <FontAwesomeIcon  style={mySkin.avatar.style} icon={faDragon} size='6x' />
                         </div>
@@ -119,22 +122,22 @@ class GameLobby extends Component {
                     </Col>
                 </Row>
                 <Row style={{margin:50}}>
-                    <Col>
+                    <Col xs={6}>
                         <Card style={styles.chatBox}>
                             <Card.Body>
                                 Chat Box
                             </Card.Body>
                         </Card>
                     </Col>
-                    <Col>
+                    <Col xs={6}>
                         <Row>
-                                <Button variant="outline-success" style={styles.btn} block size="lg" onClick={this.handleReady}>Ready</Button>      
+                                <Button variant="outline-success" className="Buttons" block size="lg" onClick={this.handleReady}>Ready</Button>      
                         </Row>
                         <Row>
-                                <Button variant="outline-success"style={styles.btn} block size="lg" onClick={this.handleBet}>Bet</Button>                       
+                                <Button variant="outline-warning" className="Buttons" block size="lg" onClick={this.handleBet}>Bet</Button>                       
                         </Row>
                         <Row>                          
-                                <Button variant="outline-danger" style={styles.btn} block size="lg" onClick={this.handleExit}>Exit</Button>
+                                <Button variant="outline-danger" className="Buttons" block size="lg" onClick={this.handleExit}>Exit</Button>
                         </Row>
                     </Col>
                 </Row>
