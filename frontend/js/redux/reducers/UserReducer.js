@@ -1,6 +1,12 @@
 import { userConstants } from '../actions/types';
 
-export function users(state = {}, action) {
+const initialState = {
+    loading: false,
+    users: [],
+    error: null
+}
+
+export function users(state = initialState, action) {
     switch (action.type) {
         case userConstants.GETALL_REQUEST:
             return {
@@ -8,7 +14,8 @@ export function users(state = {}, action) {
             }
         case userConstants.GETALL_SUCCESS:
             return {
-                items: action.users
+                
+                users: action.users
             }
         case userConstants.GETALL_FAILURE:
             return {

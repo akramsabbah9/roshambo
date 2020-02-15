@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-import { Container, Navbar, Button, Row, Col, Image, Card, ListGroup, Title, ButtonGroup, Overlay } from 'react-bootstrap';
+import { Container, Navbar, Button, Row, Col, Card} from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMehRollingEyes, faDragon, faAlignJustify } from "@fortawesome/free-solid-svg-icons";
+import { faMehRollingEyes, faDragon } from "@fortawesome/free-solid-svg-icons";
+import { history } from '../../utils/history';
 import { Link } from 'react-router-dom';
-
+import { connect } from 'react-redux';
+import { skins } from '../Settings/Skins';
 
 
 
@@ -43,15 +45,20 @@ class GameLobby extends Component {
         }, 1200)
     }
 
-    handleSignOut(e){
+    handleSignOut(e) {
         e.preventDefault();
-        this.props.history.push("/login");
+        history.push('/login');
     }
 
     render(){
+        const mySkin = skins[this.props.activeSkin]
+        const myself = this.props.user
+
+        console.log(JSON.stringify(mySkin))
+
         const styles = {
             profilePic: {
-                margin: 30,
+                marginTop: 30,
             },
             title: {
                 marginLeft: 25,
@@ -75,24 +82,21 @@ class GameLobby extends Component {
         
 
         return(
-            
             <Container>
-                <Navbar bg="light">
-                    <Navbar.Brand>
-                        <Link to="/userdashboard" style={{color: "black", fontFamily: "Bangers, cursive", fontSize: "1.5em"}}>
-                            Roshambo
-                        </Link>
-                    </Navbar.Brand>
-                    <Button style={{marginLeft: '76%', justifySelf: 'center'}} variant="outline-danger" onClick={this.handleSignOut}>Sign Out</Button>
+                <Navbar bg="light"> 
+                    <Link to='/userdashboard'>       
+                        <Navbar.Brand style={{marginLeft:8, fontFamily:"'Bangers', cursive", fontSize:"30px"}}>Roshambo</Navbar.Brand>
+                    </Link>  
+                    <Button style={{marginLeft:'76%', justifyCenter:'Center'}} variant="outline-danger" onClick={this.handleSignOut}>Sign Out</Button>
                 </Navbar>
                 <Row>
                     <Col>
-                        <div className="col d-flex align-items-center justify-content-center">
-                            <FontAwesomeIcon  style={styles.profilePic} icon={faMehRollingEyes} size='6x' />
+                        <div style={styles.profilePic} className="col d-flex align-items-center justify-content-center">
+                            <FontAwesomeIcon  style={mySkin.avatar.style} icon={mySkin.avatar.name} size='6x' />
                              {this.state.myselfReady ? <p>READY</p> : null}   
                         </div>
                         <div className="col d-flex align-items-center justify-content-center">
-                            <p>ME</p>
+                            <h5>ME: {myself.name}</h5>
                         </div>
                     </Col>
                     <Col>
@@ -106,12 +110,11 @@ class GameLobby extends Component {
                             </Card>
                     </Col>
                     <Col>
-                        <div className="col d-flex align-items-center justify-content-center">
-                            <FontAwesomeIcon  style={styles.profilePic} icon={faDragon} size='6x' />
-                            
+                        <div style={styles.profilePic} className="col d-flex align-items-center justify-content-center">
+                            <FontAwesomeIcon  style={mySkin.avatar.style} icon={faDragon} size='6x' />
                         </div>
                         <div className="col d-flex align-items-center justify-content-center">
-                            <p>JARED</p>
+                            <h5>THEM: Jared18</h5>
                         </div>
                     </Col>
                 </Row>
@@ -142,4 +145,12 @@ class GameLobby extends Component {
 }
 
 
-export default GameLobby;
+function mapStateToProps (state) {
+    const { activeSkin } = state.skins
+    const { user } = state.auth
+
+    return { activeSkin, user }
+}
+
+
+export default connect(mapStateToProps)(GameLobby);

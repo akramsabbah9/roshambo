@@ -9,10 +9,62 @@ export const userActions = {
     getAll,
 }
 
+// (FOR TESTING ONLY) DELETE AFTER
 const user = {
-    name: "Bobby"
-
+    name: "flowerHead10",
+    id: 0,
+    email: "lion@gmail.com",
+    rank: "15",
+    guild: "pirates@licious",
+    wins: 2,
+    loss: 12,
+    total: 14
 }
+
+// (FOR TESTING ONLY) DELETE AFTER
+const userData = [{
+    name: "jerry1",
+    id: 1,
+    rank: "23",
+    guild: "pirates@licious",
+    wins: 23,
+    loss: 2,
+    total: 25
+},{
+    name: "jerry2",
+    id: 2,
+    rank: "23",
+    guild: "pirates@licious",
+    wins: 23,
+    loss: 2,
+    total: 25
+},{
+    name: "jerry3",
+    id: 3,
+    rank: "23",
+    guild: "pirates@licious",
+    wins: 23,
+    loss: 2,
+    total: 25
+},{
+    name: "jerry4",
+    id: 4,
+    rank: "23",
+    guild: "pirates@licious",
+    wins: 23,
+    loss: 2,
+    total: 25
+},{
+    name: "jerry5",
+    id: 5,
+    rank: "23",
+    guild: "pirates@licious",
+    wins: 23,
+    loss: 2,
+    total: 25
+}];
+
+
 
 function login(username, password) {
     return dispatch => {
@@ -54,6 +106,7 @@ function register(user) {
         dispatch(request(user));
 
 
+        dispatch(success(user))
         /*
         api.signup(user)
             .then(
@@ -85,6 +138,7 @@ function getAll() {
     return dispatch => {
         dispatch(request());
 
+        dispatch(success(userData))
         /*
         api.allUsers()
             .then(

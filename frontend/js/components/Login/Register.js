@@ -5,6 +5,8 @@ Col, Nav, Navbar} from 'react-bootstrap';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import './Pages.css';
+import { connect } from 'react-redux';
+import { usersActions, userActions } from '../../redux/actions/UsersActions';
 
 const schema = yup.object({
     firstName : yup.string()
@@ -47,7 +49,7 @@ class Register extends Component{
     }
     render(){
     return (
-      <>
+      <div>
         <Nav variant="pills" onSelect={this.onSelect}>
           <Nav.Item>
             <Nav.Link className="sign" href="/">ROSHAMBO</Nav.Link>
@@ -57,8 +59,10 @@ class Register extends Component{
           <Formik
             initialValues={{firstName:"", lastName:"", phone:"", email:"", username:"", password:"", confirmPassword: ""}}
             onSubmit={(values, {setSubmitting}) => {
-                this.props.history.push("/Login");
-                document.body.style.backgroundColor = 'white';
+                this.props.registerUser(values)
+                
+                //this.props.history.push("/Login");
+                //document.body.style.backgroundColor = 'white';
               }}
             validationSchema={schema}
           >
@@ -111,7 +115,7 @@ class Register extends Component{
                       className="inputbox"
                       value={values.email}
                       onChange={handleChange}
-                      onBlue={handleBlur}
+                      onBlur={handleBlur}
                       isInvalid={touched.email && errors.email}
                     />
                     <Form.Control.Feedback type="invalid">
@@ -195,9 +199,17 @@ class Register extends Component{
             )}
             </Formik>
         </Container>
-        </>
+        </div>
     );
     }
 }
 
-export default Register;
+const actionCreators = {
+  registerUser: userActions.register,
+}
+
+function mapStateToProps(state) {
+  return {}
+}
+
+export default connect(mapStateToProps, actionCreators)(Register);
