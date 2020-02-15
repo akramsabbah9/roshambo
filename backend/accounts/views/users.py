@@ -17,7 +17,17 @@ from ..serializers import UserSerializer, EditUserSerializer
 @api_view(['GET'])
 def current_user(request):
     """
-    Determine the current user by their token, and return their data
+    @auth-required: yes
+    @method-supported: GET
+    @GET: 
+        @return: 
+            keys:
+                country_code
+                email
+                guild
+                username
+                id
+            value: appropriate values corresponding to the keys.
     """
     serializer = UserSerializer(request.user)
     return Response(serializer.data)
@@ -26,7 +36,12 @@ def current_user(request):
 @api_view(['GET'])
 def users(request):
     """
-    Gets a list of all users' usernames
+    @auth-required: yes
+    @method-supported: GET
+    @GET: 
+        @return: 
+            key: users
+            value: list of all registered users' usernames.
     """
     usernames = User.objects.values_list('username', flat=True)
     return Response({'users': usernames})
@@ -35,7 +50,12 @@ def users(request):
 @api_view(['GET'])
 def active_users(request):
     """
-    Gets a list of all active users' usernmes
+    @auth-required: yes
+    @method-supported: GET
+    @GET: 
+        @return: 
+            key: users
+            value: list of all active users' usernames.
     """
     usernames = User.objects.filter(is_active=True).values_list('username', flat=True)
     return Response({'users': usernames})
@@ -43,7 +63,13 @@ def active_users(request):
 
 class EditUser(GenericAPIView, UpdateModelMixin):
     """
-    Edits a valid field for a user.
+    @auth-required: yes
+    @method-supported: PUT
+    @PUT: 
+        @param user-field:
+            key: username|email|password|country_code|guild
+            value: valid value to set the corresponding field to.
+        @return: the newly-updated user representation, as per GET /accounts/users/current/.
     """
     queryset = User.objects.all()
     serializer_class = EditUserSerializer
@@ -60,8 +86,16 @@ class EditUser(GenericAPIView, UpdateModelMixin):
         
 
 class Register(APIView):
-    """ 
-    Creates a given user.
+    """
+    @auth-required: no
+    @method-supported: POST
+    @POST: 
+        @param user-field:
+            keys: username, email, password, [country_code]
+            value: valid value to set the corresponding field to.
+        @return: 
+            Token: the valid token for the user session
+            the newly-created user representation, as per GET /accounts/users/current/.
     """
     # This permission class will overide the global permission class setting
     permission_classes = (permissions.AllowAny,)
@@ -96,7 +130,15 @@ class Register(APIView):
 
 class Login(APIView):
     """
-    Logs in a user.
+    @auth-required: no
+    @method-supported: POST
+    @POST: 
+        @param user-field:
+            keys: email, password
+            value: valid value to set the corresponding field to.
+        @return: 
+            Token: the valid token for the user session
+            the user representation, as per GET /accounts/users/current/.
     """
     # This permission class will overide the global permission class setting
     permission_classes = (permissions.AllowAny,)
@@ -123,6 +165,12 @@ class Login(APIView):
 
 @api_view(['POST'])
 def logout(request, format=None):  
+    """
+    @auth-required: yes
+    @method-supported: POST
+    @POST: 
+        @return: HTTP 204 no content. Logout performed successfully.
+    """
     # simply delete the token to force a login  
     request.user.is_active = False
     request.user.auth_token.delete()  

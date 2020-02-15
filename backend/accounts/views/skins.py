@@ -17,7 +17,9 @@ def available_skins(request):
     """
     @auth-required: yes
     @method-supported: GET
-    @return: a list of positive integers, corresponding to all possible skins that are available.
+    @return: 
+        key: skins
+        value: a list of positive integers, corresponding to all possible skins that are available.
     """
     skins = SkinsInventory.objects.values_list('skin', flat=True)
     return Response({'skins': skins})
@@ -26,12 +28,16 @@ def available_skins(request):
 class ActiveUserSkin(APIView):
     """
     @auth-required: yes
-    @method-supported: GET, POST
+    @method-supported: GET, PUT
     @GET: 
-        @return: the positive integer reprersenting the currently-active user skin.
-    @POST: 
-        @param user: the user whose skin to update
-        @param skin: the new skin to apply. Must be available according to TODO: purchased_skins?
+        @return: 
+            key: active_skin
+            value: the positive integer representing the currently-active user skin.
+    @PUT: 
+        @param skin: 
+            key: active_skin
+            value: the new skin to apply. Must be available according to GET /accounts/skins/purchased/
+        @return: the now-updated active_skin, akin to GET.
     """
     def get(self, request, format='json'):
         skin_data = SkinsSerializer(request.user.skins).data
@@ -67,12 +73,16 @@ class ActiveUserSkin(APIView):
 class PurchasedUserSkins(APIView):
     """
     @auth-required: yes
-    @method-supported: GET, POST
+    @method-supported: GET, PUT
     @GET: 
-        @return: the positive integer reprersenting the currently-active user skin.
-    @POST: 
-        @param user: the user whose skin to update
-        @param skin: the new skin to apply. Must be available according to TODO: purchased_skins?
+        @return: 
+            key: purchased_skins
+            value: list of positive integers representing purchased skins.
+    @PUT: 
+        @param skin: 
+            key: purchased_skins
+            value: list of positive integers representing purchased skins to add. Must be available according to GET /accounts/skins/.
+        @return: the now-updated purchased_skins, akin to GET.
     """
     def get(self, request, format='json'):
         data = self._generate_response_data(request)
@@ -81,7 +91,7 @@ class PurchasedUserSkins(APIView):
     def put(self, request, format='json'):
         self._validate_put_request(request)
 
-        # TODO: need to check based on Stripe token
+        # TODO(benjibrandt): need to check based on Stripe token
         newly_purchased_skins = request.data['purchased_skins']
         for skin in newly_purchased_skins:
             skin_object = SkinsInventory.objects.filter(skin=skin)
