@@ -15,6 +15,11 @@ class UserDashBoard extends Component {
     constructor(props) {
         super(props)
 
+        //this.props.getCurrent()
+        this.state = {
+            currentUserLoading: false,
+        }
+
         this.handleSignOut = this.handleSignOut.bind(this)
         this.handleMatch = this.handleMatch.bind(this)
         this.handleSettings = this.handleSettings.bind(this)
@@ -24,6 +29,7 @@ class UserDashBoard extends Component {
         // add functionality for rendering custom skins
 
         // dispatch to get all users
+        this.props.getCurrent()
         this.props.getAll()
         
     }
@@ -78,7 +84,7 @@ class UserDashBoard extends Component {
     }
 
     render() {
-        const { user, users, activeSkin } = this.props
+        const { user, users, activeSkin, userLoading } = this.props
         const mySkin = skins[activeSkin]
         const styles = {
             profilePic: {
@@ -116,12 +122,8 @@ class UserDashBoard extends Component {
                         </div>
                         <Card>
                             <ListGroup variant="flush">
-                                <ListGroup.Item>Name: {user.name}</ListGroup.Item>
-                                <ListGroup.Item>Rank: {user.rank}</ListGroup.Item>
-                                <ListGroup.Item>Guild: {user.guild}</ListGroup.Item>
-                                <ListGroup.Item>Wins: {user.wins}</ListGroup.Item>
-                                <ListGroup.Item>Loss: {user.loss}</ListGroup.Item>
-                                <ListGroup.Item>Total: {user.total}</ListGroup.Item>
+                                {console.log(userLoading)}
+                                <h5>Loading</h5>
                             </ListGroup>
 
                         </Card>
@@ -150,15 +152,34 @@ class UserDashBoard extends Component {
 }
 
 function mapStateToProps (state) {
-    const { user } = state.auth
+    const user = state.user.currentUser
+    const userLoading = state.user.userLoading
     const { users } = state.users
     const { activeSkin } = state.skins
-    return { user, users, activeSkin }
+    return { user, users, activeSkin, userLoading }
 }
 
 const actionCreators = {
-    getAll: userActions.getAll
+    getAll: userActions.getAll,
+    getCurrent: userActions.getCurrent
 }
 
 export default connect(mapStateToProps, actionCreators)(UserDashBoard);
 
+/*
+
+                                <ListGroup.Item>Wins: {user.wins}</ListGroup.Item>
+                                <ListGroup.Item>Loss: {user.loss}</ListGroup.Item>
+                                <ListGroup.Item>Total: {user.total}</ListGroup.Item>
+
+
+
+                                                                {userLoading 
+                                    ? (<h1>Loading</h1>) 
+                                    : ( <div>
+                                            <ListGroup.Item>Name: {user.username}</ListGroup.Item>
+                                            <ListGroup.Item>Rank: {user.rank}</ListGroup.Item>
+                                            <ListGroup.Item>Guild: {user.guild}</ListGroup.Item>
+                                        </div>
+                                )}
+*/

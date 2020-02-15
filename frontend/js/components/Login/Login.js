@@ -39,8 +39,10 @@ class Login extends Component{
 
   handleLogin(values){
     this.setState({submitted: true });
-    const { username, password } = values
-    this.props.login(username, password)
+    const { email, password } = values
+    this.props.login(email, password)
+    //this.props.getCurrent()
+    //history.push('/userdashboard')
 
   }
 
@@ -147,7 +149,8 @@ function mapState(state) {
 
 const actionCreators = {
   login: userActions.login,
-  logout: userActions.logout
+  logout: userActions.logout,
+  getCurrent: userActions.getCurrent
 }
 
 
