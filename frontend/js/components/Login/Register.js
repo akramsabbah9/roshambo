@@ -47,7 +47,7 @@ class Register extends Component{
     }
     render(){
     return (
-      <>
+      <div>
         <Nav variant="pills" onSelect={this.onSelect}>
           <Nav.Item>
             <Nav.Link className="sign" href="/">ROSHAMBO</Nav.Link>
@@ -195,9 +195,11 @@ class Register extends Component{
             )}
             </Formik>
         </Container>
-        </>
+        </div>
     );
     }
 }
+
+
 
 export default Register;

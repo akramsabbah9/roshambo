@@ -2,17 +2,10 @@ import React, { Component } from 'react';
 import { Container, Form, Button, Row, Col, Card, Table } from 'react-bootstrap';
 import { Formik } from 'formik';
 import * as yup from 'yup';
+import { connect } from 'react-redux';
+import { skinsActions } from '../../redux/actions/SkinsActions';
 
-const DummyData = [{
-        type: "Bet",
-        description: "In game bet",
-        price: 50
-    },{
-        type: "Bet",
-        description: "In game bet",
-        price: 25
-    }
-]
+
 
 const paymentValues = {
     firstName: '',
@@ -55,21 +48,30 @@ class PaymentPage extends Component {
                 type: this.props.history.location.state.type,
                 description: this.props.history.location.state.description,
                 price: this.props.history.location.state.price,
+                id: this.props.history.location.state.id,
             }]
 
         }
 
         this.handleSubmit = this.handleSubmit.bind(this)
         this.handleCancel = this.handleCancel.bind(this)
-    
-        console.log(JSON.stringify(this.state))
     }
 
     handleSubmit(values) {
+        const skinPurchase = "Custom Skin"
+        const { id, type } = this.state.items[0]
         // Process payment information here
-
-        // Add logic for go back Store or Game Lobby
-        this.props.history.push('/gameLobby')
+        //console.log(this.state.items[0].type)
+        //console.log(this.state.items[0].type == skinPurchase)
+        // Add redux logic to add skin
+        if (type == skinPurchase) {
+            // dispatch add skins action
+            //console.log("Entered adding skin")
+            this.props.addSkin(this.props.ownedSkins, this.props.activeSkin, id)
+            this.props.history.push('/userdashboard')
+        } else {
+            this.props.history.push('/gameLobby')
+        } 
     }
 
     handleCancel() {
@@ -120,8 +122,6 @@ class PaymentPage extends Component {
             }
         }
 
-        const items = DummyData
-
         return(
             <Container>
                 <Row className="col d-flex align-items-center justify-content-center">
@@ -145,7 +145,7 @@ class PaymentPage extends Component {
                     <Card.Title style={{marginTop:75}}>Enter Payment Information</Card.Title>
                     <Formik
                         initialValues={paymentValues}
-                        validationSchema = {validationSchema}
+                        //validationSchema = {validationSchema}
                         onSubmit = {(values) => this.handleSubmit(values)}
                     >
                     {({ errors,
@@ -341,5 +341,14 @@ class PaymentPage extends Component {
 
 }
 
-export default PaymentPage;
+function mapStateToProps(state) {
+    const { ownedSkins, activeSkin } = state.skins
+    return { ownedSkins, activeSkin }
+}
+
+const actionCreators = {
+    addSkin: skinsActions.add,
+}
+
+export default connect(mapStateToProps,actionCreators)(PaymentPage);
 

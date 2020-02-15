@@ -1,6 +1,10 @@
 import { userConstants } from '../actions/types';
 
-const initialState = {}
+const initialState = {
+    loggingIn: false,
+    loggedIn: false,
+    user: {}
+}
 
 export function auth(state=initialState, action) {
     switch(action.type) {
@@ -22,3 +26,5 @@ export function auth(state=initialState, action) {
             return state
     }
 }
+
+

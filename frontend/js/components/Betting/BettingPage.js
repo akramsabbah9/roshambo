@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Container, Navbar, Button, Row, Col, Card } from 'react-bootstrap';
-
+import { Link } from 'react-router-dom';
+import { history } from '../../utils/history';
 
 
 
@@ -40,7 +41,7 @@ class Betting extends Component {
 
     handleContinue() {
         const price = this.state.you.bet
-        this.props.history.push('/payment', {type:"Bet", description:"In game bet", price:price})
+        this.props.history.push('/payment', {type:"Bet", description:"In game bet", id: 0, price:price})
     }
 
     handleHome() {
@@ -49,6 +50,11 @@ class Betting extends Component {
 
     handleCancel() {
         this.props.history.push('/gamelobby')
+    }
+
+    handleSignOut(e) {
+        e.preventDefault();
+        history.push('/login');
     }
 
     render(){
@@ -70,8 +76,11 @@ class Betting extends Component {
         }
         return(
             <Container>
-                <Navbar bg="light">       
-                    <Navbar.Brand style={{marginLeft:8}} onClick={this.handleHome.bind(this)}>Roshambo</Navbar.Brand>
+                <Navbar bg="light"> 
+                    <Link to='/userdashboard'>       
+                        <Navbar.Brand style={{marginLeft:8, fontFamily:"'Bangers', cursive", fontSize:"30px"}}>Roshambo</Navbar.Brand>
+                    </Link>  
+                    <Button style={{marginLeft:'76%', justifyCenter:'Center'}} variant="outline-danger" onClick={this.handleSignOut}>Sign Out</Button>
                 </Navbar>
                 <div style={{margin:50}} />
                 <Row>

@@ -1,60 +1,65 @@
 import React, { Component } from 'react';
-import { Container, Navbar, Button, Row, Col, Card, CardGroup } from 'react-bootstrap';
+import { Container, Navbar, Button, Col, Card } from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHippo, faKiwiBird, faOtter } from "@fortawesome/free-solid-svg-icons";
+import { skins } from '../Settings/Skins';
+import { Link } from 'react-router-dom';
+import { history } from '../../utils/history';
+import { connect } from 'react-redux';
 
-const dummyProducts = [
-    {
-        name: "Lion in Lair Skin",
-        description: "Bring fierceness with Lion in Lair skin",
-        price: 5
-    },{
-        name: "Princess Smoothie Skin",
-        description: "Show off attitude and spunk with Princess Smoothie skin",
-        price: 5
-    },{
-        name: "Angry Henery Skin",
-        description: "Show your opponent's you mean strictly business with Angry Henery skin",
-        price: 5
-    },
-]
+/* 
+    To Do:
+
+    - add logic for already owned skins
+        - can not but already owned skins
+        - connect redux for ownedSkins
+        - disable button if is owned skin
+
+
+*/
+
 
 class OnlineStore extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            products: dummyProducts,
+            products: skins,
             toPurchase: null
         }
     }
-
-
 
     handlePurchase(product) {
         const paymentProps = {
             type: "Custom Skin",
             description: product.name,
+            id: product.id,
             price: product.price
         }
 
         this.props.history.push('/payment', paymentProps)
     }
 
+    handleSignOut(e) {
+        e.preventDefault();
+        history.push('/login');
+    }
+
     addProductCards(products) {
-        const icons = [faOtter, faHippo, faKiwiBird]
         const cards = products.map((product, index) => (
             <Col key={index}>
                 <Card>
                     <Card.Header className="col d-flex align-items-center justify-content-center">
-                        <FontAwesomeIcon icon={icons[index]} size='10x'/>
+                        <FontAwesomeIcon style={product.avatar.style} icon={product.avatar.name} size='10x'/>
                     </Card.Header>
                     <Card.Body>
                         <Card.Title>{product.name}</Card.Title>
-                        <h3>${product.price}.00</h3>
+                        { (this.props.ownedSkins.some(ownedSkin => ownedSkin == product.id)) 
+                            ? <h3>Owned</h3>
+                            : <h3>${product.price}.00</h3>
+                        }
                         <Card.Text>{product.description}</Card.Text>
                     </Card.Body>
                     <Card.Footer className="col d-flex align-items-center justify-content-center">
-                        <Button onClick={() => this.handlePurchase(product)}>Buy</Button>
+                        <Button onClick={() => this.handlePurchase(product)} disabled={this.props.ownedSkins.some(ownedSkin => ownedSkin == product.id)}>Buy</Button>
                     </Card.Footer>
                 </Card>
                 <div style={{margin:50}} />
@@ -66,18 +71,31 @@ class OnlineStore extends Component {
     }
 
     render() {
+        const products= this.state.products.filter((product) => {
+            if (product.id != 0)
+                return product
+        })
         return(
             <Container>
-                <Navbar bg="light">       
-                    <Navbar.Brand style={{marginLeft:8}}>Roshambo</Navbar.Brand>
+                <Navbar bg="light"> 
+                    <Link to='/userdashboard'>       
+                        <Navbar.Brand style={{marginLeft:8, fontFamily:"'Bangers', cursive", fontSize:"30px"}}>Roshambo</Navbar.Brand>
+                    </Link>  
+                    <Button style={{marginLeft:'76%', justifyCenter:'Center'}} variant="outline-danger" onClick={this.handleSignOut}>Sign Out</Button>
                 </Navbar>
                 <Col>
                     <h1 style={{marginTop:10, marginBottom: 10}}>Store</h1>
                 </Col>
-                    {this.addProductCards(this.state.products)}
+                    {this.addProductCards(products)}
             </Container>
         )
     }
 }
 
-export default OnlineStore;
+function mapStateToProps (state) {
+    const { ownedSkins } = state.skins
+
+    return { ownedSkins }
+}
+
+export default connect(mapStateToProps)(OnlineStore);

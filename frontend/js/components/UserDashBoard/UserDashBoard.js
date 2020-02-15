@@ -5,88 +5,50 @@ import { faMehRollingEyes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Link } from 'react-router-dom';
+import { history } from '../../utils/history';
+import { userActions } from '../../redux/actions/UsersActions';
+import { connect } from 'react-redux';
+import { skins } from '../Settings/Skins';
 
-/* DATA FOR TESTING ONLY DELETE AFTER! */
-const userData = [{
-    name: "jerry1",
-    rank: "23",
-    guild: "pirates@licious",
-    wins: 23,
-    loss: 2,
-    total: 25
-},{
-    name: "jerry2",
-    rank: "23",
-    guild: "pirates@licious",
-    wins: 23,
-    loss: 2,
-    total: 25
-},{
-    name: "jerry3",
-    rank: "23",
-    guild: "pirates@licious",
-    wins: 23,
-    loss: 2,
-    total: 25
-},{
-    name: "jerry4",
-    rank: "23",
-    guild: "pirates@licious",
-    wins: 23,
-    loss: 2,
-    total: 25
-},{
-    name: "jerry5",
-    rank: "23",
-    guild: "pirates@licious",
-    wins: 23,
-    loss: 2,
-    total: 25
-}];
-
-const myself = {
-    name: "flowerHead10",
-    rank: "15",
-    guild: "pirates@licious",
-    wins: 2,
-    loss: 12,
-    total: 14
-}
 
 class UserDashBoard extends Component {
     constructor(props) {
         super(props)
-        this.state = {
-            myself: myself,
-            userData: userData,
-            email: this.props.history.location.state.email,
-            password: this.props.history.location.state.password
-        }
+
         this.handleSignOut = this.handleSignOut.bind(this)
         this.handleMatch = this.handleMatch.bind(this)
-        console.log(JSON.stringify({email: this.state.email, password: this.state.password}))
+        this.handleSettings = this.handleSettings.bind(this)
     }
-
+    
     componentDidMount() {
-        document.body.backgroundColor = "white";
+        // add functionality for rendering custom skins
+
         // dispatch to get all users
+        this.props.getAll()
+        
     }
 
     handleSignOut(e) {
         e.preventDefault();
-        this.props.history.push('/login');
+        history.push('/login');
     }
 
     handleMatch(e) {
         e.preventDefault()
-        this.props.history.push('/gamelobby')
+        history.push('/gamelobby')
     }
 
     handleStore() {
-        this.props.history.push('/store')
+        history.push('/store')
     }
 
-    buildOnlineUserTable () {
+    handleSettings(e) {
+        e.preventDefault()
+        history.push('/settings');
+        
+    }
+
+    buildOnlineUserTable (users) {
         return (
             <Table striped hover responsive size="sm">
             <thead>
@@ -100,7 +62,7 @@ class UserDashBoard extends Component {
                 </tr>
             </thead>
             <tbody>
-                {this.state.userData.map((user, index) =>         
+                {users.map((user, index) =>         
                     <tr key={index}>
                     <td>{user.name}</td>
                     <td>{user.rank}</td>
@@ -116,10 +78,13 @@ class UserDashBoard extends Component {
     }
 
     render() {
+        const { user, users, activeSkin } = this.props
+        const mySkin = skins[activeSkin]
         const styles = {
             profilePic: {
-                margin: 40,
-                marginLeft: 70,
+                marginTop: 30,
+                marginLeft: '25%',
+                marginBottom: 30,
             },
             tableCard: {
                 marginTop: 20,
@@ -135,33 +100,34 @@ class UserDashBoard extends Component {
                 justifySelf: 'center'
             }
         }
+
         return (
             <Container>
-                <Navbar bg="light">       
-                    <Navbar.Brand style={{marginLeft:8, fontFamily:"'Bangers', cursive", fontSize:"30px"}}href="#home">Roshambo</Navbar.Brand>
+                <Navbar bg="light"> 
+                    <Link to='/userdashboard'>     
+                        <Navbar.Brand style={{marginLeft:8, fontFamily:"'Bangers', cursive", fontSize:"30px"}}>Roshambo</Navbar.Brand>
+                    </Link> 
                     <Button style={styles.signOutBtn} variant="outline-danger" onClick={this.handleSignOut}>Sign Out</Button>
                 </Navbar>
                 <Row>
                     <Col sm={3}>
-                        <div className="d-flex flex-column">
-                            <FontAwesomeIcon  style={styles.profilePic} icon={faMehRollingEyes} size='6x' />
+                        <div style={styles.profilePic} className="d-flex flex-column">
+                            <FontAwesomeIcon  style={mySkin.avatar.style} icon={mySkin.avatar.name} size='6x' />
                         </div>
                         <Card>
                             <ListGroup variant="flush">
-                                <ListGroup.Item>Name: {this.state.myself.name}</ListGroup.Item>
-                                <ListGroup.Item>Rank: {this.state.myself.rank}</ListGroup.Item>
-                                <ListGroup.Item>Guild: {this.state.myself.guild}</ListGroup.Item>
-                                <ListGroup.Item>Wins: {this.state.myself.wins}</ListGroup.Item>
-                                <ListGroup.Item>Loss: {this.state.myself.loss}</ListGroup.Item>
-                                <ListGroup.Item>Total: {this.state.myself.total}</ListGroup.Item>
+                                <ListGroup.Item>Name: {user.name}</ListGroup.Item>
+                                <ListGroup.Item>Rank: {user.rank}</ListGroup.Item>
+                                <ListGroup.Item>Guild: {user.guild}</ListGroup.Item>
+                                <ListGroup.Item>Wins: {user.wins}</ListGroup.Item>
+                                <ListGroup.Item>Loss: {user.loss}</ListGroup.Item>
+                                <ListGroup.Item>Total: {user.total}</ListGroup.Item>
                             </ListGroup>
 
                         </Card>
                         <div className="d-flex flex-column" style={{marginTop:50}}>
                             <ButtonGroup>
-                                <Button variant="outline-secondary">
-                                    <Link to="/Settings">Settings</Link>  
-                                </Button>
+                                <Button variant="outline-secondary" onClick={this.handleSettings}>Settings</Button>
                                 <Button variant="outline-secondary" onClick={this.handleStore.bind(this)}>Store</Button>
                             </ButtonGroup>
                         </div>
@@ -170,7 +136,7 @@ class UserDashBoard extends Component {
                         <Card style={styles.tableCard}>
                             <Card.Title style={styles.title}>Online Users</Card.Title>
                             <Card.Body>
-                                {this.buildOnlineUserTable()}
+                                {this.buildOnlineUserTable(users)}
                             </Card.Body>
                             <Card.Footer style={{backgroundColor: 'transparent', border:'none'}} className="d-flex flex-column">
                                 <Button variant="outline-success" onClick={this.handleMatch}>MATCH</Button>
@@ -183,5 +149,16 @@ class UserDashBoard extends Component {
     }
 }
 
-export default UserDashBoard;
+function mapStateToProps (state) {
+    const { user } = state.auth
+    const { users } = state.users
+    const { activeSkin } = state.skins
+    return { user, users, activeSkin }
+}
+
+const actionCreators = {
+    getAll: userActions.getAll
+}
+
+export default connect(mapStateToProps, actionCreators)(UserDashBoard);
 
