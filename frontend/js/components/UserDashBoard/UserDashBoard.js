@@ -59,8 +59,8 @@ class UserDashBoard extends Component {
         this.state = {
             myself: myself,
             userData: userData,
-            email: this.props.history.location.state.email,
-            password: this.props.history.location.state.password
+            //email: this.props.history.location.state.email,
+            //password: this.props.history.location.state.password
         }
         this.handleSignOut = this.handleSignOut.bind(this)
         this.handleMatch = this.handleMatch.bind(this)
@@ -68,7 +68,7 @@ class UserDashBoard extends Component {
     }
 
     componentDidMount() {
-        document.body.backgroundColor = "white";
+        document.body.style.backgroundColor = "white";
         // dispatch to get all users
     }
 
@@ -79,7 +79,7 @@ class UserDashBoard extends Component {
 
     handleMatch(e) {
         e.preventDefault()
-        this.props.history.push('/gamelobby')
+        this.props.history.push('/GameLobby')
     }
 
     handleStore() {
@@ -138,7 +138,11 @@ class UserDashBoard extends Component {
         return (
             <Container>
                 <Navbar bg="light">       
-                    <Navbar.Brand style={{marginLeft:8, fontFamily:"'Bangers', cursive", fontSize:"30px"}}href="#home">Roshambo</Navbar.Brand>
+                    <Navbar.Brand style={{marginLeft:8, fontFamily:"'Bangers', cursive", fontSize:"30px"}}>
+                        <Link to="/login" style={{color: "black"}}>
+                            Roshambo
+                        </Link>
+                    </Navbar.Brand>
                     <Button style={styles.signOutBtn} variant="outline-danger" onClick={this.handleSignOut}>Sign Out</Button>
                 </Navbar>
                 <Row>

@@ -25,15 +25,12 @@ class Login extends Component{
   }
   constructor(props){
     super(props);
-
     this.props.logout();
-
     this.state = {
       username: '',
       password: '',
       submitted: false
     };
-
     this.handleLogin = this.handleLogin.bind(this)
   }
 
@@ -41,7 +38,6 @@ class Login extends Component{
     this.setState({submitted: true });
     const { username, password } = values
     this.props.login(username, password)
-
   }
 
   render(){
@@ -72,9 +68,8 @@ class Login extends Component{
           // .catch(function (error) {
           //   console.log(error);
           // });
-          //this.props.history.push("/UserDashBoard");
-          //document.body.style.backgroundColor = 'white';
           this.handleLogin(values)
+          this.props.history.push("/UserDashBoard");
         }}
         validationSchema={schema}
       >

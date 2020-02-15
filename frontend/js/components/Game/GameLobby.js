@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Container, Navbar, Button, Row, Col, Image, Card, ListGroup, Title, ButtonGroup, Overlay } from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMehRollingEyes, faDragon, faAlignJustify } from "@fortawesome/free-solid-svg-icons";
+import { Link } from 'react-router-dom';
 
 
 
@@ -13,9 +14,10 @@ class GameLobby extends Component {
             bettingAmount: '$0',
             myselfReady: false,
         }
-        this.handleExit = this.handleExit.bind(this)
-        this.handleReady = this.handleReady.bind(this)
-        this.handleBet = this.handleBet.bind(this)
+        this.handleExit = this.handleExit.bind(this);
+        this.handleReady = this.handleReady.bind(this);
+        this.handleBet = this.handleBet.bind(this);
+        this.handleSignOut = this.handleSignOut.bind(this);
     }
 
     handleExit(e) {
@@ -39,6 +41,11 @@ class GameLobby extends Component {
         setTimeout( () => {
             this.props.history.push('/GamePage')
         }, 1200)
+    }
+
+    handleSignOut(e){
+        e.preventDefault();
+        this.props.history.push("/login");
     }
 
     render(){
@@ -70,8 +77,13 @@ class GameLobby extends Component {
         return(
             
             <Container>
-                <Navbar bg="light">       
-                    <Navbar.Brand href="#home">Roshambo</Navbar.Brand>
+                <Navbar bg="light">
+                    <Navbar.Brand>
+                        <Link to="/userdashboard" style={{color: "black", fontFamily: "Bangers, cursive", fontSize: "1.5em"}}>
+                            Roshambo
+                        </Link>
+                    </Navbar.Brand>
+                    <Button style={{marginLeft: '76%', justifySelf: 'center'}} variant="outline-danger" onClick={this.handleSignOut}>Sign Out</Button>
                 </Navbar>
                 <Row>
                     <Col>

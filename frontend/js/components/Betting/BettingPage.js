@@ -71,7 +71,7 @@ class Betting extends Component {
         return(
             <Container>
                 <Navbar bg="light">       
-                    <Navbar.Brand style={{marginLeft:8}} onClick={this.handleHome.bind(this)}>Roshambo</Navbar.Brand>
+                    <Navbar.Brand style={{marginLeft:8, fontFamily: "Bangers, cursive", fontSize: "1.5em"}} onClick={this.handleHome.bind(this)}>Roshambo</Navbar.Brand>
                 </Navbar>
                 <div style={{margin:50}} />
                 <Row>
