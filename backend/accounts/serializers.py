@@ -4,7 +4,7 @@ from rest_framework import serializers
 from rest_framework.fields import empty
 from rest_framework.validators import UniqueValidator
 
-from .models import RoshamboUser, Skins, SkinsInventory
+from .models import RoshamboUser, Skins, SkinsInventory, Stats
 from .utils import check_for_edit_validation_errors
 
 
@@ -52,6 +52,24 @@ class EditUserSerializer(UserSerializer):
     class Meta:
         model = RoshamboUser
         exclude = ('id',)
+
+
+class StatsSerializer(serializers.ModelSerializer):
+    def validate(self, data):
+        if hasattr(self, 'initial_data'):
+            allowed_edits = set(['games_won', 'games_lost'])
+            provided_fields = set(self.initial_data.keys())
+            defined_fields = set(self.fields.keys())
+            check_for_edit_validation_errors(defined_fields, allowed_edits, provided_fields)
+        return data
+
+    games_won = serializers.IntegerField()
+    games_lost = serializers.IntegerField()
+
+    class Meta:
+        model = Stats
+        exclude = ('user',)
+
 
 class SkinsInventorySerializer(serializers.ModelSerializer):
     skin = serializers.IntegerField(required=True)

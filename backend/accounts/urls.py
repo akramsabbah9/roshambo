@@ -3,6 +3,7 @@
 from django.urls import path, re_path
 from .views.users import active_users, current_user, Login, logout, Register, users, EditUser
 from .views.skins import available_skins, ActiveUserSkin, PurchasedUserSkins
+from .views.stats import Stats
 
 urlpatterns = [
     # Users
@@ -16,5 +17,7 @@ urlpatterns = [
     # Skins
     path('skins/', available_skins),
     path('skins/active/', ActiveUserSkin.as_view()),
-    path('skins/purchased/', PurchasedUserSkins.as_view())
+    path('skins/purchased/', PurchasedUserSkins.as_view()),
+    # Stats
+    re_path(r'stats|statistics/$', Stats.as_view())
 ]
