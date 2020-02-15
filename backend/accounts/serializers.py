@@ -1,10 +1,11 @@
 # accounts/serializers.py
 
 from rest_framework import serializers
+from rest_framework.fields import empty
 from rest_framework.validators import UniqueValidator
-from rest_framework.serializers import ValidationError
 
-from .models import RoshamboUser
+from .models import RoshamboUser, Skins, SkinsInventory
+from .utils import check_for_edit_validation_errors
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -38,26 +39,32 @@ class UserSerializer(serializers.ModelSerializer):
         model = RoshamboUser
         fields = ('id', 'username', 'email', 'password', 'country_code', 'guild')
 
+
 class EditUserSerializer(UserSerializer):
     def validate(self, data):
         if hasattr(self, 'initial_data'):
             allowed_edits = set(['username', 'email', 'password', 'country_code', 'guild'])
-            init_data_set = set(self.initial_data.keys())
-            forbidden_edits = init_data_set - allowed_edits
-            unknown_keys = init_data_set - set(self.fields.keys())
-            if unknown_keys or forbidden_edits:
-                err_msg = self._validation_error_mesage(forbidden_edits, unknown_keys)
-                raise ValidationError(err_msg, code='invalid')
+            provided_fields = set(self.initial_data.keys())
+            defined_fields = set(self.fields.keys())
+            check_for_edit_validation_errors(defined_fields, allowed_edits, provided_fields)
         return data
-
-    def _validation_error_mesage(self, forbidden_edits, unknown_keys):
-        validation_error = {}
-        for edit in forbidden_edits:
-            validation_error[edit] = 'This field cannot be edited.'
-        for key in unknown_keys:
-            validation_error[key] = 'Unknown field.'
-        return {'error': validation_error}
 
     class Meta:
         model = RoshamboUser
         exclude = ('id',)
+
+class SkinsInventorySerializer(serializers.ModelSerializer):
+    skin = serializers.IntegerField(required=True)
+
+    class Meta:
+        model = SkinsInventory
+        fields = ('skin',)
+
+
+class SkinsSerializer(serializers.ModelSerializer):
+    active_skin = SkinsInventorySerializer()
+    purchased_skins = SkinsInventorySerializer(many=True)
+
+    class Meta:
+        model = Skins
+        fields = ('active_skin', 'purchased_skins')
