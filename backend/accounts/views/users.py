@@ -91,7 +91,7 @@ class Register(APIView):
     @method-supported: POST
     @POST: 
         @param user-field:
-            keys: username, email, password, [country_code]
+            keys: username, email, password, first_name, last_name, [country_code]
             value: valid value to set the corresponding field to.
         @return: 
             Token: the valid token for the user session

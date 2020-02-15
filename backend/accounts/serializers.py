@@ -9,6 +9,8 @@ from .utils import check_for_edit_validation_errors
 
 
 class UserSerializer(serializers.ModelSerializer):
+    first_name = serializers.CharField(max_length=30, required=True),
+    last_name = serializers.CharField(max_length=150, required=True),
     email = serializers.EmailField(
         required=True,
         validators=[UniqueValidator(queryset=RoshamboUser.objects.all())]
@@ -27,17 +29,18 @@ class UserSerializer(serializers.ModelSerializer):
     guild = serializers.CharField(max_length=30, required=False)
 
     def create(self, validated_data):
+        print(validated_data)
         if validated_data.get('country_code'):
             user = RoshamboUser.objects.create_user(validated_data['username'], validated_data['email'],
-                validated_data['password'], validated_data['country_code'])
+                validated_data['password'], validated_data['first_name'], validated_data['last_name'], validated_data['country_code'])
         else:
             user = RoshamboUser.objects.create_user(validated_data['username'], validated_data['email'],
-                validated_data['password'])
+                validated_data['password'], validated_data['first_name'], validated_data['last_name'])
         return user
 
     class Meta:
         model = RoshamboUser
-        fields = ('id', 'username', 'email', 'password', 'country_code', 'guild')
+        fields = ('id', 'username', 'email', 'password', 'country_code', 'guild', 'first_name', 'last_name')
 
 
 class EditUserSerializer(UserSerializer):
