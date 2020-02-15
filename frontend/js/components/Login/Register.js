@@ -5,6 +5,8 @@ Col, Nav, Navbar} from 'react-bootstrap';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import './Pages.css';
+import { connect } from 'react-redux';
+import { usersActions, userActions } from '../../redux/actions/UsersActions';
 
 const schema = yup.object({
     firstName : yup.string()
@@ -57,8 +59,10 @@ class Register extends Component{
           <Formik
             initialValues={{firstName:"", lastName:"", phone:"", email:"", username:"", password:"", confirmPassword: ""}}
             onSubmit={(values, {setSubmitting}) => {
-                this.props.history.push("/Login");
-                document.body.style.backgroundColor = 'white';
+                this.props.registerUser(values)
+                
+                //this.props.history.push("/Login");
+                //document.body.style.backgroundColor = 'white';
               }}
             validationSchema={schema}
           >
@@ -200,6 +204,10 @@ class Register extends Component{
     }
 }
 
+const actionCreators = {
+  registerUser: userActions.register,
+}
 
 
-export default Register;
+
+export default connect({}, actionCreators)(Register);

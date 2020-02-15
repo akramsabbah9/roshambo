@@ -106,7 +106,7 @@ function register(user) {
         dispatch(request(user));
 
 
-        dispatch(success())
+        dispatch(success(user))
         /*
         api.signup(user)
             .then(
