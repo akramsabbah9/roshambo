@@ -21,14 +21,13 @@ class RoshamboUser(AbstractUser):
         return 'email: {}; username: {}'.format(self.email, self.username)
 
 
-class UserStats(models.Model):
+class Stats(models.Model):
     user = models.OneToOneField(RoshamboUser, on_delete=models.CASCADE, primary_key=True)
-    games_played = models.PositiveIntegerField(default=0)
     games_won = models.PositiveIntegerField(default=0)
     games_lost = models.PositiveIntegerField(default=0)
 
     def __str__(self):
-        return 'user: {}; games played: {}; games won: {}; games lost: {}'.format(self.user, self.games_played, self.games_won, self.games_lost)
+        return 'user: {}; games won: {}; games lost: {}'.format(self.user, self.games_won, self.games_lost)
 
 
 class SkinsInventory(models.Model):

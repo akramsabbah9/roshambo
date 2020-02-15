@@ -19,10 +19,9 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='UserStats',
+            name='Stats',
             fields=[
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, primary_key=True, serialize=False, to=settings.AUTH_USER_MODEL)),
-                ('games_played', models.PositiveIntegerField(default=0)),
                 ('games_won', models.PositiveIntegerField(default=0)),
                 ('games_lost', models.PositiveIntegerField(default=0)),
             ],
