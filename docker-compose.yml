@@ -34,6 +34,7 @@ services:
     build:
       context: .
       dockerfile: frontend/Dockerfile
+    container_name: roshambo_frontend
     environment:
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=true
