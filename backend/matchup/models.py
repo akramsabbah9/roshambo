@@ -1,4 +1,5 @@
 from django.db import models
+from channels.consumer import SyncConsumer
 
 class Room(models.Model):
 
@@ -10,6 +11,10 @@ class Room(models.Model):
 
     # Has the room been filled, locking it from further entry even if usr_count drops?
     lock = models.BooleanField(default=False)
+
+    # create a central websocket consumer upon initializing
+    #TODO
+    my_ws = models.CharField(max_length=255)
 
     def __str__(self):
         return self.title
