@@ -20,9 +20,6 @@ const schema = yup.object({
     .email("Must be a valid email address")
     .max(25, "Email must be less than 25 characters")
     .required("Required"),
-    phone: yup.string()
-    .matches(/^(\+?\d)?\(\d{3}\)\d{3}-\d{4}$/, "phone number must be in the form of +x(xxx)xxx-xxxx")
-    .required("Required"),
     username : yup.string()
     .matches(/^\D/, "username or password must start with an alphabet letter")
     .min(5, "username or password must be at least 5 letters long")
@@ -55,7 +52,7 @@ class Register extends Component{
         </Nav>
         <Container className="main border rounded p-3 mid col-5">
           <Formik
-            initialValues={{firstName:"", lastName:"", phone:"", email:"", username:"", password:"", confirmPassword: ""}}
+            initialValues={{firstName:"", lastName:"", email:"", username:"", password:"", confirmPassword: ""}}
             onSubmit={(values, {setSubmitting}) => {
                 this.props.history.push("/Login");
                 document.body.style.backgroundColor = 'white';
@@ -111,7 +108,7 @@ class Register extends Component{
                       className="inputbox"
                       value={values.email}
                       onChange={handleChange}
-                      onBlue={handleBlur}
+                      onBlur={handleBlur}
                       isInvalid={touched.email && errors.email}
                     />
                     <Form.Control.Feedback type="invalid">
@@ -119,23 +116,6 @@ class Register extends Component{
                    </Form.Control.Feedback>
                 </Form.Group>
                  
-                </Col>
-                <Col>
-                  <Form.Group controlId="formPhone">
-                      <Form.Control
-                        type="text"
-                        placeholder="(xxx)xxx-xxxx"
-                        name="phone"
-                        className="inputbox"
-                        value={values.phone}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        isInvalid={touched.phone && errors.phone}
-                      />
-                      <Form.Control.Feedback type="invalid">
-                          {errors.phone}
-                      </Form.Control.Feedback>
-                  </Form.Group>
                 </Col>
                 <Col>
                 <Form.Group controlId="formUsername">

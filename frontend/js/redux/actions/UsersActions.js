@@ -1,6 +1,7 @@
 import { login as loginApi } from '../../utils/api';
 import { history } from '../../utils/history';
 import { userConstants } from './types';
+import { signup } from '../../utils/api';
 
 export const userActions = {
     login,
@@ -105,20 +106,14 @@ function register(user) {
     return dispatch => {
         dispatch(request(user));
 
-
-        dispatch(success())
-        /*
-        api.signup(user)
-            .then(
-                user => {
-                    dispatch(success());
-                    history.pushState('/login');
-                },
-                error => {
-                    dispatch(failure(error.toString()))
-                }
-            )
-            */
+        signup(user)
+        .then (response => {
+            localStorage.setItem('token', response.token)
+            dispatch(success(response.token))
+        })
+        .error (error => {
+            dispatch(failure(error))
+        })
     }
     
     function request(user) { return { type: userConstants.REGISTER_REQUEST, user }}
@@ -138,6 +133,7 @@ function getAll() {
     return dispatch => {
         dispatch(request());
 
+        
         dispatch(success(userData))
         /*
         api.allUsers()
