@@ -1,4 +1,4 @@
-# accounts/view.py
+# accounts/views/users.py
 
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import update_last_login
@@ -10,8 +10,8 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.authtoken.models import Token
 from rest_framework.mixins import UpdateModelMixin
 
-from .models import RoshamboUser as User
-from .serializers import UserSerializer, EditUserSerializer
+from ..models import RoshamboUser as User, SkinsInventory, Skins
+from ..serializers import UserSerializer, EditUserSerializer
 
 
 @api_view(['GET'])
@@ -70,13 +70,23 @@ class Register(APIView):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            update_last_login(request, user)
             if user:
+                self._add_default_skin(user)
+                update_last_login(request, user)
                 token = Token.objects.create(user=user)
                 json = serializer.data
                 json['token'] = token.key
                 return Response(json, status=status.HTTP_201_CREATED)
+            else:
+                return Response({'error': 'User creation failed due to an internal server error. Try again later.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def _add_default_skin(self, user):
+        skin = SkinsInventory.objects.get(skin=0)
+        user_skin = Skins(user=user, active_skin=skin)
+        user_skin.save() # must be saved before we can add to purchased_skins
+        user_skin.purchased_skins.add(skin)
+        user_skin.save()
 
 
 class Login(APIView):
@@ -113,3 +123,5 @@ def logout(request, format=None):
     request.user.auth_token.delete()  
     request.user.save()
     return Response(status=status.HTTP_204_NO_CONTENT)
+
+
