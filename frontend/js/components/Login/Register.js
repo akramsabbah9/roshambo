@@ -9,12 +9,12 @@ import { connect } from 'react-redux';
 import { usersActions, userActions } from '../../redux/actions/UsersActions';
 
 const schema = yup.object({
-    firstName : yup.string()
+    first_name : yup.string()
     .matches(/\D+/, "firstName cannot contain digits")
     .min(2, "firstName must be at least 2 letters")
     .max(50, "firstName must not be longer than 50 letters")
     .required("Required"),
-    lastName : yup.string()
+    last_name : yup.string()
     .matches(/[A-Za-z0-9]/, "lastName can only contains alphanumeric letters")
     .max(100, "lastName must not be longer than 100 letters")
     .required("Required"),
@@ -23,14 +23,14 @@ const schema = yup.object({
     .max(25, "Email must be less than 25 characters")
     .required("Required"),
     username : yup.string()
-    .matches(/^\D/, "username or password must start with an alphabet letter")
-    .min(5, "username or password must be at least 5 letters long")
-    .max(30, "username or password cannot exceed 30 characters")
+    .matches(/^\D/, "username must start with an alphabet letter")
+    .min(5, "username must be at least 5 characters long")
+    .max(30, "username cannot exceed 30 characters")
     .required("Required"),
     password : yup.string()
-    .matches(/^\D/, "username or password must start with an alphabet letter")
-    .min(5, "username or password must be at least 5 letters long")
-    .max(30, "username or password cannot exceed 30 characters")
+    .matches(/^\D/, "password must start with an alphabet letter")
+    .min(8, "password must be at least 8 characters long")
+    .max(30, "password cannot exceed 30 characters")
     .required("Required"),
     confirmPassword : yup.string()
     .oneOf([yup.ref('password'), null], "Does not match with password")
@@ -54,8 +54,9 @@ class Register extends Component{
         </Nav>
         <Container className="main border rounded p-3 mid col-5">
           <Formik
-            initialValues={{firstName:"", lastName:"", email:"", username:"", password:"", confirmPassword: ""}}
+            initialValues={{first_name:"", last_name:"", email:"", username:"", password:"", confirmPassword: ""}}
             onSubmit={(values, {setSubmitting}) => {
+                console.log(JSON.stringify(values))
                 this.props.registerUser(values)
                 
                 //this.props.history.push("/Login");
@@ -79,7 +80,7 @@ class Register extends Component{
                     type="text" 
                     placeholder="First Name" 
                     className="inputbox"
-                    name="firstName"
+                    name="first_name"
                     value={values.firstName}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -94,7 +95,7 @@ class Register extends Component{
                     type="text" 
                     placeholder="Last Name" 
                     className="inputbox"
-                    name="lastName"
+                    name="last_name"
                     value={values.lastName}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -184,12 +185,12 @@ class Register extends Component{
     }
 }
 
-const actionCreators = {
-  registerUser: userActions.register,
+function mapStateToProps (state) {
+  return {}
 }
 
-function mapStateToProps(state) {
-  return {}
+const actionCreators = {
+  registerUser: userActions.register,
 }
 
 export default connect(mapStateToProps, actionCreators)(Register);

@@ -1,13 +1,14 @@
-import { login as loginApi } from '../../utils/api';
 import { history } from '../../utils/history';
 import { userConstants } from './types';
-import { signup } from '../../utils/api';
+import { signup, currentUser, login as loginAPI, } from '../../utils/api';
+
 
 export const userActions = {
     login,
     register,
     logout,
     getAll,
+    getCurrent,
 }
 
 // (FOR TESTING ONLY) DELETE AFTER
@@ -67,34 +68,25 @@ const userData = [{
 
 
 
-function login(username, password) {
+function login(email, password) {
+    const data = {
+        email: email,
+        password: password,
+    }
+    console.log(data)
     return dispatch => {
-        dispatch(request({username}));
-
-        // DELETE: FOR TESTING ONLY
-        if (password == "123") {
-            localStorage.setItem('user', 'loggedIn')
-            dispatch(success(user))
-            history.push('/userdashboard');
-        } else {
-            dispatch(failure("Error logging in."))
-        }
+        dispatch(request({email}));
         
-        
-        
-        /*
-        
-        api.login({username, password})
-            .then(
-                user => {
-                    dispatch(success(user));
-                    history.pushState('/userdashboard');
-                },
-                error => {
-                    dispatch(failure(error.toString()));
-                }
-            )
-        */
+        loginAPI(data)
+        .then(response => {
+            localStorage.setItem('token', response.token)
+            dispatch(success(response.token))
+            history.push('/userdashboard')
+        })
+        .catch(error => {
+            console.log(error)
+            dispatch(failure(error))
+        })
     };
 
     function request(user) {return { type: userConstants.LOGIN_REQUEST, user}}
@@ -110,8 +102,10 @@ function register(user) {
         .then (response => {
             localStorage.setItem('token', response.token)
             dispatch(success(response.token))
+            history.push('/userdashboard')
         })
-        .error (error => {
+        .catch (error => {
+            console.log(error)
             dispatch(failure(error))
         })
     }
@@ -125,7 +119,7 @@ function logout(user) {
     /*
     api.logout();
     */
-    localStorage.removeItem('user')
+    localStorage.removeItem('token')
     return { type: userConstants.LOGOUT }
 }
 
@@ -148,4 +142,24 @@ function getAll() {
     function request() { return {type: userConstants.GETALL_REQUEST}}
     function success(users) { return { type: userConstants.GETALL_SUCCESS, users}}
     function failure(error) { return { type: userConstants.GETALL_FAILURE, error}}
+}
+
+function getCurrent() {
+    return dispatch => {
+        dispatch(request());
+
+        // get api
+        currentUser()
+        .then(response => {
+            console.log(response)
+            dispatch(success(response))
+        })
+        .catch(error => {
+            dispatch(failure(error))
+        })
+    }
+
+    function request() { return {type: userConstants.GETCURRENT_REQUEST}}
+    function success(users) { return { type: userConstants.GETCURRENT_SUCCESS, users}}
+    function failure(error) { return { type: userConstants.GETCURRENT_FAILURE, error}}
 }
