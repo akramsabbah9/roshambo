@@ -1,0 +1,48 @@
+.Menu{
+    font-family: 'Bangers', cursive;
+    margin-left: 20%;
+    margin-top: 15%;
+}
+
+.Logo{
+    font-family: 'Bangers', cursive;
+    font-size: 75px;
+    margin-top: 10%;
+    text-shadow: -2px 2px black;
+}
+
+.Link{
+    font-size: 40px;
+    color: white;
+}
+
+.toLeft{
+    animation-name: shakeLeft;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    transform: rotate(-90deg);
+}
+
+.toRight{
+    animation-name: shakeRight;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    transform: rotate(90deg);
+}
+
+@keyframes shakeRight{
+    10% { transform: translate(5px, 0px)}
+    20% { transform: translate(-5px, 0px)}
+    30% { transform: translate(0px, 0px)}
+    40% { transform: translate(5px, 0px)}
+    50% { transform: translate(-5px, 0px)}
+}
+
+@keyframes shakeLeft{
+    10% { transform: translate(-5px, 0px)}
+    20% { transform: translate(5px, 0px)}
+    30% { transform: translate(0px, 0px)}
+    40% { transform: translate(-5px, 0px)}
+    50% { transform: translate(5px, 0px)}
+}
+
