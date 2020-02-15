@@ -13,5 +13,6 @@ fi
 
 python manage.py makemigrations
 python manage.py migrate
+python manage.py loaddata skins_inventory.json
 
 exec "$@"
