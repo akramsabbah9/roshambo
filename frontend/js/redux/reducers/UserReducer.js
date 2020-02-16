@@ -1,7 +1,7 @@
 import { userConstants } from '../actions/types';
 
 const usersInitialState = {
-    usersLoading: false,
+    usersLoading: true,
     users: [],
     error: null
 }
@@ -21,7 +21,7 @@ export function users(state = usersInitialState, action) {
         case userConstants.GETALL_SUCCESS:
             return {
                 users: action.users,
-                usersLoading: false,
+                usersLoading: false
             }
         case userConstants.GETALL_FAILURE:
             return {

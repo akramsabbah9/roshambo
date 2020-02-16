@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Link } from 'react-router-dom';
 import { history } from '../../utils/history';
 import { userActions } from '../../redux/actions/UsersActions';
+import Loading from '../Loading/Loading';
 import { connect } from 'react-redux';
 import { skins } from '../Settings/Skins';
 import '../Game.css'
@@ -16,15 +17,12 @@ class UserDashBoard extends Component {
     constructor(props) {
         super(props)
 
-        //this.props.getCurrent()
-        this.state = {
-            currentUserLoading: false,
-        }
-
         this.handleSignOut = this.handleSignOut.bind(this)
         this.handleMatch = this.handleMatch.bind(this)
         this.handleSettings = this.handleSettings.bind(this)
     }
+
+
     
     componentDidMount() {
         document.body.style.backgroundColor = "white";
@@ -60,22 +58,20 @@ class UserDashBoard extends Component {
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Rank</th>
                     <th>Guild</th>
                     <th>Wins</th>
                     <th>Loss</th>
-                    <th>Total</th>
+                    <th>Active?</th>
                 </tr>
             </thead>
             <tbody>
                 {users.map((user, index) =>         
                     <tr key={index}>
-                    <td>{user.name}</td>
-                    <td>{user.rank}</td>
+                    <td>{user.username}</td>
                     <td>{user.guild}</td>
-                    <td>{user.wins}</td>
-                    <td>{user.loss}</td>
-                    <td>{user.total}</td>
+                    <td>{user.games_won}</td>
+                    <td>{user.games_lost}</td>
+                    <td>{user.is_active ? 'Online' : 'Offline'}</td>
                     </tr>
                 )}
             </tbody>
@@ -84,7 +80,7 @@ class UserDashBoard extends Component {
     }
 
     render() {
-        const { user, users, activeSkin, userLoading } = this.props
+        const { user, users, activeSkin, userLoading, usersLoading } = this.props
         const mySkin = skins[activeSkin]
         const styles = {
             profilePic: {
@@ -108,7 +104,6 @@ class UserDashBoard extends Component {
                 fontSize:"20px"
             }
         }
-
         return (
             <Container className="Words">
                 <Navbar bg="light"> 
@@ -142,7 +137,7 @@ class UserDashBoard extends Component {
                         <Card style={styles.tableCard}>
                             <Card.Title style={styles.title}>Online Users</Card.Title>
                             <Card.Body>
-                                {this.buildOnlineUserTable(users)}
+                                {usersLoading ? <Loading /> : this.buildOnlineUserTable(users)}
                             </Card.Body>
                             <Card.Footer style={{backgroundColor: 'transparent', border:'none'}} className="d-flex flex-column">
                                 <Button variant="outline-success" onClick={this.handleMatch} className=
@@ -159,9 +154,10 @@ class UserDashBoard extends Component {
 function mapStateToProps (state) {
     const user = state.user.currentUser
     const userLoading = state.user.userLoading
+    const usersLoading = state.users.usersLoading
     const { users } = state.users
     const { activeSkin } = state.skins
-    return { user, users, activeSkin, userLoading }
+    return { user, users, activeSkin, userLoading, usersLoading }
 }
 
 const actionCreators = {

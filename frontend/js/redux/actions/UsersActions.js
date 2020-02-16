@@ -1,6 +1,6 @@
 import { history } from '../../utils/history';
 import { userConstants } from './types';
-import { signup, currentUser, login as loginAPI, } from '../../utils/api';
+import { signup, currentUser, login as loginAPI, allUsers } from '../../utils/api';
 
 
 export const userActions = {
@@ -20,7 +20,7 @@ const user = {
     guild: "pirates@licious",
     wins: 2,
     loss: 12,
-    total: 14
+    is_active: true
 }
 
 // (FOR TESTING ONLY) DELETE AFTER
@@ -31,7 +31,7 @@ const userData = [{
     guild: "pirates@licious",
     wins: 23,
     loss: 2,
-    total: 25
+    is_active: true
 },{
     name: "jerry2",
     id: 2,
@@ -39,7 +39,7 @@ const userData = [{
     guild: "pirates@licious",
     wins: 23,
     loss: 2,
-    total: 25
+    is_active: true
 },{
     name: "jerry3",
     id: 3,
@@ -47,7 +47,7 @@ const userData = [{
     guild: "pirates@licious",
     wins: 23,
     loss: 2,
-    total: 25
+    is_active: false
 },{
     name: "jerry4",
     id: 4,
@@ -55,7 +55,7 @@ const userData = [{
     guild: "pirates@licious",
     wins: 23,
     loss: 2,
-    total: 25
+    is_active: true
 },{
     name: "jerry5",
     id: 5,
@@ -63,7 +63,7 @@ const userData = [{
     guild: "pirates@licious",
     wins: 23,
     loss: 2,
-    total: 25
+    is_active: true
 }];
 
 
@@ -105,7 +105,6 @@ function register(user) {
             history.push('/userdashboard')
         })
         .catch (error => {
-            console.log(error)
             dispatch(failure(error))
         })
     }
@@ -127,8 +126,16 @@ function getAll() {
     return dispatch => {
         dispatch(request());
 
-        
-        dispatch(success(userData))
+        allUsers().then(json =>
+            {
+                console.log("allUsers promise completed!")
+                console.log(json)
+                dispatch(success(json));
+            })
+            .catch(error => {
+                dispatch(failure(error));
+            });
+        // dispatch(success(userData))
         /*
         api.allUsers()
             .then(
