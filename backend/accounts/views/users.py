@@ -31,8 +31,11 @@ def current_user(request):
                 id
             value: appropriate values corresponding to the keys.
     """
-    serializer = UserSerializer(request.user)
-    return Response(serializer.data)
+    # TODO(benjibrandt): this is sorty janky to filter the entire user set...
+    user = User.objects.filter(id=request.user.id).annotate(
+        games_won=F('stats__games_won'), games_lost=F('stats__games_lost')
+    ).values('first_name', 'last_name', 'email', 'username', 'guild', 'games_won', 'games_lost').first()
+    return Response(user)
 
 
 @api_view(['GET'])
