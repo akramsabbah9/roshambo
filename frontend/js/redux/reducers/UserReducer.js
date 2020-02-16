@@ -1,4 +1,5 @@
 import { userConstants } from '../actions/types';
+import { activeUsers } from '../../utils/api';
 
 const usersInitialState = {
     usersLoading: true,
@@ -65,10 +66,7 @@ export function user(state = userInitialState, action) {
         case userConstants.CHANGE_EMAIL_SUCCESS:
             return {
                 ...state,
-                currentUser: {
-                    ...currentUser,
-                    email: action.email,
-                },
+                currentUser: action.user,
             }
         case userConstants.CHANGE_EMAIL_FAILURE:
             return {

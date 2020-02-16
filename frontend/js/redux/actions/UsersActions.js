@@ -111,7 +111,7 @@ function changeEmail(email) {
         .then(response => {
             console.log(response)
             dispatch(success(response))
-            history.goBack()
+            history.push('/userdashboard')
         })
         .catch(error => {
             dispatch(failure(error))
@@ -119,7 +119,7 @@ function changeEmail(email) {
     };
 
     function request() {return { type: userConstants.CHANGE_EMAIL_REQUEST}}
-    function success() {return { type: userConstants.CHANGE_EMAIL_SUCCESS}}
+    function success(user) {return { type: userConstants.CHANGE_EMAIL_SUCCESS, user}}
     function failure(error) {return { type: userConstants.CHANGE_EMAIL_FAILURE, error}}
 }
 
@@ -135,7 +135,7 @@ function changePassword(password) {
         .then(response => {
             console.log(response)
             dispatch(success(response))
-            history.goBack()
+            history.push('/userdashboard')
         })
         .catch(error => {
             dispatch(failure(error))

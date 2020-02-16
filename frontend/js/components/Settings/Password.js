@@ -19,16 +19,17 @@ class Email extends Component{
     constructor(props){
         super(props)
         this.handleChangePassword = this.handleChangePassword.bind(this)
+        this.handleGoBack = this.handleGoBack.bind(this)
     }
     componentDidMount(){
         document.body.style.backgroundColor="#c1f0f0";
     }
 
     handleChangePassword(password) {
-        const data = {
-            password: password
-        }
-        this.props.changePassword(data)
+        this.props.changePassword(password)
+    }
+    handleGoBack() {
+        this.props.history.goBack()
     }
     render(){
         return(
@@ -92,7 +93,7 @@ class Email extends Component{
                                     Submit
                                 </Button>
                             </Col>
-                            <Button variant="outline-danger" href="/Settings" style={{marginRight:"2.5%"}}>
+                            <Button variant="outline-danger" onClick={this.handleGoBack} style={{marginRight:"2.5%"}}>
                                 Back
                             </Button>
                         </Row>

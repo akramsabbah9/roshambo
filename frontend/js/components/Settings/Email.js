@@ -17,16 +17,16 @@ class Email extends Component{
     constructor(props){
         super(props)
         this.handleEmailChange = this.handleEmailChange.bind(this)
+        this.handleGoBack = this.handleGoBack.bind(this)
     }
     componentDidMount(){
         document.body.style.backgroundColor="#ecc6ec";
     }
     handleEmailChange(email) {
-
-        console.log(email)
-        const data = {email: email}
-        
-        this.props.changeEmail(data)
+        this.props.changeEmail(email)
+    }
+    handleGoBack() {
+        this.props.history.goBack()
     }
     render(){
         return(
@@ -71,7 +71,7 @@ class Email extends Component{
                                     Submit
                                 </Button>
                             </Col>
-                            <Button variant="outline-danger" href="/Settings" style={{marginRight:"2.5%"}}>
+                            <Button variant="outline-danger" onClick={this.handleGoBack} style={{marginRight:"2.5%"}}>
                                 Back
                             </Button>
                         </Row>

@@ -55,7 +55,7 @@ class Appearance extends Component {
 
     handleBack(e) {
         e.preventDefault()
-        history.push('/Settings')
+        history.goBack()
     }
 
     render() {
@@ -65,7 +65,6 @@ class Appearance extends Component {
                 return skin
             }
         })
-        console.log(activeSkin)
         const styles = {
             signOutBtn: {
                 marginLeft: '76%',
