@@ -2,6 +2,8 @@
 
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import update_last_login
+from django.db.models import F
+from django.http import JsonResponse
 from rest_framework import permissions, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -39,12 +41,14 @@ def users(request):
     @auth-required: yes
     @method-supported: GET
     @GET: 
-        @return: 
-            key: users
-            value: list of all registered users' usernames.
+        @return: top 10 list of user infos.
+            keys: games_won, games_lost, guild, username, is_active
+            value: valid value to set the corresponding field to.
     """
-    usernames = User.objects.values_list('username', flat=True)
-    return Response({'users': usernames})
+    users_info = list(User.objects.annotate(
+        games_won=F('stats__games_won'), games_lost=F('stats__games_lost')
+    ).values('username', 'guild', 'games_won', 'games_lost', 'is_active'))[:10]
+    return JsonResponse(users_info, safe=False)
 
 
 @api_view(['GET'])
@@ -53,12 +57,14 @@ def active_users(request):
     @auth-required: yes
     @method-supported: GET
     @GET: 
-        @return: 
-            key: users
-            value: list of all active users' usernames.
+        @return: top 10 list of active user infos.
+            keys: games_won, games_lost, guild, username
+            value: valid value to set the corresponding field to.
     """
-    usernames = User.objects.filter(is_active=True).values_list('username', flat=True)
-    return Response({'users': usernames})
+    active_users = list(User.objects.filter(is_active=True).annotate(
+        games_won=F('stats__games_won'), games_lost=F('stats__games_lost')
+    ).values('username', 'guild', 'games_won', 'games_lost'))[:10]
+    return Response(active_users)
 
 
 class EditUser(GenericAPIView, UpdateModelMixin):
