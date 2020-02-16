@@ -121,8 +121,17 @@ class UserDashBoard extends Component {
                         </div>
                         <Card>
                             <ListGroup variant="flush">
-                                {console.log(userLoading)}
-                                <h5>Loading</h5>
+                                {
+                                userLoading ? 
+                                    <Loading/>
+                                :
+                                    <React.Fragment>
+                                        <ListGroup.Item>{user.username}</ListGroup.Item>
+                                        <ListGroup.Item>{user.guild}</ListGroup.Item>
+                                        <ListGroup.Item>Games Won: {user.games_won}</ListGroup.Item>
+                                        <ListGroup.Item>Games Lost: {user.games_lost}</ListGroup.Item>
+                                    </React.Fragment>
+                                }
                             </ListGroup>
 
                         </Card>
@@ -166,21 +175,3 @@ const actionCreators = {
 }
 
 export default connect(mapStateToProps, actionCreators)(UserDashBoard);
-
-/*
-
-                                <ListGroup.Item>Wins: {user.wins}</ListGroup.Item>
-                                <ListGroup.Item>Loss: {user.loss}</ListGroup.Item>
-                                <ListGroup.Item>Total: {user.total}</ListGroup.Item>
-
-
-
-                                                                {userLoading 
-                                    ? (<h1>Loading</h1>) 
-                                    : ( <div>
-                                            <ListGroup.Item>Name: {user.username}</ListGroup.Item>
-                                            <ListGroup.Item>Rank: {user.rank}</ListGroup.Item>
-                                            <ListGroup.Item>Guild: {user.guild}</ListGroup.Item>
-                                        </div>
-                                )}
-*/

@@ -40,7 +40,7 @@ export function user(state = userInitialState, action) {
             }
         case userConstants.GETCURRENT_SUCCESS:
             return {
-                user: action.user,
+                currentUser: action.user,
                 error: null,
                 userLoading: false,
             }

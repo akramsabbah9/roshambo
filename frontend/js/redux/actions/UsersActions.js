@@ -73,7 +73,6 @@ function login(email, password) {
         email: email,
         password: password,
     }
-    console.log(data)
     return dispatch => {
         dispatch(request({email}));
         
@@ -84,7 +83,6 @@ function login(email, password) {
             history.push('/userdashboard')
         })
         .catch(error => {
-            console.log(error)
             dispatch(failure(error))
         })
     };
@@ -128,22 +126,11 @@ function getAll() {
 
         allUsers().then(json =>
             {
-                console.log("allUsers promise completed!")
-                console.log(json)
                 dispatch(success(json));
             })
             .catch(error => {
                 dispatch(failure(error));
             });
-        // dispatch(success(userData))
-        /*
-        api.allUsers()
-            .then(
-                users => dispatch(success(users)),
-                error => dispatch(failure(error.toString()))
-            )
-
-            */
     }
 
     function request() { return {type: userConstants.GETALL_REQUEST}}
@@ -158,7 +145,6 @@ function getCurrent() {
         // get api
         currentUser()
         .then(response => {
-            console.log(response)
             dispatch(success(response))
         })
         .catch(error => {
@@ -167,6 +153,6 @@ function getCurrent() {
     }
 
     function request() { return {type: userConstants.GETCURRENT_REQUEST}}
-    function success(users) { return { type: userConstants.GETCURRENT_SUCCESS, users}}
+    function success(user) { return { type: userConstants.GETCURRENT_SUCCESS, user}}
     function failure(error) { return { type: userConstants.GETCURRENT_FAILURE, error}}
 }
