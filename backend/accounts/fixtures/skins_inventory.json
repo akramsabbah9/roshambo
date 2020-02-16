@@ -16,5 +16,11 @@
     "fields": {
       "skin": 2
     }
+  },
+  {
+    "model": "accounts.SkinsInventory",
+    "fields": {
+      "skin": 3
+    }
   }
 ]
