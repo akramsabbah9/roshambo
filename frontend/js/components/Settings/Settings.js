@@ -50,7 +50,7 @@ class Settings extends Component{
                     <Col md={4} className="d-flex justify-content-center">
                         <Card className="SettingCards">
                                 <Card.Title className="CardTitle">Basic Info</Card.Title>
-                                <Card.Link className="CardLinks" style={{margin:"0.25em auto"}}>Name: {user.name}</Card.Link>
+                                <Card.Link className="CardLinks" style={{margin:"0.25em auto"}}>Name: {user.username}</Card.Link>
                                 <Card.Link className="CardLinks" style={{margin:"0.25em auto"}}>Email: {user.email}</Card.Link>
                         </Card>
                     </Col>
@@ -74,16 +74,10 @@ class Settings extends Component{
 }
 
 function mapStateToProps (state) {
-   const { user } = state.auth
+   const user = state.user.currentUser
 
    return { user }
 }
 
-
-
 export default connect(mapStateToProps)(Settings);
 
-/*
-sm={{offset: 3, span: 3}}
-
-*/

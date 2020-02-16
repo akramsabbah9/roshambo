@@ -60,14 +60,12 @@ class PaymentPage extends Component {
     handleSubmit(values) {
         const skinPurchase = "Custom Skin"
         const { id, type } = this.state.items[0]
+        const data = {purchased_skins: [id]}
+
+
         // Process payment information here
-        //console.log(this.state.items[0].type)
-        //console.log(this.state.items[0].type == skinPurchase)
-        // Add redux logic to add skin
         if (type == skinPurchase) {
-            // dispatch add skins action
-            //console.log("Entered adding skin")
-            this.props.addSkin(this.props.ownedSkins, this.props.activeSkin, id)
+            this.props.addSkin(data)
             this.props.history.push('/userdashboard')
         } else {
             this.props.history.push('/gameLobby')
@@ -342,8 +340,8 @@ class PaymentPage extends Component {
 }
 
 function mapStateToProps(state) {
-    const { ownedSkins, activeSkin } = state.skins
-    return { ownedSkins, activeSkin }
+    const { ownedSkins, activeSkin, error } = state.skins
+    return { ownedSkins, activeSkin, error }
 }
 
 const actionCreators = {

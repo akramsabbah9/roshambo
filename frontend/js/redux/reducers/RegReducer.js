@@ -6,14 +6,25 @@ const initialState = {
     error: null
 }
 
-export function registration(state=initialState, action) {
+export function reg(state=initialState, action) {
     switch(action.type) {
         case userConstants.REGISTER_REQUEST:
-            return { registering: true }
+            return { 
+                ...state,
+                registering: true 
+            }
         case userConstants.REGISTER_SUCCESS:
-            return { success: true }
+            return { 
+                ...state,
+                registering: false,
+                success: true 
+            }
         case userConstants.REGISTER_FAILURE:
-            return { error: action.error }
+            return { 
+                ...state,
+                error: action.error 
+            }
+
         default:
             return state
     }

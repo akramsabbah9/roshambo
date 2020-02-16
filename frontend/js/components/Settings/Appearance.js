@@ -44,7 +44,8 @@ class Appearance extends Component {
     }
 
     handleChangeDefault(id) {
-        this.props.changeSkin(this.props.ownedSkins, id)
+        const data = {active_skin: id}
+        this.props.changeSkin(data)
     }
 
     handleSignOut(e){
