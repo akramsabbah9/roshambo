@@ -1,6 +1,6 @@
 # matchup/consumers.py
 
-from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.generic.websocket import AsyncWebsocketConsumer, WebsocketConsumer
 from channels.generic.websocket import SyncConsumer
 from channels.db import database_sync_to_async
 
@@ -8,6 +8,22 @@ import json
 
 from .models import Room
 from .utils import get_room_name, leave_room
+
+
+# class MatchmakingConsumer(WebsocketConsumer):
+#     def init_chat(self, data):
+#         username = data['username']
+#         user, created = User.objects.get_or_create(username=username)
+#         content = {
+#             'command': 'init_chat'
+#         }
+#         if not user:
+#             content['error'] = 'Unable to get or create User with username: ' + username
+#             self.send_message(content)
+#         content['success'] = 'Chatting in with success with username: ' + username
+#         self.send_message(content)
+
+
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):

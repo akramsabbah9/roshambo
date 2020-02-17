@@ -1,18 +1,18 @@
 # matchup/routing.py
 
-from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 from django.urls import re_path
 
-from . import consumers
+from .consumers import ChatConsumer
+from .authentication import TokenAuthMiddleware
 
 websocket_urlpatterns = [
-    re_path(r'ws/chat/(?P<room_name>\w+)/$', consumers.ChatConsumer),
+    re_path(r'matchup/(?P<room_name>\w+)/$', ChatConsumer),
 ]
 
 application = ProtocolTypeRouter({
     # (http->django views is added by default)
-    'websocket': AuthMiddlewareStack(
+    'websocket': TokenAuthMiddleware(
         URLRouter(
             websocket_urlpatterns
         )
