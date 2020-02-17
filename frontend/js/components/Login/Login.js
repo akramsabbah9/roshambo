@@ -53,24 +53,8 @@ class Login extends Component{
       <p className="sign">Sign In</p>
       <Formik
         initialValues = {{email: '', password: ''}}
-
         onSubmit={values => {
-          // axios.post('/Test',{
-          //   username: values.username,
-          //   password: values.password
-          // })
-          // .then( res => () => {
-          // console.log(`Status code: ${res.status}`)
-          // console.log(`Status text: ${res.statusText}`)
-          // console.log(`Request method: ${res.request.method}`)
-          // console.log(`Path: ${res.request.path}`)
-          // console.log(`Date: ${res.headers.date}`)
-          // console.log(`Data: ${res.data}`)})
-          // .catch(function (error) {
-          //   console.log(error);
-          // });
           this.handleLogin(values)
-          this.props.history.push("/UserDashBoard");
         }}
         validationSchema={schema}
       >
