@@ -2,11 +2,9 @@ import React, { Component } from 'react';
 import { Container, Navbar, Button, Row, Col, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { history } from '../../utils/history';
-import '../Game.css'
 import { userActions } from '../../redux/actions/UsersActions';
 import { connect } from 'react-redux';
-
-
+import '../Fonts.css';
 
 class Betting extends Component {
     constructor(props) {

@@ -7,7 +7,7 @@ import { skins } from './Skins';
 import { history } from '../../utils/history'
 import { Link } from 'react-router-dom';
 import { userActions } from '../../redux/actions/UsersActions';
-
+import '../Fonts.css';
 
 class Appearance extends Component {
     constructor(props) {
@@ -33,7 +33,7 @@ class Appearance extends Component {
                         <Card.Text style={{textAlign: 'center'}}>{skin.description}</Card.Text>
                     </Card.Body>
                     <Card.Footer className="col d-flex align-items-center justify-content-center">
-                        <Button onClick={() => this.handleChangeDefault(skin.id)} disabled={(skin.id == activeSkin)}>Set as Deafult</Button>
+                        <Button onClick={() => this.handleChangeDefault(skin.id)} disabled={(skin.id == activeSkin)} className='Buttons'>Set as Default</Button>
                     </Card.Footer>
                 </Card>
                 <div style={{margin:50}} />
@@ -66,23 +66,15 @@ class Appearance extends Component {
                 return skin
             }
         })
-        const styles = {
-            signOutBtn: {
-                marginLeft: '76%',
-                justifySelf: 'center',
-                fontFamily:"'Bangers', cursive", 
-                fontSize:"20px"
-            }
-        }
 
         return(
-            <Container>
+            <Container className="Words">
                 <Navbar bg="light"> 
                     <Link to='/userdashboard'>     
                         <Navbar.Brand style={{marginLeft:8, fontFamily:"'Bangers', cursive", fontSize:"30px"}}>Roshambo</Navbar.Brand>
-                    </Link> 
+                    </Link>
                     <Navbar.Collapse className="justify-content-end">
-                        <Button variant="outline-danger"  style={styles.signOutBtn} onClick={this.handleSignOut}>Sign Out</Button>
+                        <Button className='Buttons' variant="outline-danger" onClick={this.handleSignOut}>Sign Out</Button>
                     </Navbar.Collapse>
                 </Navbar>
                 <Col>
@@ -90,7 +82,7 @@ class Appearance extends Component {
                 </Col>
                     {this.addProductCards(renderSkins, activeSkin)}
 
-                <Col className="col d-flex align-items-center justify-content-center">
+                <Col className="col d-flex align-items-center justify-content-center Buttons">
                     <Button style={{margin:30}} onClick={this.handleBack}>Back</Button>
                 </Col>
             </Container>

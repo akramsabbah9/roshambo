@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Button, Form, Container,
-Col, Nav} from 'react-bootstrap';
+Col, Row, Nav} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import './Pages.css';
+import '../Fonts.css'
 
 
 import { connect } from 'react-redux';
@@ -52,24 +53,8 @@ class Login extends Component{
       <p className="sign">Sign In</p>
       <Formik
         initialValues = {{email: '', password: ''}}
-
         onSubmit={values => {
-          // axios.post('/Test',{
-          //   username: values.username,
-          //   password: values.password
-          // })
-          // .then( res => () => {
-          // console.log(`Status code: ${res.status}`)
-          // console.log(`Status text: ${res.statusText}`)
-          // console.log(`Request method: ${res.request.method}`)
-          // console.log(`Path: ${res.request.path}`)
-          // console.log(`Date: ${res.headers.date}`)
-          // console.log(`Data: ${res.data}`)})
-          // .catch(function (error) {
-          //   console.log(error);
-          // });
           this.handleLogin(values)
-          this.props.history.push("/UserDashBoard");
         }}
         validationSchema={schema}
       >
@@ -82,7 +67,6 @@ class Login extends Component{
            handleBlur
           }) => (
           <Form onSubmit={handleSubmit}>
-          <Col>
           <Form.Group controlId = "Username">
             <Form.Control 
               type="email" 
@@ -99,8 +83,6 @@ class Login extends Component{
             {errors.username}
           </Form.Control.Feedback>
           </Form.Group>
-          </Col>
-          <Col>
           <Form.Group controlId="Password">
             <Form.Control 
               type="password"
@@ -116,21 +98,26 @@ class Login extends Component{
               {errors.password}
             </Form.Control.Feedback>
           </Form.Group>
-          </Col>
-        <Button variant="primary" type="submit" className="offset-md-3 button">
-          Submit
-        </Button>
-          <Link to="/Register" className="offset-md-2">
-            <Button className="button">
-             Register
+        <Row>
+          <Col>
+            <Button variant="primary" type="submit" className="offset-md-3 button">
+              Submit
             </Button>
-          </Link>
+          </Col>
+          <Col>
+            <Link to="/Register" className="offset-md-2">
+              <Button className="button">
+              Register
+              </Button>
+            </Link>
+          </Col>
+        </Row>
       </Form>
       )}
 
       </Formik>
 
-      {error != null ? <h3>{error.response.status == 404 ? 'Username and/or password are incorrect.' : error.response.error}</h3> : null}
+      {error != null ? <h3 className="Words" style={{fontSize: '17.5px', color: 'red', marginTop: '5%'}}>{error.response.status == 404 ? 'Username and/or password are incorrect.' : error.response.error}</h3> : null}
       
     </Container>
     </div>

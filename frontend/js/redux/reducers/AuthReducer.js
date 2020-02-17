@@ -18,12 +18,13 @@ export function auth(state=initialState, action) {
                 ...state,
                 loggingIn: false,
                 loggedIn: true,
+                error: null
             }
         case userConstants.LOGIN_FAILURE:
             return {
                 ...state,
                 loggingIn: false,
-                logedIn: false,
+                loggedIn: false,
                 error: action.error
             }
         case userConstants.LOGOUT: 

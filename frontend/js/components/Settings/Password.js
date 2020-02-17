@@ -2,9 +2,11 @@ import React, {Component} from 'react';
 import {Button, Form, Container, Row, Col} from 'react-bootstrap';
 import {Formik} from 'formik';
 import * as yup from 'yup';
-import './Settings.css';
 import { userActions } from '../../redux/actions/UsersActions';
 import { connect } from 'react-redux';
+import './Settings.css';
+import '../Fonts.css'
+
 
 const schema = yup.object({
     password : yup.string()
@@ -87,13 +89,13 @@ class Email extends Component{
                                 {errors.confirmPassword}
                             </Form.Control.Feedback>
                         </Form.Group>
-                        <Row>
+                        <Row className="Buttons">
                             <Col>
                                 <Button variant="primary" type="submit">
                                     Submit
                                 </Button>
                             </Col>
-                            <Button variant="outline-danger" onClick={this.handleGoBack} style={{marginRight:"2.5%"}}>
+                            <Button variant="danger" onClick={this.handleGoBack} style={{marginRight:"2.5%"}}>
                                 Back
                             </Button>
                         </Row>

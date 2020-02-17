@@ -6,9 +6,8 @@ import { history } from '../../utils/history';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { skins } from '../Settings/Skins';
-import '../Game.css';
 import { userActions } from '../../redux/actions/UsersActions';
-
+import '../Fonts.css';
 
 class GameLobby extends Component {
     constructor(props) {
