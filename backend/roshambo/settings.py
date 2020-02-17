@@ -149,7 +149,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # Channels configuration
-ASGI_APPLICATION = 'roshambo.routing.application'
+ASGI_APPLICATION = 'matchup.routing.application'
 
 # Channels
 CHANNEL_LAYERS = {
@@ -166,18 +166,3 @@ CORS_ORIGIN_WHITELIST = (
         'http://localhost:3000',
         'http://localhost:8000',
     )
-
-import channels.layers
-#from channels_redis.core import RedisChannelLayer
-#from asgiref.sync import async_to_sync
-# Channels configuration
-ASGI_APPLICATION = 'roshambo.routing.application'
-
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('roshambo_redis', 6379)],
-        },
-    },
-}

@@ -16,7 +16,7 @@ class Room(models.Model):
 
     # create a central websocket consumer upon initializing
     #TODO
-    my_ws = models.CharField(max_length=255)
+    # my_ws = models.CharField(max_length=255)
 
     def __str__(self):
         return self.title

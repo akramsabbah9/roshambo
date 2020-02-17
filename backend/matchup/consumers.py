@@ -71,24 +71,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 #TODO keep track of state here?
 #TODO how to start only once?
-class GameConsumer(SyncConsumer):
-    def connect(self, event):
-        self.room_name = name #TODO
-        self.room_group_name = 'game_%s' % self.room_name
+# class GameConsumer(SyncConsumer):
+#     def connect(self, event):
+#         self.room_name = name #TODO
+#         self.room_group_name = 'game_%s' % self.room_name
 
-        # Join room group
-        await self.channel_layer.group_add(
-            self.room_group_name,
-            self.channel_name
-        )
+#         # Join room group
+#         await self.channel_layer.group_add(
+#             self.room_group_name,
+#             self.channel_name
+#         )
 
-    def receive(self, event):
-        text_data_json = json.loads(text_data)
-        message = text_data_json['hand']
-        # Send message to room group
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': 'chat_message',
-                'message': 'Player sent '.join(message)
-            }
+#     def receive(self, event):
+#         text_data_json = json.loads(text_data)
+#         message = text_data_json['hand']
+#         # Send message to room group
+#         await self.channel_layer.group_send(
+#             self.room_group_name,
+#             {
+#                 'type': 'chat_message',
+#                 'message': 'Player sent '.join(message)
+#             })
