@@ -60,7 +60,7 @@ class PaymentPage extends Component {
     handleSubmit(values) {
         const skinPurchase = "Custom Skin"
         const { id, type } = this.state.items[0]
-        const data = {purchased_skins: [id]}
+        const data = {purchased_skin: id}
 
 
         // Process payment information here
