@@ -25,7 +25,6 @@ class Login extends Component{
   }
   constructor(props){
     super(props);
-    this.props.logout();
     this.state = {
       username: '',
       password: '',

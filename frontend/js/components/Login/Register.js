@@ -44,6 +44,16 @@ class Register extends Component{
     componentDidMount() {
         document.body.style.backgroundColor = '#fcc092';
     }
+
+    buildErrorMessage (error) {
+      return (
+        <React.Fragment>
+          {error.map((errorField) =>
+            errorField
+          )}
+        </React.Fragment>
+      )
+  }
     render(){
 
     const { error } = this.props 
@@ -183,7 +193,8 @@ class Register extends Component{
             )}
             </Formik>
 
-            { error != null ? <h3>{error}</h3> : null }
+            {/* TODO: need to use buildErrorMessage here */}
+            { error != null ? <h3>{'There was a problem signing you up!'}</h3> : null }
 
         </Container>
         </div>
