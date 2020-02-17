@@ -13,6 +13,7 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
 
+<<<<<<< HEAD
   # redis:
   #   container_name: roshambo_redis
   #   image: redis:5.0.7
@@ -23,6 +24,8 @@ services:
   #   restart: always
 
   
+=======
+>>>>>>> game-experimental
   redis:
     container_name: roshambo_redis
     image: redis:latest
@@ -46,6 +49,8 @@ services:
       - 8000:8000
     volumes:
       - ./backend/:/roshambo
+    links:
+      - redis
 
   frontend:
     build:
