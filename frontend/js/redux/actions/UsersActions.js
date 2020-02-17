@@ -1,6 +1,6 @@
 import { history } from '../../utils/history';
 import { userConstants } from './types';
-import { signup, currentUser, login as loginAPI, allUsers } from '../../utils/api';
+import { signup, currentUser, login as loginAPI, allUsers, editUser } from '../../utils/api';
 
 
 export const userActions = {
@@ -9,63 +9,9 @@ export const userActions = {
     logout,
     getAll,
     getCurrent,
+    changeEmail,
+    changePassword,
 }
-
-// (FOR TESTING ONLY) DELETE AFTER
-const user = {
-    name: "flowerHead10",
-    id: 0,
-    email: "lion@gmail.com",
-    rank: "15",
-    guild: "pirates@licious",
-    wins: 2,
-    loss: 12,
-    is_active: true
-}
-
-// (FOR TESTING ONLY) DELETE AFTER
-const userData = [{
-    name: "jerry1",
-    id: 1,
-    rank: "23",
-    guild: "pirates@licious",
-    wins: 23,
-    loss: 2,
-    is_active: true
-},{
-    name: "jerry2",
-    id: 2,
-    rank: "23",
-    guild: "pirates@licious",
-    wins: 23,
-    loss: 2,
-    is_active: true
-},{
-    name: "jerry3",
-    id: 3,
-    rank: "23",
-    guild: "pirates@licious",
-    wins: 23,
-    loss: 2,
-    is_active: false
-},{
-    name: "jerry4",
-    id: 4,
-    rank: "23",
-    guild: "pirates@licious",
-    wins: 23,
-    loss: 2,
-    is_active: true
-},{
-    name: "jerry5",
-    id: 5,
-    rank: "23",
-    guild: "pirates@licious",
-    wins: 23,
-    loss: 2,
-    is_active: true
-}];
-
 
 
 function login(email, password) {
@@ -74,7 +20,7 @@ function login(email, password) {
         password: password,
     }
     return dispatch => {
-        dispatch(request({email}));
+        dispatch(request());
         
         loginAPI(data)
         .then(response => {
@@ -87,8 +33,8 @@ function login(email, password) {
         })
     };
 
-    function request(user) {return { type: userConstants.LOGIN_REQUEST, user}}
-    function success(user) {return { type: userConstants.LOGIN_SUCCESS, user}}
+    function request() {return { type: userConstants.LOGIN_REQUEST}}
+    function success() {return { type: userConstants.LOGIN_SUCCESS}}
     function failure(error) {return { type: userConstants.LOGIN_FAILURE, error}}
 }
 
@@ -113,9 +59,6 @@ function register(user) {
 }
 
 function logout(user) {
-    /*
-    api.logout();
-    */
     localStorage.removeItem('token')
     return { type: userConstants.LOGOUT }
 }
@@ -142,7 +85,6 @@ function getCurrent() {
     return dispatch => {
         dispatch(request());
 
-        // get api
         currentUser()
         .then(response => {
             dispatch(success(response))
@@ -155,4 +97,52 @@ function getCurrent() {
     function request() { return {type: userConstants.GETCURRENT_REQUEST}}
     function success(user) { return { type: userConstants.GETCURRENT_SUCCESS, user}}
     function failure(error) { return { type: userConstants.GETCURRENT_FAILURE, error}}
+}
+
+function changeEmail(email) {
+    const data = {
+        email: email,
+    }
+
+    return dispatch => {
+        dispatch(request());
+        
+        editUser(data)
+        .then(response => {
+            console.log(response)
+            dispatch(success(response))
+            history.push('/userdashboard')
+        })
+        .catch(error => {
+            dispatch(failure(error))
+        })
+    };
+
+    function request() {return { type: userConstants.CHANGE_EMAIL_REQUEST}}
+    function success(user) {return { type: userConstants.CHANGE_EMAIL_SUCCESS, user}}
+    function failure(error) {return { type: userConstants.CHANGE_EMAIL_FAILURE, error}}
+}
+
+function changePassword(password) {
+    const data = {
+        password: password,
+    }
+
+    return dispatch => {
+        dispatch(request());
+        
+        editUser(data)
+        .then(response => {
+            console.log(response)
+            dispatch(success(response))
+            history.push('/userdashboard')
+        })
+        .catch(error => {
+            dispatch(failure(error))
+        })
+    };
+
+    function request() {return { type: userConstants.CHANGE_PASSWORD_REQUEST}}
+    function success() {return { type: userConstants.CHANGE_PASSWORD_SUCCESS}}
+    function failure(error) {return { type: userConstants.CHANGE_PASSWORD_FAILURE, error}}
 }

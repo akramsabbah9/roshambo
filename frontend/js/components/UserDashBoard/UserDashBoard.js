@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Link } from 'react-router-dom';
 import { history } from '../../utils/history';
 import { userActions } from '../../redux/actions/UsersActions';
+import { skinsActions } from '../../redux/actions/SkinsActions';
 import Loading from '../Loading/Loading';
 import { connect } from 'react-redux';
 import { skins } from '../Settings/Skins';
@@ -23,13 +24,14 @@ class UserDashBoard extends Component {
     }
 
 
-    
     componentDidMount() {
         document.body.style.backgroundColor = "white";
         // add functionality for rendering custom skins
-        // dispatch to get all users
+        // call api to load all states
         this.props.getCurrent()
         this.props.getAll()  
+        this.props.getActiveSkin()
+        this.props.getOwnedSkins()
     }
 
     handleSignOut(e) {
@@ -80,8 +82,10 @@ class UserDashBoard extends Component {
     }
 
     render() {
-        const { user, users, activeSkin, userLoading, usersLoading } = this.props
+        const { user, users, activeSkin, getActiveSkinLoading, userLoading, usersLoading } = this.props
         const mySkin = skins[activeSkin]
+        
+        //const mySkin = skins[0]
         const styles = {
             profilePic: {
                 marginTop: 30,
@@ -117,7 +121,11 @@ class UserDashBoard extends Component {
                 <Row>
                     <Col xs={3}>
                         <div style={styles.profilePic} className="d-flex flex-column">
-                            <FontAwesomeIcon  style={mySkin.avatar.style} icon={mySkin.avatar.name} size='6x' />
+                            {getActiveSkinLoading 
+                                ? <Loading />
+                                : <FontAwesomeIcon  style={mySkin.avatar.style} icon={mySkin.avatar.name} size='6x' />
+                            }
+                            
                         </div>
                         <Card>
                             <ListGroup variant="flush">
@@ -126,8 +134,11 @@ class UserDashBoard extends Component {
                                     <Loading/>
                                 :
                                     <React.Fragment>
-                                        <ListGroup.Item>{user.username}</ListGroup.Item>
-                                        <ListGroup.Item>{user.guild}</ListGroup.Item>
+                                        <ListGroup.Item>Name: {user.username}</ListGroup.Item>
+                                        { user.guild == "" 
+                                            ? <ListGroup.Item>Guild: None</ListGroup.Item>
+                                            : <ListGroup.Item>Guild: {user.guild}</ListGroup.Item>
+                                        }
                                         <ListGroup.Item>Games Won: {user.games_won}</ListGroup.Item>
                                         <ListGroup.Item>Games Lost: {user.games_lost}</ListGroup.Item>
                                     </React.Fragment>
@@ -165,13 +176,16 @@ function mapStateToProps (state) {
     const userLoading = state.user.userLoading
     const usersLoading = state.users.usersLoading
     const { users } = state.users
-    const { activeSkin } = state.skins
-    return { user, users, activeSkin, userLoading, usersLoading }
+    const { activeSkin, getActiveSkinLoading } = state.skins
+
+    return { user, users, activeSkin, getActiveSkinLoading, userLoading, usersLoading }
 }
 
 const actionCreators = {
     getAll: userActions.getAll,
-    getCurrent: userActions.getCurrent
+    getCurrent: userActions.getCurrent,
+    getActiveSkin: skinsActions.getActiveSkin,
+    getOwnedSkins: skinsActions.getOwnedSkins,
 }
 
 export default connect(mapStateToProps, actionCreators)(UserDashBoard);

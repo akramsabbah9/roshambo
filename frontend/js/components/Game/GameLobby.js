@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Container, Navbar, Button, Row, Col, Card} from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMehRollingEyes, faDragon } from "@fortawesome/free-solid-svg-icons";
+import { faDragon } from "@fortawesome/free-solid-svg-icons";
 import { history } from '../../utils/history';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -99,7 +99,7 @@ class GameLobby extends Component {
                              {this.state.myselfReady ? <p>READY</p> : null}   
                         </div>
                         <div className="col d-flex align-items-center justify-content-center">
-                            <h5>ME: {myself.name}</h5>
+                            <h5>ME: {myself.username}</h5>
                         </div>
                     </Col>
                     <Col xs={4}>
@@ -150,7 +150,7 @@ class GameLobby extends Component {
 
 function mapStateToProps (state) {
     const { activeSkin } = state.skins
-    const { user } = state.auth
+    const user = state.user.currentUser
 
     return { activeSkin, user }
 }

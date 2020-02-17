@@ -44,7 +44,8 @@ class Appearance extends Component {
     }
 
     handleChangeDefault(id) {
-        this.props.changeSkin(this.props.ownedSkins, id)
+        const data = {active_skin: id}
+        this.props.changeSkin(data)
     }
 
     handleSignOut(e){
@@ -54,7 +55,7 @@ class Appearance extends Component {
 
     handleBack(e) {
         e.preventDefault()
-        history.push('/Settings')
+        history.goBack()
     }
 
     render() {
@@ -64,7 +65,6 @@ class Appearance extends Component {
                 return skin
             }
         })
-        console.log(activeSkin)
         const styles = {
             signOutBtn: {
                 marginLeft: '76%',

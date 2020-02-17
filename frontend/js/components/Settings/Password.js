@@ -3,6 +3,8 @@ import {Button, Form, Container, Row, Col} from 'react-bootstrap';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import './Settings.css';
+import { userActions } from '../../redux/actions/UsersActions';
+import { connect } from 'react-redux';
 
 const schema = yup.object({
     password : yup.string()
@@ -14,11 +16,20 @@ const schema = yup.object({
 })
 
 class Email extends Component{
-    constructor(){
-        super();
+    constructor(props){
+        super(props)
+        this.handleChangePassword = this.handleChangePassword.bind(this)
+        this.handleGoBack = this.handleGoBack.bind(this)
     }
     componentDidMount(){
         document.body.style.backgroundColor="#c1f0f0";
+    }
+
+    handleChangePassword(password) {
+        this.props.changePassword(password)
+    }
+    handleGoBack() {
+        this.props.history.goBack()
     }
     render(){
         return(
@@ -27,11 +38,13 @@ class Email extends Component{
                 <Formik
                   initialValues={{password:"", confirmPassword: ""}}
                   onSubmit={(values, {setSubmitting}) => {
-                    var pw = ""
+                    /*var pw = ""
                     for(var x = 0; x < values.password.length; x++)
                         pw = pw.concat("*");
                     this.props.history.push("/userdashboard", {password: pw});
                     document.body.style.backgroundColor = 'white';
+                    */
+                   this.handleChangePassword(values.password)
                   }}
                   validationSchema={schema}
                 >
@@ -80,7 +93,7 @@ class Email extends Component{
                                     Submit
                                 </Button>
                             </Col>
-                            <Button variant="outline-danger" href="/Settings" style={{marginRight:"2.5%"}}>
+                            <Button variant="outline-danger" onClick={this.handleGoBack} style={{marginRight:"2.5%"}}>
                                 Back
                             </Button>
                         </Row>
@@ -92,4 +105,12 @@ class Email extends Component{
     }
 }
 
-export default Email;
+function mapStateToProps (state) {
+    return {}
+}
+
+const actionCreators = {
+    changePassword: userActions.changePassword
+}
+
+export default connect(mapStateToProps, actionCreators)(Email);

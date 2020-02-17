@@ -3,6 +3,8 @@ import {Button, Form, Container, Row, Col} from 'react-bootstrap';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import './Settings.css';
+import { userActions } from '../../redux/actions/UsersActions';
+import { connect } from 'react-redux';
 
 const schema = yup.object({
     email : yup.string()
@@ -12,11 +14,19 @@ const schema = yup.object({
 })
 
 class Email extends Component{
-    constructor(){
-        super();
+    constructor(props){
+        super(props)
+        this.handleEmailChange = this.handleEmailChange.bind(this)
+        this.handleGoBack = this.handleGoBack.bind(this)
     }
     componentDidMount(){
         document.body.style.backgroundColor="#ecc6ec";
+    }
+    handleEmailChange(email) {
+        this.props.changeEmail(email)
+    }
+    handleGoBack() {
+        this.props.history.goBack()
     }
     render(){
         return(
@@ -25,8 +35,9 @@ class Email extends Component{
                 <Formik
                   initialValues={{email:""}}
                   onSubmit={(values, {setSubmitting}) => {
-                    this.props.history.push("/userdashboard", {email: values.email});
-                    document.body.style.backgroundColor = 'white';
+
+                    //document.body.style.backgroundColor = 'white';
+                    this.handleEmailChange(values.email)
                   }}
                   validationSchema={schema}
                 >
@@ -60,7 +71,7 @@ class Email extends Component{
                                     Submit
                                 </Button>
                             </Col>
-                            <Button variant="outline-danger" href="/Settings" style={{marginRight:"2.5%"}}>
+                            <Button variant="outline-danger" onClick={this.handleGoBack} style={{marginRight:"2.5%"}}>
                                 Back
                             </Button>
                         </Row>
@@ -72,4 +83,12 @@ class Email extends Component{
     }
 }
 
-export default Email;
+function mapStateToProps(state) {
+    return {}
+}
+
+const actionCreators = {
+    changeEmail: userActions.changeEmail,
+}
+
+export default connect(mapStateToProps, actionCreators)(Email);

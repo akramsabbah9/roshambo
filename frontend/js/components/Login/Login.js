@@ -38,11 +38,10 @@ class Login extends Component{
     this.setState({submitted: true });
     const { email, password } = values
     this.props.login(email, password)
-    //this.props.getCurrent()
-    //history.push('/userdashboard')
   }
 
   render(){
+  const {error} = this.props
   return (
     <div>
     <Nav variant="pills">
@@ -131,6 +130,9 @@ class Login extends Component{
       )}
 
       </Formik>
+
+      {error != null ? <h3>{error}</h3> : null}
+      
     </Container>
     </div>
   );
@@ -138,14 +140,13 @@ class Login extends Component{
 }
 
 function mapState(state) {
-  const { loggingIn } = state.auth;
-  return { loggingIn };
+  const { error } = state.auth;
+  return { error };
 }
 
 const actionCreators = {
   login: userActions.login,
   logout: userActions.logout,
-  getCurrent: userActions.getCurrent
 }
 
 

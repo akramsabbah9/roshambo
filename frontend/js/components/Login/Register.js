@@ -45,6 +45,9 @@ class Register extends Component{
         document.body.style.backgroundColor = '#fcc092';
     }
     render(){
+
+    const { error } = this.props 
+    
     return (
       <div>
         <Nav variant="pills" onSelect={this.onSelect}>
@@ -179,6 +182,9 @@ class Register extends Component{
               </Form>
             )}
             </Formik>
+
+            { error != null ? <h3>{error}</h3> : null }
+
         </Container>
         </div>
     );
@@ -186,7 +192,8 @@ class Register extends Component{
 }
 
 function mapStateToProps (state) {
-  return {}
+  const { error } = state.reg
+  return { error }
 }
 
 const actionCreators = {
