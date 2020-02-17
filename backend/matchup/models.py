@@ -1,3 +1,5 @@
+# matchup/models.py
+
 from django.db import models
 from channels.consumer import SyncConsumer
 

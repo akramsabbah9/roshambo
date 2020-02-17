@@ -1,3 +1,5 @@
+# matchup/exceptions.py
+
 class ExistError(Exception):
     def __init__(self, *args):
         if args:

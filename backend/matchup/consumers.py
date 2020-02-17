@@ -1,10 +1,13 @@
+# matchup/consumers.py
+
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.generic.websocket import SyncConsumer
 from channels.db import database_sync_to_async
-from .models import Room
-from .utils import get_room_name
-from .utils import leave_room
+
 import json
+
+from .models import Room
+from .utils import get_room_name, leave_room
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
