@@ -6,9 +6,8 @@ import { history } from '../../utils/history';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { skins } from '../Settings/Skins';
+import { userActions } from '../../redux/actions/UsersActions';
 import '../Fonts.css';
-
-
 
 class GameLobby extends Component {
     constructor(props) {
@@ -48,7 +47,7 @@ class GameLobby extends Component {
 
     handleSignOut(e) {
         e.preventDefault();
-        history.push('/login');
+        this.props.logout()
     }
 
     render(){
@@ -155,5 +154,9 @@ function mapStateToProps (state) {
     return { activeSkin, user }
 }
 
+const actionCreators = {
+    logout: userActions.logout,
+}
 
-export default connect(mapStateToProps)(GameLobby);
+
+export default connect(mapStateToProps, actionCreators)(GameLobby);

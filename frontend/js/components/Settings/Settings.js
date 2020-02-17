@@ -5,6 +5,7 @@ import placeHolder from 'file-loader!../src/placeholder.png';
 import './Settings.css';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { userActions } from '../../redux/actions/UsersActions';
 import '../Fonts.css';
 
 class Settings extends Component{
@@ -18,7 +19,7 @@ class Settings extends Component{
 
     handleSignOut(e){
         e.preventDefault();
-        this.props.history.push('/login');
+        this.props.logout()
     }
 
     render(){
@@ -78,5 +79,9 @@ function mapStateToProps (state) {
    return { user }
 }
 
-export default connect(mapStateToProps)(Settings);
+const actionCreators = {
+    logout: userActions.logout,
+}
+
+export default connect(mapStateToProps, actionCreators)(Settings);
 

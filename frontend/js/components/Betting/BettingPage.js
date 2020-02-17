@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { Container, Navbar, Button, Row, Col, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { history } from '../../utils/history';
-import '../Fonts.css'
-
-
+import { userActions } from '../../redux/actions/UsersActions';
+import { connect } from 'react-redux';
+import '../Fonts.css';
 
 class Betting extends Component {
     constructor(props) {
@@ -20,6 +20,8 @@ class Betting extends Component {
 
         }
         //this.handleContinue = this.handleContinue.bind(this)
+
+        this.handleSignOut = this.handleSignOut.bind(this)
     }
 
     componentDidMount(){
@@ -59,7 +61,7 @@ class Betting extends Component {
 
     handleSignOut(e) {
         e.preventDefault();
-        history.push('/login');
+        this.props.logout()
     }
 
     render(){
@@ -124,4 +126,13 @@ class Betting extends Component {
     }
 }
 
-export default Betting;
+function mapStateToProps (state) {
+    return {}
+}
+
+const actionCreators = {
+    logout: userActions.logout,
+}
+
+
+export default connect(mapStateToProps, actionCreators)(Betting);

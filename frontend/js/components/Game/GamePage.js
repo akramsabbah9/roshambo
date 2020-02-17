@@ -4,6 +4,8 @@ import { Container, Row, Col, Card,
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMehRollingEyes, faDragon, faHandPaper, faHandScissors, faHandRock, faHandPeace } from "@fortawesome/free-solid-svg-icons";
 import { history } from '../../utils/history';
+import { connect } from 'react-redux';
+import { skins } from '../Settings/Skins';
 import "../Fonts.css";
 
 const ROCK = 0;
@@ -20,7 +22,9 @@ class GamePage extends Component {
             playerMove: -1,
             CPUMove: -1,
             GameEnded: false,
-            GameStarted: false
+            GameStarted: false,
+            CPUwins: 0,
+            myWins: 0,
         }
         this.onClick = this.onClick.bind(this);
         this.CPUMove = this.CPUMove.bind(this);
@@ -93,27 +97,49 @@ class GamePage extends Component {
     GameEndLogic(){
         switch(this.state.playerMove){
             case PAPER:
-                if(this.state.CPUMove == SCISSORS) this.setState({winnerName: "You have been defeated"});
-                if(this.state.CPUMove == ROCK) this.setState({winnerName: "You are Victorious"});
+                if(this.state.CPUMove == SCISSORS){
+                    let wins = this.state.CPUwins + 1
+                    this.setState({winnerName: "You have been defeated", CPUwins: wins});
+                } 
+                if(this.state.CPUMove == ROCK) {
+                    let wins = this.state.myWins + 1
+                    this.setState({winnerName: "You are Victorious", myWins: wins});
+                } 
                 if(this.state.CPUMove == PAPER) this.setState({winnerName: "No one wins"});
                 break;
             case SCISSORS:
                 if(this.state.CPUMove == SCISSORS) this.setState({winnerName: "No one wins"});
-                if(this.state.CPUMove == ROCK) this.setState({winnerName: "You have been defeated"});
-                if(this.state.CPUMove == PAPER) this.setState({winnerName: "You are Victorious"});
+                if(this.state.CPUMove == ROCK) {
+                    let wins = this.state.CPUwins + 1
+                    this.setState({winnerName: "You have been defeated", CPUwins: wins});
+                } 
+                if(this.state.CPUMove == PAPER) {
+                    let wins = this.state.myWins + 1
+                    this.setState({winnerName: "You are Victorious", myWins: wins});
+                }
                 break;
             case ROCK:
-                if(this.state.CPUMove == SCISSORS) this.setState({winnerName: "You are Victorious"});
+                if(this.state.CPUMove == SCISSORS) {
+                    let wins = this.state.myWins + 1
+                    this.setState({winnerName: "You are Victorious", myWins: wins});
+                } 
                 if(this.state.CPUMove == ROCK) this.setState({winnerName: "No one wins"});
-                if(this.state.CPUMove == PAPER) this.setState({winnerName: "You have been defeated"});
+                if(this.state.CPUMove == PAPER) {
+                    let wins = this.state.CPUwins + 1
+                    this.setState({winnerName: "You have been defeated", CPUwins: wins});
+                } 
                 break;
         }
     }
 
 render() {
+    const mySkin = skins[this.props.activeSkin]
+    const myself = this.props.user
+    const { myWins, CPUwins } = this.state
+
     const styles = {
         profilePic: {
-            margin: 30,
+            margin: 15,
         },
         title: {
             marginLeft: 25,
@@ -148,14 +174,14 @@ render() {
         <Container className="Words" style={{marginTop: '5%'}}>
             <Row>
                 <Col sm={4}>
-                    <div className="col d-flex align-items-center justify-content-center">
-                        <FontAwesomeIcon  style={styles.profilePic} icon={faMehRollingEyes} size='6x' />
+                    <div style={styles.profilePic} className="col d-flex align-items-center justify-content-center">
+                        <FontAwesomeIcon  style={mySkin.avatar.style} icon={mySkin.avatar.name} size='6x' />
                     </div>
                     <div className="col d-flex align-items-center justify-content-center">
-                        <p>ME</p>
+                        <h3>ME: {myself.username}</h3>
                     </div>
                     <div className="col d-flex align-items-center justify-content-center">
-                        <p>WINS: 2</p>
+                        <p>WINS: {myWins}</p>
                 </div>
                 </Col>
                 <Col sm={4}>
@@ -174,14 +200,14 @@ render() {
                     
                 </Col>
                 <Col sm={4}>
-                    <div className="col d-flex align-items-center justify-content-center">
-                        <FontAwesomeIcon  style={styles.profilePic} icon={faDragon} size='6x' />
+                    <div style={styles.profilePic} className="col d-flex align-items-center justify-content-center">
+                        <FontAwesomeIcon icon={faDragon} size='6x' />
                     </div>
                     <div className="col d-flex align-items-center justify-content-center">
-                        <p>JARED</p>
+                        <h3>THEM: JARED</h3>
                     </div>
                     <div className="col d-flex align-items-center justify-content-center">
-                        <p>WINS: 0</p>
+                        <p>WINS: {CPUwins}</p>
                     </div>
                 </Col>
             </Row>
@@ -270,4 +296,13 @@ render() {
 }
 }
 
-export default GamePage;
+
+function mapStateToProps (state) {
+    const { activeSkin } = state.skins
+    const user = state.user.currentUser
+
+    return { activeSkin, user }
+}
+
+
+export default connect(mapStateToProps)(GamePage);

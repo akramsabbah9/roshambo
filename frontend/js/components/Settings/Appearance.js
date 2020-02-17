@@ -6,8 +6,8 @@ import { connect } from 'react-redux';
 import { skins } from './Skins';
 import { history } from '../../utils/history'
 import { Link } from 'react-router-dom';
+import { userActions } from '../../redux/actions/UsersActions';
 import '../Fonts.css';
-
 
 class Appearance extends Component {
     constructor(props) {
@@ -51,7 +51,7 @@ class Appearance extends Component {
 
     handleSignOut(e){
         e.preventDefault();
-        history.push('/login');
+        this.props.logout()
     }
 
     handleBack(e) {
@@ -96,7 +96,8 @@ function mapStateToProps (state) {
 }
 
 const actionCreators = {
-    changeSkin: skinsActions.change
+    changeSkin: skinsActions.change,
+    logout: userActions.logout,
 }
 
 export default connect(mapStateToProps, actionCreators)(Appearance);
