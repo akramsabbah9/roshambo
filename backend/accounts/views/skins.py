@@ -94,7 +94,8 @@ class PurchasedUserSkins(APIView):
         # TODO(benjibrandt): need to check based on Stripe token
         newly_purchased_skins = request.data['purchased_skins']
         for skin in newly_purchased_skins:
-            skin_object = SkinsInventory.objects.filter(skin=skin)
+            skin_object = SkinsInventory.objects.filter(skin=skin).values('skin')
+            print(skin_object)
             if skin_object:
                 request.user.skins.purchased_skins.add(skin_object)
                 request.user.skins.save()

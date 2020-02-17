@@ -12,6 +12,9 @@ __pycache__/
 # C extensions
 *.so
 
+# Test Data
+test-data
+
 # Distribution / packaging
 .Python
 env/

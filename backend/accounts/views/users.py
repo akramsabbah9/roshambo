@@ -12,7 +12,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.authtoken.models import Token
 from rest_framework.mixins import UpdateModelMixin
 
-from ..models import RoshamboUser as User, SkinsInventory, Skins, Stats
+from ..models import RoshamboUser as User, SkinsInventory, Skins, Stats, Wallet
 from ..serializers import UserSerializer, EditUserSerializer
 
 
@@ -116,6 +116,7 @@ class Register(APIView):
             if user:
                 self._add_default_skin(user)
                 self._initialize_stats_entries(user)
+                self._initialize_wallet(user)
                 update_last_login(request, user)
                 token = Token.objects.create(user=user)
                 json = serializer.data
@@ -135,6 +136,10 @@ class Register(APIView):
     def _initialize_stats_entries(self, user):
         user_stats = Stats(user=user)
         user_stats.save()
+
+    def _initialize_wallet(self, user):
+        wallet = Wallet(user=user)
+        wallet.save()
 
 
 class Login(APIView):
