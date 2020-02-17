@@ -39,7 +39,7 @@ class WalletAPI(GenericAPIView, UpdateModelMixin):
         current_cash = request.user.wallet.cash
         if action == 'sub' and amount > current_cash:
             return Response(
-                {'amount': '{} is greater than user\'s current balance. Cannot complete transaction.'.format(amount)}, 
+                {'amount': '{} is greater than user\'s current balance of {}. Cannot complete transaction.'.format(amount, current_cash)}, 
                 status=status.HTTP_402_PAYMENT_REQUIRED
             )
 
