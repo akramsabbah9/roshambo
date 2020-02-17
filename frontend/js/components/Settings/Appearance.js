@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { skins } from './Skins';
 import { history } from '../../utils/history'
 import { Link } from 'react-router-dom';
+import { userActions } from '../../redux/actions/UsersActions';
 
 
 class Appearance extends Component {
@@ -50,7 +51,7 @@ class Appearance extends Component {
 
     handleSignOut(e){
         e.preventDefault();
-        history.push('/login');
+        this.props.logout()
     }
 
     handleBack(e) {
@@ -68,8 +69,9 @@ class Appearance extends Component {
         const styles = {
             signOutBtn: {
                 marginLeft: '76%',
-                marginRight: '24%',
-                justifySelf: 'center'
+                justifySelf: 'center',
+                fontFamily:"'Bangers', cursive", 
+                fontSize:"20px"
             }
         }
 
@@ -79,7 +81,9 @@ class Appearance extends Component {
                     <Link to='/userdashboard'>     
                         <Navbar.Brand style={{marginLeft:8, fontFamily:"'Bangers', cursive", fontSize:"30px"}}>Roshambo</Navbar.Brand>
                     </Link> 
-                    <Button style={styles.signOutBtn} variant="outline-danger" onClick={this.handleSignOut}>Sign Out</Button>
+                    <Navbar.Collapse className="justify-content-end">
+                        <Button variant="outline-danger"  style={styles.signOutBtn} onClick={this.handleSignOut}>Sign Out</Button>
+                    </Navbar.Collapse>
                 </Navbar>
                 <Col>
                     <h1 style={{marginTop:10, marginBottom: 10}}>Change Skins</h1>
@@ -100,7 +104,8 @@ function mapStateToProps (state) {
 }
 
 const actionCreators = {
-    changeSkin: skinsActions.change
+    changeSkin: skinsActions.change,
+    logout: userActions.logout,
 }
 
 export default connect(mapStateToProps, actionCreators)(Appearance);

@@ -27,7 +27,10 @@ export function auth(state=initialState, action) {
                 error: action.error
             }
         case userConstants.LOGOUT: 
-            return {}
+            return {
+                ...state,
+                loggedIn: false,
+            }
             
         default:
             return state

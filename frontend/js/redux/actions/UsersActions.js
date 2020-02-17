@@ -59,10 +59,15 @@ function register(user) {
 }
 
 function logout(user) {
-    logoutAPI().then(() => {
-        localStorage.removeItem('token')
-        return { type: userConstants.LOGOUT }
-    })
+    return dispatch =>{
+        logoutAPI()
+        .then(() => {
+            localStorage.removeItem('token')
+            dispatch(success())
+            history.push('/login');
+        })   
+    }
+    function success() {return {type: userConstants.LOGOUT}}
 }
 
 function getAll() {

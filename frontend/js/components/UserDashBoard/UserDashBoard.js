@@ -36,7 +36,7 @@ class UserDashBoard extends Component {
 
     handleSignOut(e) {
         e.preventDefault();
-        history.push('/login');
+        this.props.logout()
     }
 
     handleMatch(e) {
@@ -183,10 +183,12 @@ function mapStateToProps (state) {
 }
 
 const actionCreators = {
+    logout: userActions.logout,
     getAll: userActions.getAll,
     getCurrent: userActions.getCurrent,
     getActiveSkin: skinsActions.getActiveSkin,
     getOwnedSkins: skinsActions.getOwnedSkins,
+    
 }
 
 export default connect(mapStateToProps, actionCreators)(UserDashBoard);

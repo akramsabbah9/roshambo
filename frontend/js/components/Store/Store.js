@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 import { history } from '../../utils/history';
 import { connect } from 'react-redux';
 import "../Game.css"
+import { userActions } from '../../redux/actions/UsersActions';
+
 
 /* 
     To Do:
@@ -26,6 +28,8 @@ class OnlineStore extends Component {
             products: skins,
             toPurchase: null
         }
+
+        this.handleSignOut = this.handleSignOut.bind(this)
     }
 
     componentDidMount(){
@@ -45,7 +49,7 @@ class OnlineStore extends Component {
 
     handleSignOut(e) {
         e.preventDefault();
-        history.push('/login');
+        this.props.logout()
     }
 
     addProductCards(products) {
@@ -105,4 +109,8 @@ function mapStateToProps (state) {
     return { ownedSkins }
 }
 
-export default connect(mapStateToProps)(OnlineStore);
+const actionCreators = {
+    logout: userActions.logout
+}
+
+export default connect(mapStateToProps, actionCreators)(OnlineStore);
