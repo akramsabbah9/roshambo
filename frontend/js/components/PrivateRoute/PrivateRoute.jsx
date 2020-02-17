@@ -8,3 +8,12 @@ export const PrivateRoute = ({ component: Component, ...rest }) => (
             : <Redirect to={{ pathname: '/login', state: {from: props.location } }} />)
     } />
 )
+
+export const HomeRoute = ({ component: Component, ...rest }) => (
+    <Route {...rest} render={props => (
+        localStorage.getItem('token')
+            ? <Redirect to={{ pathname: '/userdashboard', state: {from: props.location } }} />
+            : <Component {...props} />
+    )
+    } />
+)

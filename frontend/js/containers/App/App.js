@@ -14,7 +14,7 @@ import Payment from '../../components/Payment/payment';
 import OnlineStore from '../../components/Store/Store';
 import Appearance from '../../components/Settings/Appearance';
 import Erehwon from '../../components/404 Page/404page';
-import { PrivateRoute } from '../../components/PrivateRoute/PrivateRoute';
+import { PrivateRoute, HomeRoute } from '../../components/PrivateRoute/PrivateRoute';
 import { history } from '../../utils/history';
 
 
@@ -22,7 +22,7 @@ import { history } from '../../utils/history';
 const App = () => (
   <Router history={history}>
     <Switch>
-        <Route exact path="/" component={Menu}/>
+        <HomeRoute exact path="/" component={Menu}/>
         <Route exact path="/Register" component={Register}/>
         <Route exact path="/login" component={LoginPage}/>
         <PrivateRoute exact path="/UserDashBoard" component={UserDashBoard} />   
