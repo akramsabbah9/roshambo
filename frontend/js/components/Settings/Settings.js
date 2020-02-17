@@ -9,7 +9,7 @@ import '../Fonts.css';
 
 class Settings extends Component{
     constructor(props){
-        super();
+        super(props);
         this.handleSignOut = this.handleSignOut.bind(this);
     }
     componentDidMount(){
@@ -40,7 +40,7 @@ class Settings extends Component{
                             <Card.Title style={{textAlign: 'Center'}}>User Profile</Card.Title>
                             <Card.Img src={placeHolder} style={{width: '12rem', height: '12rem', marginLeft:"13.5%"}} alt="Card image" />
                             <Card.Text>
-                            Welcome {user.name}!
+                            Welcome {user.username}!
                             </Card.Text>
                         </Card.Body>
                         </Card>
@@ -75,7 +75,6 @@ class Settings extends Component{
 
 function mapStateToProps (state) {
    const user = state.user.currentUser
-
    return { user }
 }
 

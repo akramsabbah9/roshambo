@@ -18,7 +18,19 @@ class RoshamboUser(AbstractUser):
     objects = RoshamboUserManager()
 
     def __str__(self):
-        return 'email: {}; username: {}'.format(self.email, self.username)
+        return 'id: {}; email: {}; username: {}'.format(self.id, self.email, self.username)
+
+
+class Wallet(models.Model):
+    """
+    Will house in-site currency. Will only allow for whole numbers, so will use an integer.
+    Store purchases buy increments of this currency, and this currency is used for all other purchases.
+    """
+    user = models.OneToOneField(RoshamboUser, on_delete=models.CASCADE, primary_key=True)
+    cash = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return 'user {} has {} in in-site currency.'.format(self.user, self.cash)
 
 
 class Stats(models.Model):
@@ -32,9 +44,16 @@ class Stats(models.Model):
 
 class SkinsInventory(models.Model):
     skin = models.PositiveIntegerField(primary_key=True)
+    price = models.PositiveIntegerField(default=5)
+
+    def __str__(self):
+        return 'skin {} costs {} in in-site currency.'.format(self.skin, self.price)
 
 
 class Skins(models.Model):
     user = models.OneToOneField(RoshamboUser, on_delete=models.CASCADE, primary_key=True)
     active_skin = models.ForeignKey(SkinsInventory, on_delete=models.CASCADE, related_name='value')
     purchased_skins = models.ManyToManyField(SkinsInventory)
+
+    def __str__(self):
+        return 'user {} has skin {} currently active, and owns {}.'.format(self.user, self.active_skin, self.purchased_skins)

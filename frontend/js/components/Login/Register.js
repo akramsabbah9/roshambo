@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Button, Form, Container,
-Col, Nav, Navbar} from 'react-bootstrap';
+Col, Nav, Row} from 'react-bootstrap';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import './Pages.css';
 import { connect } from 'react-redux';
-import { usersActions, userActions } from '../../redux/actions/UsersActions';
+import {userActions } from '../../redux/actions/UsersActions';
 
 const schema = yup.object({
     first_name : yup.string()
@@ -44,6 +44,16 @@ class Register extends Component{
     componentDidMount() {
         document.body.style.backgroundColor = '#fcc092';
     }
+
+    buildErrorMessage (error) {
+      return (
+        <React.Fragment>
+          {error.map((errorField) =>
+            errorField
+          )}
+        </React.Fragment>
+      )
+  }
     render(){
 
     const { error } = this.props 
@@ -76,114 +86,110 @@ class Register extends Component{
            handleBlur
           }) => (
             <Form onSubmit={handleSubmit}>
-                <p className="sign">Register</p>
-                <Col>
-                <Form.Group controlId="formFirstName">
-                  <Form.Control 
-                    type="text" 
-                    placeholder="First Name" 
+            <p className="sign">Register</p>
+            <Form.Group controlId="formFirstName">
+              <Form.Control 
+                type="text" 
+                placeholder="First Name" 
+                className="inputbox"
+                name="first_name"
+                value={values.firstName}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                isInvalid={(touched.firstName && errors.firstName)}
+                />
+              <Form.Control.Feedback type="invalid">
+                    {errors.firstName}
+              </Form.Control.Feedback>
+            </Form.Group>
+            <Form.Group controlId="formLastName">
+              <Form.Control 
+                type="text" 
+                placeholder="Last Name" 
+                className="inputbox"
+                name="last_name"
+                value={values.lastName}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                isInvalid={(touched.lastName && errors.lastName)}
+                />
+              <Form.Control.Feedback type="invalid">
+                    {errors.lastName}
+              </Form.Control.Feedback>
+            </Form.Group>
+            <Form.Group controlId="formBasicEmail">
+                <Form.Control 
+                  type="email" 
+                  placeholder="Email" 
+                  name="email"
+                  className="inputbox"
+                  value={values.email}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  isInvalid={touched.email && errors.email}
+                />
+                <Form.Control.Feedback type="invalid">
+                    {errors.email}
+              </Form.Control.Feedback>
+            </Form.Group>
+            <Form.Group controlId="formUsername">
+                <Form.Control 
+                  type="text" 
+                  placeholder="Username"
+                  name="username"
+                  className="inputbox"
+                  value={values.username}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  isInvalid={touched.username && errors.username}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.username}
+                </Form.Control.Feedback>
+            </Form.Group>
+                <Form.Group controlId="formPassword">
+                    <Form.Control 
+                    type="password" 
+                    placeholder="Password"
+                    name="password"
                     className="inputbox"
-                    name="first_name"
-                    value={values.firstName}
+                    value={values.password}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    isInvalid={(touched.firstName && errors.firstName)}
-                    />
-                   <Form.Control.Feedback type="invalid">
-                        {errors.firstName}
-                   </Form.Control.Feedback>
-                </Form.Group>
-                <Form.Group controlId="formLastName">
-                  <Form.Control 
-                    type="text" 
-                    placeholder="Last Name" 
-                    className="inputbox"
-                    name="last_name"
-                    value={values.lastName}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    isInvalid={(touched.lastName && errors.lastName)}
-                    />
-                   <Form.Control.Feedback type="invalid">
-                        {errors.lastName}
-                   </Form.Control.Feedback>
-                </Form.Group>
-                <Form.Group controlId="formBasicEmail">
-                    <Form.Control 
-                      type="email" 
-                      placeholder="Email" 
-                      name="email"
-                      className="inputbox"
-                      value={values.email}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      isInvalid={touched.email && errors.email}
+                    isInvalid={touched.password && errors.password}
                     />
                     <Form.Control.Feedback type="invalid">
-                        {errors.email}
-                   </Form.Control.Feedback>
-                </Form.Group>
-                 
-                </Col>
-                <Col>
-                <Form.Group controlId="formUsername">
-                    <Form.Control 
-                      type="text" 
-                      placeholder="Username"
-                      name="username"
-                      className="inputbox"
-                      value={values.username}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      isInvalid={touched.username && errors.username}
-                    />
-                    <Form.Control.Feedback type="invalid">
-                      {errors.username}
+                        {errors.password}
                     </Form.Control.Feedback>
                 </Form.Group>
-                </Col>
-                <Col>
-                    <Form.Group controlId="formPassword">
-                        <Form.Control 
-                        type="password" 
-                        placeholder="Password"
-                        name="password"
-                        className="inputbox"
-                        value={values.password}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        isInvalid={touched.password && errors.password}
-                        />
-                        <Form.Control.Feedback type="invalid">
-                            {errors.password}
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                </Col>
-                <Col>
-                    <Form.Group controlId="formConfirmPassword">
-                        <Form.Control 
-                        type="password" 
-                        placeholder="Confirm Password"
-                        name="confirmPassword"
-                        className="inputbox"
-                        value={values.confirmPassword}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        isInvalid={touched.confirmPassword && errors.confirmPassword}
-                        />
-                        <Form.Control.Feedback type="invalid">
-                            {errors.confirmPassword}
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                </Col>
-                <Button variant="primary" type="submit" className="offset-lg-5 button" disabled={isSubmitting}>
-                    Submit
-                </Button>
+                <Form.Group controlId="formConfirmPassword">
+                    <Form.Control 
+                    type="password" 
+                    placeholder="Confirm Password"
+                    name="confirmPassword"
+                    className="inputbox"
+                    value={values.confirmPassword}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    isInvalid={touched.confirmPassword && errors.confirmPassword}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                        {errors.confirmPassword}
+                    </Form.Control.Feedback>
+                </Form.Group>
+                <Row>
+                  <Col className="d-flex justify-content-center align-items-center">
+                    <Button variant="primary" type="submit" className="button" disabled={isSubmitting}>
+                        Submit
+                    </Button>
+                  </Col>
+                </Row>
               </Form>
             )}
             </Formik>
 
-            { error != null ? <h3>{error}</h3> : null }
+            {/* TODO: need to use buildErrorMessage here */}
+            { error != null ? <h3>{error.message}</h3> : null }
 
         </Container>
         </div>

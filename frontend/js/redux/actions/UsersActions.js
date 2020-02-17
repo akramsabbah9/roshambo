@@ -1,6 +1,6 @@
 import { history } from '../../utils/history';
 import { userConstants } from './types';
-import { signup, currentUser, login as loginAPI, allUsers, editUser } from '../../utils/api';
+import { signup, currentUser, login as loginAPI, allUsers, editUser, logout as logoutAPI } from '../../utils/api';
 
 
 export const userActions = {
@@ -59,8 +59,10 @@ function register(user) {
 }
 
 function logout(user) {
-    localStorage.removeItem('token')
-    return { type: userConstants.LOGOUT }
+    logoutAPI().then(() => {
+        localStorage.removeItem('token')
+        return { type: userConstants.LOGOUT }
+    })
 }
 
 function getAll() {

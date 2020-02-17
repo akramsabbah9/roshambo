@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Container, ToggleButton, Row, Col, Card, ToggleButtonGroup, 
+import { Container, Row, Col, Card, 
          ButtonToolbar, Button, ButtonGroup} from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMehRollingEyes, faDragon, faHandPaper, faHandScissors, faHandRock, faHandPeace } from "@fortawesome/free-solid-svg-icons";
-import "../Fonts.css"
+import { history } from '../../utils/history';
+import "../Fonts.css";
 
 const ROCK = 0;
 const PAPER = 1;
@@ -26,6 +27,10 @@ class GamePage extends Component {
         this.CountDown = this.CountDown.bind(this);
         this.GameEndLogic = this.GameEndLogic.bind(this);
         this.CountDownEffect = this.CountDownEffect.bind(this);
+        this.Quit = this.Quit.bind(this);
+    }
+    Quit(){
+        history.push('/userdashboard');
     }
     onClick(selection){
         this.state.GameStarted = true;
@@ -139,8 +144,9 @@ render() {
 
     }
     return (
-        <Container className="Words">
-            <Row style={{margin:50, marginTop:'15%'}}>
+        <>
+        <Container className="Words" style={{marginTop: '5%'}}>
+            <Row>
                 <Col sm={4}>
                     <div className="col d-flex align-items-center justify-content-center">
                         <FontAwesomeIcon  style={styles.profilePic} icon={faMehRollingEyes} size='6x' />
@@ -215,7 +221,7 @@ render() {
                     }
                 </Col>
             </Row>
-            <Row style={{margin:50}}>
+            <Row style={{margin:25}}>
                 <ButtonToolbar className="col d-flex align-items-center justify-content-center">
                     <ButtonGroup size="lg" style={{width: '100%'}}>
                         <Button 
@@ -243,28 +249,23 @@ render() {
                             <FontAwesomeIcon icon={faHandPeace}/>
                         </Button>
                     </ButtonGroup>
-                   
-                        {/* <ToggleButtonGroup size="lg" style={{width:'100%'}} type="radio" name="options" >
-                            <ToggleButton value={"rock"} onClick={(event) => this.onClick(0)}>
-                                <FontAwesomeIcon icon={faHandRock}/>
-                            </ToggleButton>
-                            <ToggleButton value={"paper"} onClick={(event) => this.onClick(1)}>
-                                <FontAwesomeIcon icon={faHandPaper}/>
-                            </ToggleButton>
-                            <ToggleButton value={"scissors"} onClick={(event) => this.onClick(2)}>
-                                <FontAwesomeIcon icon={faHandScissors}/>
-                            </ToggleButton>
-                        </ToggleButtonGroup> */}
                 </ButtonToolbar>
             </Row>
-            <Row>
+            <Row style={{margin:25}}>
                 <div className="col d-flex align-items-center justify-content-center"
                 style={{fontFamily: "Bangers, cursive", fontSize: "2em"}}>
                     {this.state.GameEnded ? this.state.winnerName : ""}
                 </div>
             </Row>
-
+            <Row>
+                <div className="col d-flex justify-content-center align-items-center">
+                    <Button variant='danger' className="Buttons" size="lg" onClick={this.Quit}>
+                        Get Me Out
+                    </Button>
+                </div>
+            </Row>
         </Container>
+        </>
     )
 }
 }
