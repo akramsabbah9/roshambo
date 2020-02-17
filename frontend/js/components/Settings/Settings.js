@@ -5,7 +5,7 @@ import placeHolder from 'file-loader!../src/placeholder.png';
 import './Settings.css';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import '../Game.css';
+import '../Fonts.css';
 
 class Settings extends Component{
     constructor(props){

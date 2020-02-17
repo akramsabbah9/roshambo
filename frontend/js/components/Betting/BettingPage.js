@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Container, Navbar, Button, Row, Col, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { history } from '../../utils/history';
-import '../Game.css'
+import '../Fonts.css'
 
 
 

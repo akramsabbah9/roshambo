@@ -20,10 +20,11 @@ export function auth(state=initialState, action) {
                 loggedIn: true,
             }
         case userConstants.LOGIN_FAILURE:
+            console.log(action.error.message);
             return {
                 ...state,
                 loggingIn: false,
-                logedIn: false,
+                loggedIn: false,
                 error: action.error
             }
         case userConstants.LOGOUT: 

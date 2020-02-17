@@ -6,7 +6,7 @@ import { history } from '../../utils/history';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { skins } from '../Settings/Skins';
-import '../Game.css';
+import '../Fonts.css';
 
 
 

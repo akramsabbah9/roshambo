@@ -11,7 +11,7 @@ import { skinsActions } from '../../redux/actions/SkinsActions';
 import Loading from '../Loading/Loading';
 import { connect } from 'react-redux';
 import { skins } from '../Settings/Skins';
-import '../Game.css'
+import '../Fonts.css'
 
 
 class UserDashBoard extends Component {

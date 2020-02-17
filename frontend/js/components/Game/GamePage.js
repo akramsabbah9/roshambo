@@ -3,7 +3,7 @@ import { Container, ToggleButton, Row, Col, Card, ToggleButtonGroup,
          ButtonToolbar, Button, ButtonGroup} from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMehRollingEyes, faDragon, faHandPaper, faHandScissors, faHandRock, faHandPeace } from "@fortawesome/free-solid-svg-icons";
-import "../Game.css"
+import "../Fonts.css"
 
 const ROCK = 0;
 const PAPER = 1;

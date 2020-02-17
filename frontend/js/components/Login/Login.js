@@ -6,6 +6,7 @@ import {Link} from 'react-router-dom';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import './Pages.css';
+import '../Fonts.css'
 
 
 import { connect } from 'react-redux';
@@ -117,7 +118,8 @@ class Login extends Component{
               {errors.password}
             </Form.Control.Feedback>
           </Form.Group>
-          </Col>
+        </Col>
+        {error != null ? <h3 className="Buttons" style={{textAlign: 'center'}}>{error.message}</h3> : null}
         <Button variant="primary" type="submit" className="offset-md-3 button">
           Submit
         </Button>
@@ -128,11 +130,7 @@ class Login extends Component{
           </Link>
       </Form>
       )}
-
-      </Formik>
-
-      {error != null ? <h3>{error}</h3> : null}
-      
+      </Formik>      
     </Container>
     </div>
   );
