@@ -131,7 +131,7 @@ class Login extends Component{
 
       </Formik>
 
-      {error != null ? <h3>{error}</h3> : null}
+      {error != null ? <h3>{error.response.status == 404 ? 'Username and/or password are incorrect.' : error.response.error}</h3> : null}
       
     </Container>
     </div>
