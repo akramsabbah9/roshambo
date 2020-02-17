@@ -33,8 +33,10 @@ def current_user(request):
     """
     # TODO(benjibrandt): this is sorty janky to filter the entire user set...
     user = User.objects.filter(id=request.user.id).annotate(
-        games_won=F('stats__games_won'), games_lost=F('stats__games_lost')
-    ).values('first_name', 'last_name', 'email', 'username', 'guild', 'games_won', 'games_lost').first()
+        games_won=F('stats__games_won'), 
+        games_lost=F('stats__games_lost'),
+        cash=F('wallet__cash')
+    ).values('first_name', 'last_name', 'email', 'username', 'guild', 'games_won', 'games_lost', 'cash').first()
     return Response(user)
 
 

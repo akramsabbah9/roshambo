@@ -62,7 +62,7 @@ class UserDashBoard extends Component {
                     <th>Name</th>
                     <th>Guild</th>
                     <th>Wins</th>
-                    <th>Loss</th>
+                    <th>Losses</th>
                     <th>Active?</th>
                 </tr>
             </thead>
@@ -139,6 +139,7 @@ class UserDashBoard extends Component {
                                             ? <ListGroup.Item>Guild: None</ListGroup.Item>
                                             : <ListGroup.Item>Guild: {user.guild}</ListGroup.Item>
                                         }
+                                        <ListGroup.Item>ReiherRubles: ℟{user.cash}</ListGroup.Item>
                                         <ListGroup.Item>Games Won: {user.games_won}</ListGroup.Item>
                                         <ListGroup.Item>Games Lost: {user.games_lost}</ListGroup.Item>
                                     </React.Fragment>
@@ -155,7 +156,7 @@ class UserDashBoard extends Component {
                     </Col>
                     <Col xs={9} >
                         <Card style={styles.tableCard}>
-                            <Card.Title style={styles.title}>Online Users</Card.Title>
+                            <Card.Title style={styles.title}>Top Users</Card.Title>
                             <Card.Body>
                                 {usersLoading ? <Loading /> : this.buildOnlineUserTable(users)}
                             </Card.Body>
