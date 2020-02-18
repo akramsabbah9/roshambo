@@ -30,7 +30,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             await self.accept()
             await self._send_response(
                 {
-                    'error': 'Please provide your authentication token as a header to access this resource.',
+                    'error': self.scope['authentication_message'],
                 }, 
                 status=status.HTTP_400_BAD_REQUEST)
             await self.close()
