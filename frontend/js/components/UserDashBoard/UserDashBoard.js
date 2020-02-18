@@ -146,7 +146,7 @@ class UserDashBoard extends Component {
                             </ListGroup>
 
                         </Card>
-                        <div className="d-flex flex-column" style={{marginTop: '4%', marginRight: '5%'}}>
+                        <div className="d-flex flex-column" style={{marginTop: '15%', marginLeft: '2%'}}>
                             <ButtonGroup className="Buttons">
                                 <Button variant="outline-info" onClick={this.handleSettings}>Settings</Button>
                                 <Button variant="outline-info" onClick={this.handleStore.bind(this)}>Store</Button>

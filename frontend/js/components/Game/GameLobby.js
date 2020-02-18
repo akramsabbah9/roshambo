@@ -21,6 +21,10 @@ class GameLobby extends Component {
         this.handleBet = this.handleBet.bind(this);
         this.handleSignOut = this.handleSignOut.bind(this);
     }
+    
+    componentDidMount(){
+        this.props.getCurrent()
+    }
 
     handleExit(e) {
         e.preventDefault()
@@ -53,8 +57,6 @@ class GameLobby extends Component {
     render(){
         const mySkin = skins[this.props.activeSkin]
         const myself = this.props.user
-
-        console.log(JSON.stringify(mySkin))
 
         const styles = {
             profilePic: {
@@ -98,7 +100,7 @@ class GameLobby extends Component {
                              {this.state.myselfReady ? <p>READY</p> : null}   
                         </div>
                         <div className="col d-flex align-items-center justify-content-center">
-                            <h5>ME: {myself.username}</h5>
+                            <h5 style={{margin: 15}}>ME: {myself.username}</h5>
                         </div>
                     </Col>
                     <Col xs={4}>
@@ -116,7 +118,7 @@ class GameLobby extends Component {
                             <FontAwesomeIcon  style={mySkin.avatar.style} icon={faDragon} size='6x' />
                         </div>
                         <div className="col d-flex align-items-center justify-content-center">
-                            <h5>THEM: Jared18</h5>
+                            <h5 style={{margin: 15}}>THEM: Jared18</h5>
                         </div>
                     </Col>
                 </Row>
@@ -130,13 +132,13 @@ class GameLobby extends Component {
                     </Col>
                     <Col xs={6}>
                         <Row>
-                                <Button variant="outline-success" className="Buttons" block size="lg" onClick={this.handleReady}>Ready</Button>      
+                                <Button style={{margin:5}} variant="outline-success" className="Buttons" block size="lg" onClick={this.handleReady}>Ready</Button>      
                         </Row>
                         <Row>
-                                <Button variant="outline-warning" className="Buttons" block size="lg" onClick={this.handleBet}>Bet</Button>                       
+                                <Button style={{margin:5}} variant="outline-warning" className="Buttons" block size="lg" onClick={this.handleBet}>Bet</Button>                       
                         </Row>
                         <Row>                          
-                                <Button variant="outline-danger" className="Buttons" block size="lg" onClick={this.handleExit}>Exit</Button>
+                                <Button style={{margin:5}} variant="outline-danger" className="Buttons" block size="lg" onClick={this.handleExit}>Exit</Button>
                         </Row>
                     </Col>
                 </Row>
@@ -156,6 +158,7 @@ function mapStateToProps (state) {
 
 const actionCreators = {
     logout: userActions.logout,
+    getCurrent: userActions.getCurrent,
 }
 
 
