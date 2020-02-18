@@ -27,10 +27,10 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         self.user = self.scope['user']
 
         if self.user.is_anonymous:
-            await self.accept()
+            await self.accept(subprotocol='Token')
             await self._send_response(
                 {
-                    'error': self.scope['authentication_message'],
+                    'error': self.scope['authentication_message']
                 }, 
                 status=status.HTTP_400_BAD_REQUEST)
             await self.close()
@@ -45,7 +45,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
 
-        await self.accept()
+        await self.accept(subprotocol='Token')
 
     async def disconnect(self, close_code):
         """

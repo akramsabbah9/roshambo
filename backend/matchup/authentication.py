@@ -10,21 +10,21 @@ from rest_framework.authtoken.models import Token
 @database_sync_to_async
 def get_user(headers):
     # Check proper header present
-    if b"authorization" not in headers:
-        return AnonymousUser(), 'no authorization provided' # we can then reject anonymous users in connect
+    if b"sec-websocket-protocol" not in headers:
+        return AnonymousUser(), 'sec-websocket-protocol not provided, so no authentication is possible' # we can then reject anonymous users in connect
         
-    auth_header = headers[b"authorization"].split()
+    auth_header = headers[b"sec-websocket-protocol"].split()
     if not auth_header:
-        return AnonymousUser(), 'no authorization provided'
+        return AnonymousUser(), 'no token provided in sec-websocket-protocol'
 
-    if auth_header[0].lower() != "token".encode():
+    if auth_header[0].lower() != "token,".encode():
         return AnonymousUser(), 'token not identified in header'
 
     # Check header correctness.
     if len(auth_header) == 1:
         return AnonymousUser(), 'no token provided'
     if len(auth_header) > 2:
-        return AnonymousUser(), 'token contains spaces'
+        return AnonymousUser(), 'token contains extraneous info'
     try:
         auth_header_token = auth_header[1].decode()
     except UnicodeError:
@@ -73,8 +73,8 @@ class TokenAuthMiddlewareInstance:
         """
         # Only handle "Authorization" headers starting with "Token".
         headers = dict(self.scope["headers"])
-        
         self.scope['user'], self.scope['authentication_message'] = await get_user(headers)
+
         inner = self.inner(self.scope)
         return await inner(receive, send)
 
