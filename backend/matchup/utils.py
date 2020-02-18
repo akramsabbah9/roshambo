@@ -1,45 +1,65 @@
-from channels.db import database_sync_to_async
-from .models import Room
-from .exceptions import ExistError
-import random
-import string
+# matchup/utils.py
 
-@database_sync_to_async
-def get_room_name():
-    # find a room
-    rooms = list(Room.objects.filter(usr_count__lte=1, lock=False))
-    if len(rooms) == 0:
-        # if no rooms are open, make a new one
-        name = ''.join(random.choice(string.ascii_lowercase) for i in range(10))
-        # if a duplicate name is made, redo the name until it isn't a dupe: 
-        collision = 1
-        while collision == 1:
-            try:
-                Room.objects.get(title=name)
-                name = ''.join(random.choice(string.ascii_lowercase) for i in range(10))
-            except Room.DoesNotExist:
-                collision = 0
-        
-        room = Room.objects.create(title=name)
-    else:
-        room = rooms[0]
-        name = rooms[0].title
-    # increment usr_count of that room, and get out
-    room.usr_count += 1
-    if room.usr_count == 2:
-        room.lock = True
-    room.save()
-    return name
+import asyncio
+import datetime
 
+from .model_interactions.utils import RPSMove
 
-@database_sync_to_async
-def leave_room(name):
-    try:
-        room = Room.objects.get(title=name)
-    except Room.DoesNotExist:
-        raise ExistError("ROOM DOES NOT EXIST!")
-    
-    room.usr_count -= 1
-    room.save()
-    if (room.usr_count <= 0):
-        room.delete()
+class Timer:
+    def __init__(self, time_to_take, callback):
+        self._time_to_take = time_to_take
+        self._callback = callback
+        self._task = asyncio.ensure_future(self._job())
+
+    async def _job(self):
+        await asyncio.sleep(self._time_to_take)
+        await self._callback()
+
+    def cancel(self):
+        self._task.cancel()
+
+def wait_then_call(time_to_take, callback):
+    """
+    Waits time_to_take and then calls callback.
+
+    :param int time_to_take: the time to take in seconds.
+    :param func callback: the function to call when time_to_take has been taken.
+    """
+    timer = Timer(time_to_take, callback)
+
+def get_time_seconds():
+    """
+    returns the current time stamp in seconds since the epoch.
+    """
+    return int((datetime.datetime.utcnow() - datetime.datetime(1970, 1, 1)).total_seconds())
+
+def evaluate_rps(user1_choice, user2_choice):
+    """
+    Evaluates rock-paper-scissors.
+
+    :param RPSMove user1_choice: rock, paper or scissors for user 1.
+    :param RPSMove user2_choice: rock, paper or scissors for user 2.
+    :rtype: int
+    :return: the slot of the winning user (1 or 2). If neither won, returns 0.
+    """
+    if user1_choice == RPSMove.rock:
+        if user2_choice == RPSMove.rock:
+            return 0
+        elif user2_choice == RPSMove.paper:
+            return 2
+        else: # user2_choice == RPSMove.scissors
+            return 1
+    elif user1_choice == RPSMove.paper:
+        if user2_choice == RPSMove.rock:
+            return 1
+        elif user2_choice == RPSMove.paper:
+            return 0
+        else: # user2_choice == RPSMove.scissors
+            return 2
+    else: # user1_choice == RPSMove.scissors
+        if user2_choice == RPSMove.rock:
+            return 2
+        elif user2_choice == RPSMove.paper:
+            return 1
+        else: # user2_choice == RPSMove.scissors
+            return 0
