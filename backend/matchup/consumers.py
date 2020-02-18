@@ -26,6 +26,16 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         # find a match
         self.user = self.scope['user']
 
+        if self.user.is_anonymous:
+            await self.accept()
+            await self._send_response(
+                {
+                    'error': 'Please provide your authentication token as a header to access this resource.',
+                }, 
+                status=status.HTTP_400_BAD_REQUEST)
+            await self.close()
+            return
+
         self.match_id = await join_match(self.user.id)
         self.match_group_id = 'game_%s' % self.match_id
 
@@ -41,8 +51,11 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         """
         Ensures proper cleanup upon leaving.
         """
+        if self.user.is_anonymous:
+            # Do nothing if we early-aborted for an unauth'd user
+            return
         # Leave match's channel group
-        await leave_match(self.match_id, self.user.id)
+        await leave_match(self.match.id, self.user.id)
         await self.channel_layer.group_discard(
             self.match_group_id,
             self.channel_name
