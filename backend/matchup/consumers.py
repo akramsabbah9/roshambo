@@ -36,7 +36,17 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             await self.close()
             return
 
-        self.match_id = await join_match(self.user.id)
+        self.match_id, join_status = await join_match(self.user.id)
+
+        if self.match_id is None:
+            await self.accept(subprotocol='Token')
+            await self._send_response(
+                {
+                    'error': '{} disallowed from joining. {}'.format(self.user.username, join_status)
+                }, 
+                status=status.HTTP_400_BAD_REQUEST)
+            await self.close()
+
         self.match_group_id = 'game_%s' % self.match_id
 
         # Join match's channel group

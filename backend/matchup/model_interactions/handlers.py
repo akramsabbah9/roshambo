@@ -1,6 +1,7 @@
 # matchup/model_interactions/handlers.py
 
 from channels.db import database_sync_to_async
+from django.db.models import Q
 
 import random
 
@@ -18,9 +19,15 @@ def join_match(user_id):
     Either way, returns the ID of the joined match.
 
     :param UUID user_id: the id of the user trying to join the match.
-    :rtype: UUID
-    :return: the UUID of the match.
+    :rtype: UUID, str
+    :return: 
+        the UUID of the match. None if the user is disallowed from joining due to already being in another match.
+        a message describing the transaction
     """
+    already_joined_matches = list(Match.objects.filter(Q(user1=user_id) | Q(user2=user_id)))
+    if len(already_joined_matches) > 0:
+        return None, 'Already joined match {}. Cannot join another.'.format(already_joined_matches[0].id)
+
     # find a match
     matches = list(Match.objects.filter(user_count__lte=1, lock=False))
     if len(matches) == 0:
@@ -35,7 +42,7 @@ def join_match(user_id):
     if match.user_count == 2:
         match.lock = True
     match.save()
-    return match.id
+    return match.id, 'Joined match {} successfully'.format(match.id)
 
 
 @database_sync_to_async
