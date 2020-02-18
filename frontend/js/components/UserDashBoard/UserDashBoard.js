@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { Container, Navbar, Button, Row, Col, Image, Card, ListGroup, Title, ButtonGroup, Nav } from 'react-bootstrap';
+import { Container, Navbar, Button, Row, Col, ListGroup, Card, ButtonGroup, } from 'react-bootstrap';
 import Table from 'react-bootstrap/Table';
-import { faMehRollingEyes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Link } from 'react-router-dom';

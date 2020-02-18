@@ -89,6 +89,21 @@ export function user(state = userInitialState, action) {
                 error: action.error,
             }
 
+        // Change Guild
+        case userConstants.CHANGE_GUILD_REQUEST:
+            return {
+                ...state,
+            }
+        case userConstants.CHANGE_GUILD_SUCCESS:
+            return {
+                ...state,
+            }
+        case userConstants.CHANGE_GUILD_FAILURE:
+            return {
+                ...state,
+                error: action.error,
+            }
+
 
     
         default:

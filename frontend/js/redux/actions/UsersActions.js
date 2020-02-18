@@ -11,6 +11,7 @@ export const userActions = {
     getCurrent,
     changeEmail,
     changePassword,
+    changeGuild,
 }
 
 
@@ -152,4 +153,28 @@ function changePassword(password) {
     function request() {return { type: userConstants.CHANGE_PASSWORD_REQUEST}}
     function success() {return { type: userConstants.CHANGE_PASSWORD_SUCCESS}}
     function failure(error) {return { type: userConstants.CHANGE_PASSWORD_FAILURE, error}}
+}
+
+function changeGuild(guild) {
+    const data = {
+        guild: guild,
+    }
+
+    return dispatch => {
+        dispatch(request());
+        
+        editUser(data)
+        .then(response => {
+            console.log(response)
+            dispatch(success(response))
+            history.push('/userdashboard')
+        })
+        .catch(error => {
+            dispatch(failure(error))
+        })
+    };
+
+    function request() {return { type: userConstants.CHANGE_GUILD_REQUEST}}
+    function success() {return { type: userConstants.CHANGE_GUILD_SUCCESS}}
+    function failure(error) {return { type: userConstants.CHANGE_GUILD_FAILURE, error}}
 }
