@@ -55,7 +55,7 @@ def leave_match(match_id, user_id):
     """
     match = get_match(match_id)
     
-    user_slot = get_user_slot_in_match(match)
+    user_slot = get_user_slot_in_match(match, user_id)
     if user_slot == 1:
         match.user1 = None
     else:

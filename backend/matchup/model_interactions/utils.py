@@ -12,7 +12,6 @@ class RPSMove(Enum):
     paper = 1
     scissors = 2
 
-@database_sync_to_async
 def get_match(match_id):
     """
     Queries the database to see if a match with match_id exists. If it does, returns the match object. Otherwise, raises ExistError.
@@ -28,7 +27,6 @@ def get_match(match_id):
         raise ExistError("Failed to find match {}. It does not exist!".format(match_id))
     return match
 
-@database_sync_to_async
 def get_user_slot_in_match(match, user_id):
     """
     Queries the database to see if user with user_id is in match. If it is, returns the user's slot. Otherwise, raises ExistError.

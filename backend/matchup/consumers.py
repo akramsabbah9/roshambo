@@ -65,17 +65,17 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             # Do nothing if we early-aborted for an unauth'd user
             return
         # Leave match's channel group
-        await leave_match(self.match.id, self.user.id)
+        await leave_match(self.match_id, self.user.id)
         await self.channel_layer.group_discard(
             self.match_group_id,
             self.channel_name
         )
 
-    async def receive(self, received_data):
+    async def receive(self, text_data):
         """
         Parses incoming requests along the Websocket, and passes to the appropriate command handler.
         """
-        data = json.loads(received_data)
+        data = json.loads(text_data)
         if not await self._request_valid(data):
             return
 
@@ -278,12 +278,12 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         """
         if 'command' not in data:
             await self._send_response({
-                'error': 'request must include key \'command\', valued with one of {}.'.format(command_groups)
+                'error': 'request must include key \'command\', valued with one of {}.'.format(self.command_groups)
             }, status=status.HTTP_400_BAD_REQUEST)
             return False
 
         command_group = data['command']
-        if command_group not in command_groups:
+        if command_group not in self.command_groups:
             await self._send_response({
                 'error': '{} is not a valid command.'.format(command_group)
             }, status=status.HTTP_400_BAD_REQUEST)
@@ -303,17 +303,17 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         Determines if the necessary arguments have been provided for a request asking for a command in command_group.
         """
         switch = {
-            'rps': rps_commands,
-            'chat': chat_commands,
-            'bet': bet_commands,
-            'channel': channel_commands
+            'rps': self.rps_commands,
+            'chat': self.chat_commands,
+            'bet': self.bet_commands,
+            'channel': self.channel_commands
         }
 
         commands = switch[command_group]
         for command in commands:
             if command in data:
                 if command_group == 'chat':
-                    if not isinstance(data[command], basestring):
+                    if not isinstance(data[command], str):
                         await self._send_response({
                             'error': 'chat request must include key \'message\' valued to a string.'
                         }, status=status.HTTP_400_BAD_REQUEST)
