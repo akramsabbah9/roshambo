@@ -15,22 +15,22 @@ class Menu extends Component{
             <div>
             <Container className="Menu">
               <Row>
-                <Col sm={5}>
+                <Col xs={5}>
                 <p className="Logo">Roshambo</p>
                 </Col>
-                <Col sm={2}>
+                <Col xs={2}>
                 <FontAwesomeIcon className="toRight" icon={faHandPaper} size="7x"/>
                 </Col>
                 <FontAwesomeIcon className="toLeft" icon={faHandPeace} size="7x"/>
               </Row>
               <Row>
-                <Col sm={5}>
+                <Col xs={5}>
                   <div className="Link">
                     <Link to="/Register" className="mr-5" style={{color: '#b3d7ff'}}>Register</Link>
                     <Link to="/Login" style={{color: '#b3d7ff'}}>Login</Link>
                   </div>
                   </Col>
-                  <Col sm={2}>
+                  <Col xs={2}>
                   <FontAwesomeIcon icon={faHandRock} className="toRight" size="7x"/>
                   </Col>
                   <FontAwesomeIcon className="toLeft" icon={faHandPaper} size="7x"/>
