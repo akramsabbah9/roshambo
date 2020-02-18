@@ -6,7 +6,7 @@ import {Link} from 'react-router-dom';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import './Pages.css';
-import '../Fonts.css'
+import '../Fonts.css';
 
 
 import { connect } from 'react-redux';
@@ -27,15 +27,16 @@ class Login extends Component{
   constructor(props){
     super(props);
     this.state = {
-      username: '',
+      email: '',
       password: '',
-      submitted: false
+      submitted: false,
+      changed: false
     };
     this.handleLogin = this.handleLogin.bind(this)
   }
 
   handleLogin(values){
-    this.setState({submitted: true });
+    this.setState({submitted: true, changed: false});
     const { email, password } = values
     this.props.login(email, password)
   }
@@ -64,23 +65,26 @@ class Login extends Component{
            handleChange,
            handleSubmit,
            values,
-           handleBlur
+           handleBlur,
           }) => (
           <Form onSubmit={handleSubmit}>
-          <Form.Group controlId = "Username">
+          <Form.Group controlId = "Email">
             <Form.Control 
-              type="email" 
+              type="email"
               className="inputbox" 
               name="email"
               placeholder="Email"
-              value={values.username}
-              onChange={handleChange}
+              value={values.email}
+              onChange={ (e) => {
+                handleChange(e);
+                this.setState({changed: true});
+              }}
               onBlur={handleBlur}
               isInvalid={(touched.email && errors.email)}
             />
             
           <Form.Control.Feedback type="invalid">
-            {errors.username}
+            {errors.email}
           </Form.Control.Feedback>
           </Form.Group>
           <Form.Group controlId="Password">
@@ -90,7 +94,10 @@ class Login extends Component{
               className="inputbox" 
               name="password"
               value={values.password}
-              onChange={handleChange}
+              onChange={ (e) => {
+                handleChange(e);
+                this.setState({changed: true});
+              }}
               onBlur={handleBlur}
               isInvalid={(touched.password && errors.password)}
             />
@@ -112,13 +119,10 @@ class Login extends Component{
             </Link>
           </Col>
         </Row>
+        {error != null && !this.state.changed ? <h3 className="Words" style={{fontSize: '17.5px', color: 'red', marginTop: '5%'}}>{error.response.status == 404 ? 'Username and/or password are incorrect.' : error.response.error}</h3> : null}
       </Form>
       )}
-
-      </Formik>
-
-      {error != null ? <h3 className="Words" style={{fontSize: '17.5px', color: 'red', marginTop: '5%'}}>{error.response.status == 404 ? 'Username and/or password are incorrect.' : error.response.error}</h3> : null}
-      
+      </Formik>      
     </Container>
     </div>
   );
