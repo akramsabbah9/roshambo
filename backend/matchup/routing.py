@@ -7,7 +7,7 @@ from .consumers import MatchmakingConsumer
 from .authentication import TokenAuthMiddleware
 
 websocket_urlpatterns = [
-    re_path(r'matchup/(?P<room_name>\w+)/$', MatchmakingConsumer),
+    re_path(r'ws/match/$', MatchmakingConsumer),
 ]
 
 application = ProtocolTypeRouter({

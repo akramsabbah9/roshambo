@@ -7,7 +7,11 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { skins } from '../Settings/Skins';
 import '../Game.css';
+import Chat from '../Chat';
+
+
 import { userActions } from '../../redux/actions/UsersActions';
+import { socketActions } from '../../redux/actions/SocketActions';
 
 
 class GameLobby extends Component {
@@ -21,6 +25,7 @@ class GameLobby extends Component {
         this.handleReady = this.handleReady.bind(this);
         this.handleBet = this.handleBet.bind(this);
         this.handleSignOut = this.handleSignOut.bind(this);
+        this.props.constructSocket();
     }
 
     handleExit(e) {
@@ -35,10 +40,18 @@ class GameLobby extends Component {
 
     handleReady(e) {
         e.preventDefault()
-        if (this.state.myselfReady)
-            this.setState({myselfReady: false})
-        else
-            this.setState({myselfReady: true})
+        if (this.state.myselfReady) {
+            this.props.socket.sendPacked({
+                'command': 'rps',
+                'ready': false
+            }).then(this.setState({myselfReady: false}));
+        }
+        else {
+            this.props.socket.sendPacked({
+                'command': 'rps',
+                'ready': true
+            }).then(this.setState({myselfReady: true}));
+        }
 
         
         setTimeout( () => {
@@ -122,14 +135,7 @@ class GameLobby extends Component {
                     </Col>
                 </Row>
                 <Row style={{margin:50}}>
-                    <Col xs={6}>
-                        <Card style={styles.chatBox}>
-                            <Card.Body>
-                                Chat Box
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                    <Col xs={6}>
+                    <Col style={{maxWidth: '100%', flex: '0 0 100%', marginLeft: '1em'}}>
                         <Row>
                                 <Button variant="outline-success" className="Buttons" block size="lg" onClick={this.handleReady}>Ready</Button>      
                         </Row>
@@ -141,8 +147,8 @@ class GameLobby extends Component {
                         </Row>
                     </Col>
                 </Row>
+            <Chat />
             </Container>
-
         )
     }
 }
@@ -151,12 +157,13 @@ class GameLobby extends Component {
 function mapStateToProps (state) {
     const { activeSkin } = state.skins
     const user = state.user.currentUser
-
-    return { activeSkin, user }
+    const socket = state.socket
+    return { activeSkin, user, socket }
 }
 
 const actionCreators = {
     logout: userActions.logout,
+    constructSocket: socketActions.constructSocket,
 }
 
 
