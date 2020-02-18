@@ -1,4 +1,4 @@
-# matchup/dbhandlers.py
+# matchup/consumers.py
 
 from channels.generic.websocket import AsyncWebsocketConsumer, WebsocketConsumer
 from channels.generic.websocket import SyncConsumer
