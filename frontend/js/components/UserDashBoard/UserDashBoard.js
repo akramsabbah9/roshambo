@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { Container, Navbar, Button, Row, Col, Image, Card, ListGroup, Title, ButtonGroup, Nav } from 'react-bootstrap';
+import { Container, Navbar, Button, Row, Col, ListGroup, Card, ButtonGroup, } from 'react-bootstrap';
 import Table from 'react-bootstrap/Table';
-import { faMehRollingEyes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Link } from 'react-router-dom';
@@ -147,7 +146,7 @@ class UserDashBoard extends Component {
                             </ListGroup>
 
                         </Card>
-                        <div className="d-flex flex-column" style={{marginTop: '4%', marginRight: '5%'}}>
+                        <div className="d-flex flex-column" style={{marginTop: '15%', marginLeft: '2%'}}>
                             <ButtonGroup className="Buttons">
                                 <Button variant="outline-info" onClick={this.handleSettings}>Settings</Button>
                                 <Button variant="outline-info" onClick={this.handleStore.bind(this)}>Store</Button>
