@@ -12,6 +12,7 @@ then
 fi
 
 python manage.py makemigrations
+python manage.py migrate matchup zero
 python manage.py migrate
 python manage.py loaddata skins_inventory.json
 

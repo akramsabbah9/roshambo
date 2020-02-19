@@ -127,6 +127,21 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             }
         )
 
+    # EXPERIMENTAL
+    async def _stop_the_game(self):
+        """
+        we have reached here because the other user never readied up.
+        if there was supposed to be another user, but they haven't been
+        doing anything for the past 2 minutes, leave the match.
+        """
+        if not await both_users_ready(self.match_id):
+            #disconnect somehow
+            '''await leave_match(self.match_id, self.user.id)
+            await self.channel_layer.group_discard(
+                self.match_group_id,
+                self.channel_name
+            )'''
+
     #------------------------------------------------------------------
     # Command Processors
     #------------------------------------------------------------------
@@ -171,6 +186,10 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                     'user_readied': self.user.id
                 }
             )
+
+            # Wait to see if other user is ready. If not, we need to exit the game.
+            if not await both_users_ready(self.match_id):
+                wait_then_call(120, self._stop_the_game)
 
             # If both users are ready, first_to_ready must send the start communication
             # This way, we incentivize faster readying, as you become the 'host'
