@@ -19,9 +19,9 @@ class Menu extends Component{
                 <p className="Logo">Roshambo</p>
                 </Col>
                 <Col xs={2}>
-                <FontAwesomeIcon className="toRight" icon={faHandPaper} size="7x"/>
+                <FontAwesomeIcon className="toRight Icon" icon={faHandPaper} size="7x"/>
                 </Col>
-                <FontAwesomeIcon className="toLeft" icon={faHandPeace} size="7x"/>
+                <FontAwesomeIcon className="toLeft Icon" icon={faHandPeace} size="7x"/>
               </Row>
               <Row>
                 <Col xs={5}>
@@ -31,12 +31,11 @@ class Menu extends Component{
                   </div>
                   </Col>
                   <Col xs={2}>
-                  <FontAwesomeIcon icon={faHandRock} className="toRight" size="7x"/>
+                  <FontAwesomeIcon icon={faHandRock} className="toRight Icon" size="7x"/>
                   </Col>
-                  <FontAwesomeIcon className="toLeft" icon={faHandPaper} size="7x"/>
+                  <FontAwesomeIcon className="toLeft Icon" icon={faHandPaper} size="7x"/>
               </Row>
-            </Container>
-                
+            </Container>   
             </div>
         )
     }

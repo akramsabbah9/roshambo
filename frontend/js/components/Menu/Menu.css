@@ -1,7 +1,7 @@
 .Menu{
     font-family: 'Bangers', cursive;
     margin-left: 20%;
-    margin-top: 15%;
+    margin-top: 200px;
 }
 
 .Logo{
@@ -45,4 +45,10 @@
     40% { transform: translate(-5px, 0px)}
     50% { transform: translate(5px, 0px)}
 }
+
+@media only screen and (max-width: 992px) {
+    .Icon {
+      display: none;
+    }
+  }
 
