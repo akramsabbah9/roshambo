@@ -96,14 +96,16 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
     #------------------------------------------------------------------
     # Utilities
     #------------------------------------------------------------------
-    async def _send_response(self, data = {}, status=status.HTTP_200_OK): # yes, yes HTTP codes aren't technically correct here, but whatever
+    async def _send_response(self, data = {}, status=status.HTTP_200_OK, id = None): # yes, yes HTTP codes aren't technically correct here, but whatever
         """
         Small wrapper around self.send so we don't have to specify json.dumps and text_data each time we send.
         Intended to send to sockets/clients, not to the channel.
         :param dict data: the data to send.
         :param int status: the status code of the message. Uses HTTP statuses for simplicity. Defaults to 200 OK.
+        :param int id: the request id, as per websocket as promised. Excluded if not specified.
         """
         data['status'] = status
+        if id is not None: data['id'] = id
         await self.send(text_data=json.dumps(data))
 
     async def _send_channel_message(self, data):
@@ -152,10 +154,10 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             if not await round_started(self.match_id):
                 await self._send_response({
                     'error': 'rps move request cannot be made until both players have readied up, and the match has started.'
-                }, status=status.HTTP_400_BAD_REQUEST)
+                }, status=status.HTTP_400_BAD_REQUEST, id=data['id'])
             move = data['move']
             await set_user_move(self.match_id, self.user.id, move)
-            await self._send_response(status=status.HTTP_204_NO_CONTENT)
+            await self._send_response(status=status.HTTP_204_NO_CONTENT, id=data['id'])
         else: # 'ready' in data
             ready_status = data['ready']
             await set_user_ready_status(self.match_id, self.user.id, ready_status)
@@ -205,7 +207,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         if not allowed_order_start:
             await self._send_response({
                     'error': 'Round cannot be started. {}'.format(allowance_reason)
-                }, status=status.HTTP_409_CONFLICT)
+                }, status=status.HTTP_409_CONFLICT, id=data['id'])
             return
 
         self._start_a_round()
@@ -287,17 +289,22 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         """
         Determines if a request is formatted properly, with all appropriate arguments.
         """
+        if 'id' not in data:
+            await self._send_response({
+                'error': 'all requests must include an \'id\' key, valued with a unique integer.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
         if 'command' not in data:
             await self._send_response({
                 'error': 'request must include key \'command\', valued with one of {}.'.format(self.command_groups)
-            }, status=status.HTTP_400_BAD_REQUEST)
+            }, status=status.HTTP_400_BAD_REQUEST, id=data['id'])
             return False
 
         command_group = data['command']
         if command_group not in self.command_groups:
             await self._send_response({
                 'error': '{} is not a valid command.'.format(command_group)
-            }, status=status.HTTP_400_BAD_REQUEST)
+            }, status=status.HTTP_400_BAD_REQUEST, id=data['id'])
             return False
 
         # order start/begin_round commands have no additional info, and their allowance is determined within the function itself
@@ -326,32 +333,32 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                     if not isinstance(data[command], str):
                         await self._send_response({
                             'error': 'chat request must include key \'message\' valued to a string.'
-                        }, status=status.HTTP_400_BAD_REQUEST)
+                        }, status=status.HTTP_400_BAD_REQUEST, id=data['id'])
                         return False
                 elif command_group == 'rps':
                     if command == 'ready':
                         if not isinstance(data[command], bool):
                             await self._send_response({
                             'error': 'rps ready request must include a bool value for key \'ready\'.'
-                        }, status=status.HTTP_400_BAD_REQUEST)
+                        }, status=status.HTTP_400_BAD_REQUEST, id=data['id'])
                         return False
                     else:
                         if data[command] not in rps_move_values:
                             await self._send_response({
                             'error': 'rps move request must include one of {} as value for key \'move\'.'.format(rps_move_values)
-                        }, status=status.HTTP_400_BAD_REQUEST)
+                        }, status=status.HTTP_400_BAD_REQUEST, id=data['id'])
                         return False
                 else: # command_group == 'bet'
                     if not isinstance(data[command], int):
                         await self._send_response({
                         'error': 'bet amount request must include an int value for key \'amount\'.'
-                    }, status=status.HTTP_400_BAD_REQUEST)
+                    }, status=status.HTTP_400_BAD_REQUEST, id=data['id'])
                     return False
                 return True
 
         await self._send_response({
                 'error': '{} request must include key from {}.'.format(command_group, commands)
-            }, status=status.HTTP_400_BAD_REQUEST)
+            }, status=status.HTTP_400_BAD_REQUEST, id=data['id'])
         return False
 
     async def _order_start_allowed(self):
@@ -402,6 +409,6 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         'rps': _process_rps_command,
         'bet': _process_bet_command,
         'chat': _process_chat_command,
-        'begin_round': _process_order_start
+        'begin_round': _process_order_start_command
     }
     seen_round_start = False
