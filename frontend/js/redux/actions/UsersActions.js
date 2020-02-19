@@ -1,104 +1,41 @@
-import { login as loginApi } from '../../utils/api';
 import { history } from '../../utils/history';
 import { userConstants } from './types';
-import { signup } from '../../utils/api';
+import { signup, currentUser, login as loginAPI, allUsers, editUser, logout as logoutAPI } from '../../utils/api';
+
 
 export const userActions = {
     login,
     register,
     logout,
     getAll,
+    getCurrent,
+    changeEmail,
+    changePassword,
+    changeGuild,
 }
 
-// (FOR TESTING ONLY) DELETE AFTER
-const user = {
-    name: "flowerHead10",
-    id: 0,
-    email: "lion@gmail.com",
-    rank: "15",
-    guild: "pirates@licious",
-    wins: 2,
-    loss: 12,
-    total: 14
-}
 
-// (FOR TESTING ONLY) DELETE AFTER
-const userData = [{
-    name: "jerry1",
-    id: 1,
-    rank: "23",
-    guild: "pirates@licious",
-    wins: 23,
-    loss: 2,
-    total: 25
-},{
-    name: "jerry2",
-    id: 2,
-    rank: "23",
-    guild: "pirates@licious",
-    wins: 23,
-    loss: 2,
-    total: 25
-},{
-    name: "jerry3",
-    id: 3,
-    rank: "23",
-    guild: "pirates@licious",
-    wins: 23,
-    loss: 2,
-    total: 25
-},{
-    name: "jerry4",
-    id: 4,
-    rank: "23",
-    guild: "pirates@licious",
-    wins: 23,
-    loss: 2,
-    total: 25
-},{
-    name: "jerry5",
-    id: 5,
-    rank: "23",
-    guild: "pirates@licious",
-    wins: 23,
-    loss: 2,
-    total: 25
-}];
-
-
-
-function login(username, password) {
+function login(email, password) {
+    const data = {
+        email: email,
+        password: password,
+    }
     return dispatch => {
-        dispatch(request({username}));
-
-        // DELETE: FOR TESTING ONLY
-        if (password == "123") {
-            localStorage.setItem('user', 'loggedIn')
-            dispatch(success(user))
-            history.push('/userdashboard');
-        } else {
-            dispatch(failure("Error logging in."))
-        }
+        dispatch(request());
         
-        
-        
-        /*
-        
-        api.login({username, password})
-            .then(
-                user => {
-                    dispatch(success(user));
-                    history.pushState('/userdashboard');
-                },
-                error => {
-                    dispatch(failure(error.toString()));
-                }
-            )
-        */
+        loginAPI(data)
+        .then(response => {
+            localStorage.setItem('token', response.token)
+            dispatch(success(response.token))
+            history.push('/userdashboard')
+        })
+        .catch(error => {
+            dispatch(failure(error))
+        })
     };
 
-    function request(user) {return { type: userConstants.LOGIN_REQUEST, user}}
-    function success(user) {return { type: userConstants.LOGIN_SUCCESS, user}}
+    function request() {return { type: userConstants.LOGIN_REQUEST}}
+    function success() {return { type: userConstants.LOGIN_SUCCESS}}
     function failure(error) {return { type: userConstants.LOGIN_FAILURE, error}}
 }
 
@@ -110,8 +47,9 @@ function register(user) {
         .then (response => {
             localStorage.setItem('token', response.token)
             dispatch(success(response.token))
+            history.push('/userdashboard')
         })
-        .error (error => {
+        .catch (error => {
             dispatch(failure(error))
         })
     }
@@ -122,30 +60,121 @@ function register(user) {
 }
 
 function logout(user) {
-    /*
-    api.logout();
-    */
-    localStorage.removeItem('user')
-    return { type: userConstants.LOGOUT }
+    return dispatch =>{
+        logoutAPI()
+        .then(() => {
+            localStorage.removeItem('token')
+            dispatch(success())
+            history.push('/login');
+        })   
+    }
+    function success() {return {type: userConstants.LOGOUT}}
 }
 
 function getAll() {
     return dispatch => {
         dispatch(request());
 
-        
-        dispatch(success(userData))
-        /*
-        api.allUsers()
-            .then(
-                users => dispatch(success(users)),
-                error => dispatch(failure(error.toString()))
-            )
-
-            */
+        allUsers().then(json =>
+            {
+                dispatch(success(json));
+            })
+            .catch(error => {
+                dispatch(failure(error));
+            });
     }
 
     function request() { return {type: userConstants.GETALL_REQUEST}}
     function success(users) { return { type: userConstants.GETALL_SUCCESS, users}}
     function failure(error) { return { type: userConstants.GETALL_FAILURE, error}}
+}
+
+function getCurrent() {
+    return dispatch => {
+        dispatch(request());
+
+        currentUser()
+        .then(response => {
+            dispatch(success(response))
+        })
+        .catch(error => {
+            dispatch(failure(error))
+        })
+    }
+
+    function request() { return {type: userConstants.GETCURRENT_REQUEST}}
+    function success(user) { return { type: userConstants.GETCURRENT_SUCCESS, user}}
+    function failure(error) { return { type: userConstants.GETCURRENT_FAILURE, error}}
+}
+
+function changeEmail(email) {
+    const data = {
+        email: email,
+    }
+
+    return dispatch => {
+        dispatch(request());
+        
+        editUser(data)
+        .then(response => {
+            console.log(response)
+            dispatch(success(response))
+            history.push('/userdashboard')
+        })
+        .catch(error => {
+            dispatch(failure(error))
+        })
+    };
+
+    function request() {return { type: userConstants.CHANGE_EMAIL_REQUEST}}
+    function success(user) {return { type: userConstants.CHANGE_EMAIL_SUCCESS, user}}
+    function failure(error) {return { type: userConstants.CHANGE_EMAIL_FAILURE, error}}
+}
+
+function changePassword(password) {
+    const data = {
+        password: password,
+    }
+
+    return dispatch => {
+        dispatch(request());
+        
+        editUser(data)
+        .then(response => {
+            console.log(response)
+            dispatch(success(response))
+            history.push('/userdashboard')
+        })
+        .catch(error => {
+            dispatch(failure(error))
+        })
+    };
+
+    function request() {return { type: userConstants.CHANGE_PASSWORD_REQUEST}}
+    function success() {return { type: userConstants.CHANGE_PASSWORD_SUCCESS}}
+    function failure(error) {return { type: userConstants.CHANGE_PASSWORD_FAILURE, error}}
+}
+
+function changeGuild(guild) {
+    const data = {
+        guild: guild,
+    }
+
+    return dispatch => {
+        dispatch(request());
+        
+        editUser(data)
+        .then(response => {
+            console.log(response)
+            dispatch(success(response))
+            history.push('/userdashboard')
+        })
+        .catch(error => {
+            dispatch(failure(error))
+        })
+    };
+
+    function request() {return { type: userConstants.CHANGE_GUILD_REQUEST}}
+    function success() {return { type: userConstants.CHANGE_GUILD_SUCCESS}}
+    function failure(error) {return { type: userConstants.CHANGE_GUILD_FAILURE, error}}
 }

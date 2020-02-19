@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Button, Form, Container,
-Col, Nav} from 'react-bootstrap';
+Col, Row, Nav} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import './Pages.css';
+import '../Fonts.css';
 
 
 import { connect } from 'react-redux';
@@ -25,26 +26,23 @@ class Login extends Component{
   }
   constructor(props){
     super(props);
-
-    this.props.logout();
-
     this.state = {
-      username: '',
+      email: '',
       password: '',
-      submitted: false
+      submitted: false,
+      changed: false
     };
-
     this.handleLogin = this.handleLogin.bind(this)
   }
 
   handleLogin(values){
-    this.setState({submitted: true });
-    const { username, password } = values
-    this.props.login(username, password)
-
+    this.setState({submitted: true, changed: false});
+    const { email, password } = values
+    this.props.login(email, password)
   }
 
   render(){
+  const {error} = this.props
   return (
     <div>
     <Nav variant="pills">
@@ -56,24 +54,7 @@ class Login extends Component{
       <p className="sign">Sign In</p>
       <Formik
         initialValues = {{email: '', password: ''}}
-
         onSubmit={values => {
-          // axios.post('/Test',{
-          //   username: values.username,
-          //   password: values.password
-          // })
-          // .then( res => () => {
-          // console.log(`Status code: ${res.status}`)
-          // console.log(`Status text: ${res.statusText}`)
-          // console.log(`Request method: ${res.request.method}`)
-          // console.log(`Path: ${res.request.path}`)
-          // console.log(`Date: ${res.headers.date}`)
-          // console.log(`Data: ${res.data}`)})
-          // .catch(function (error) {
-          //   console.log(error);
-          // });
-          //this.props.history.push("/UserDashBoard");
-          //document.body.style.backgroundColor = 'white';
           this.handleLogin(values)
         }}
         validationSchema={schema}
@@ -84,28 +65,28 @@ class Login extends Component{
            handleChange,
            handleSubmit,
            values,
-           handleBlur
+           handleBlur,
           }) => (
           <Form onSubmit={handleSubmit}>
-          <Col>
-          <Form.Group controlId = "Username">
+          <Form.Group controlId = "Email">
             <Form.Control 
-              type="email" 
+              type="email"
               className="inputbox" 
               name="email"
               placeholder="Email"
-              value={values.username}
-              onChange={handleChange}
+              value={values.email}
+              onChange={ (e) => {
+                handleChange(e);
+                this.setState({changed: true});
+              }}
               onBlur={handleBlur}
               isInvalid={(touched.email && errors.email)}
             />
             
           <Form.Control.Feedback type="invalid">
-            {errors.username}
+            {errors.email}
           </Form.Control.Feedback>
           </Form.Group>
-          </Col>
-          <Col>
           <Form.Group controlId="Password">
             <Form.Control 
               type="password"
@@ -113,7 +94,10 @@ class Login extends Component{
               className="inputbox" 
               name="password"
               value={values.password}
-              onChange={handleChange}
+              onChange={ (e) => {
+                handleChange(e);
+                this.setState({changed: true});
+              }}
               onBlur={handleBlur}
               isInvalid={(touched.password && errors.password)}
             />
@@ -121,19 +105,24 @@ class Login extends Component{
               {errors.password}
             </Form.Control.Feedback>
           </Form.Group>
-          </Col>
-        <Button variant="primary" type="submit" className="offset-md-3 button">
-          Submit
-        </Button>
-          <Link to="/Register" className="offset-md-2">
-            <Button className="button">
-             Register
+        <Row>
+          <Col>
+            <Button variant="primary" type="submit" className="offset-md-3 button">
+              Submit
             </Button>
-          </Link>
+          </Col>
+          <Col>
+            <Link to="/Register" className="offset-md-2">
+              <Button className="button">
+              Register
+              </Button>
+            </Link>
+          </Col>
+        </Row>
+        {error != null && !this.state.changed ? <h3 className="Words" style={{fontSize: '17.5px', color: 'red', marginTop: '5%'}}>{error.response.status == 404 ? 'Username and/or password are incorrect.' : error.response.error}</h3> : null}
       </Form>
       )}
-
-      </Formik>
+      </Formik>      
     </Container>
     </div>
   );
@@ -141,13 +130,13 @@ class Login extends Component{
 }
 
 function mapState(state) {
-  const { loggingIn } = state.auth;
-  return { loggingIn };
+  const { error } = state.auth;
+  return { error };
 }
 
 const actionCreators = {
   login: userActions.login,
-  logout: userActions.logout
+  logout: userActions.logout,
 }
 
 

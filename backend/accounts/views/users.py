@@ -2,6 +2,8 @@
 
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import update_last_login
+from django.db.models import F
+from django.http import JsonResponse
 from rest_framework import permissions, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -10,7 +12,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.authtoken.models import Token
 from rest_framework.mixins import UpdateModelMixin
 
-from ..models import RoshamboUser as User, SkinsInventory, Skins, Stats
+from ..models import RoshamboUser as User, SkinsInventory, Skins, Stats, Wallet
 from ..serializers import UserSerializer, EditUserSerializer
 
 
@@ -29,8 +31,13 @@ def current_user(request):
                 id
             value: appropriate values corresponding to the keys.
     """
-    serializer = UserSerializer(request.user)
-    return Response(serializer.data)
+    # TODO(benjibrandt): this is sorty janky to filter the entire user set...
+    user = User.objects.filter(id=request.user.id).annotate(
+        games_won=F('stats__games_won'), 
+        games_lost=F('stats__games_lost'),
+        cash=F('wallet__cash')
+    ).values('first_name', 'last_name', 'email', 'username', 'guild', 'games_won', 'games_lost', 'cash').first()
+    return Response(user)
 
 
 @api_view(['GET'])
@@ -39,12 +46,14 @@ def users(request):
     @auth-required: yes
     @method-supported: GET
     @GET: 
-        @return: 
-            key: users
-            value: list of all registered users' usernames.
+        @return: top 10 list of user infos.
+            keys: games_won, games_lost, guild, username, is_active
+            value: valid value to set the corresponding field to.
     """
-    usernames = User.objects.values_list('username', flat=True)
-    return Response({'users': usernames})
+    users_info = list(User.objects.annotate(
+        games_won=F('stats__games_won'), games_lost=F('stats__games_lost')
+    ).values('username', 'guild', 'games_won', 'games_lost', 'is_active'))[:10]
+    return JsonResponse(users_info, safe=False)
 
 
 @api_view(['GET'])
@@ -53,12 +62,14 @@ def active_users(request):
     @auth-required: yes
     @method-supported: GET
     @GET: 
-        @return: 
-            key: users
-            value: list of all active users' usernames.
+        @return: top 10 list of active user infos.
+            keys: games_won, games_lost, guild, username
+            value: valid value to set the corresponding field to.
     """
-    usernames = User.objects.filter(is_active=True).values_list('username', flat=True)
-    return Response({'users': usernames})
+    active_users = list(User.objects.filter(is_active=True).annotate(
+        games_won=F('stats__games_won'), games_lost=F('stats__games_lost')
+    ).values('username', 'guild', 'games_won', 'games_lost'))[:10]
+    return Response(active_users)
 
 
 class EditUser(GenericAPIView, UpdateModelMixin):
@@ -107,6 +118,7 @@ class Register(APIView):
             if user:
                 self._add_default_skin(user)
                 self._initialize_stats_entries(user)
+                self._initialize_wallet(user)
                 update_last_login(request, user)
                 token = Token.objects.create(user=user)
                 json = serializer.data
@@ -126,6 +138,10 @@ class Register(APIView):
     def _initialize_stats_entries(self, user):
         user_stats = Stats(user=user)
         user_stats.save()
+
+    def _initialize_wallet(self, user):
+        wallet = Wallet(user=user)
+        wallet.save()
 
 
 class Login(APIView):

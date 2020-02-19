@@ -3,25 +3,36 @@ import { userConstants } from '../actions/types';
 const initialState = {
     loggingIn: false,
     loggedIn: false,
-    user: {}
+    error: null
 }
 
 export function auth(state=initialState, action) {
     switch(action.type) {
         case userConstants.LOGIN_REQUEST:
             return {
+                ...state,
                 loggingIn: true,
-                user: action.user
             }
         case userConstants.LOGIN_SUCCESS:
             return {
+                ...state,
+                loggingIn: false,
                 loggedIn: true,
-                user: action.user
+                error: null
             }
         case userConstants.LOGIN_FAILURE:
-            return {}
+            return {
+                ...state,
+                loggingIn: false,
+                loggedIn: false,
+                error: action.error
+            }
         case userConstants.LOGOUT: 
-            return {}
+            return {
+                ...state,
+                loggedIn: false,
+            }
+            
         default:
             return state
     }

@@ -23,9 +23,16 @@ def check_for_edit_validation_errors(defined_fields, allowed_edits, provided_fie
             validation_error[key] = 'Unknown field.'
         raise ValidationError(validation_error, code='invalid')
 
+def flatten_purchased_skins(purchased_skins):
+    """
+    Takes a list of purchased_skins dicts, and flattens to return just the values.
+    """
+    return [skin_wrap['skin'] for skin_wrap in purchased_skins]
+
 def flatten_skin_data(data):
     """
     Skins data gets returned as a nested dict thanks to nested serializers. This flattens it out, if desired.
     """
     data['active_skin'] = data['active_skin']['skin']
-    data['purchased_skins'] = [skin_wrap['skin'] for skin_wrap in data['purchased_skins']]
+    data['purchased_skins'] = flatten_purchased_skins(data['purchased_skins'])
+    return data

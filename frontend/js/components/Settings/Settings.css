@@ -6,7 +6,6 @@
 
 .CardTitle{
     text-align: center;
-    font-family: 'Raleway', sans-serif;
     font-size: 2rem;
 }
 
@@ -21,12 +20,10 @@
 
 .CardContents{
     text-align: center;
-    font-family: 'Raleway', sans-serif;
     font-size: 2rem;
 }
 
 .CardLinks{
-    font-family: 'Raleway', sans-serif;
     font-size: 1.25rem;
 }
 

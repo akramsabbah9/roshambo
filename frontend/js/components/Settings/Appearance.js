@@ -6,16 +6,17 @@ import { connect } from 'react-redux';
 import { skins } from './Skins';
 import { history } from '../../utils/history'
 import { Link } from 'react-router-dom';
-
+import { userActions } from '../../redux/actions/UsersActions';
+import '../Fonts.css';
 
 class Appearance extends Component {
     constructor(props) {
         super(props)
-
         this.handleSignOut = this.handleSignOut.bind(this)
         this.handleBack = this.handleBack.bind(this)
         this.handleChangeDefault = this.handleChangeDefault.bind(this)
     }
+
 
     addProductCards(skins, activeSkin) {
         const cards = skins.map((skin, index) => (
@@ -32,7 +33,7 @@ class Appearance extends Component {
                         <Card.Text style={{textAlign: 'center'}}>{skin.description}</Card.Text>
                     </Card.Body>
                     <Card.Footer className="col d-flex align-items-center justify-content-center">
-                        <Button onClick={() => this.handleChangeDefault(skin.id)} disabled={(skin.id == activeSkin)}>Set as Deafult</Button>
+                        <Button onClick={() => this.handleChangeDefault(skin.id)} disabled={(skin.id == activeSkin)} className='Buttons'>Set as Default</Button>
                     </Card.Footer>
                 </Card>
                 <div style={{margin:50}} />
@@ -44,17 +45,18 @@ class Appearance extends Component {
     }
 
     handleChangeDefault(id) {
-        this.props.changeSkin(this.props.ownedSkins, id)
+        const data = {active_skin: id}
+        this.props.changeSkin(data)
     }
 
     handleSignOut(e){
         e.preventDefault();
-        history.push('/login');
+        this.props.logout()
     }
 
     handleBack(e) {
         e.preventDefault()
-        history.push('/Settings')
+        history.goBack()
     }
 
     render() {
@@ -64,28 +66,23 @@ class Appearance extends Component {
                 return skin
             }
         })
-        console.log(activeSkin)
-        const styles = {
-            signOutBtn: {
-                marginLeft: '76%',
-                justifySelf: 'center'
-            }
-        }
 
         return(
-            <Container>
+            <Container className="Words">
                 <Navbar bg="light"> 
                     <Link to='/userdashboard'>     
                         <Navbar.Brand style={{marginLeft:8, fontFamily:"'Bangers', cursive", fontSize:"30px"}}>Roshambo</Navbar.Brand>
-                    </Link> 
-                    <Button style={styles.signOutBtn} variant="outline-danger" onClick={this.handleSignOut}>Sign Out</Button>
+                    </Link>
+                    <Navbar.Collapse className="justify-content-end">
+                        <Button className='Buttons' variant="outline-danger" onClick={this.handleSignOut}>Sign Out</Button>
+                    </Navbar.Collapse>
                 </Navbar>
                 <Col>
                     <h1 style={{marginTop:10, marginBottom: 10}}>Change Skins</h1>
                 </Col>
                     {this.addProductCards(renderSkins, activeSkin)}
 
-                <Col className="col d-flex align-items-center justify-content-center">
+                <Col className="col d-flex align-items-center justify-content-center Buttons">
                     <Button style={{margin:30}} onClick={this.handleBack}>Back</Button>
                 </Col>
             </Container>
@@ -99,7 +96,8 @@ function mapStateToProps (state) {
 }
 
 const actionCreators = {
-    changeSkin: skinsActions.change
+    changeSkin: skinsActions.change,
+    logout: userActions.logout,
 }
 
 export default connect(mapStateToProps, actionCreators)(Appearance);

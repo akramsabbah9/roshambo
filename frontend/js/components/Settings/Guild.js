@@ -8,23 +8,23 @@ import './Settings.css';
 import '../Fonts.css';
 
 const schema = yup.object({
-    email : yup.string()
-    .email("Must be a valid email address")
-    .max(25, "Email must be less than 25 characters")
+    guild : yup.string()
+    .max(25, "Guild name must be less than 25 characters")
     .required("Required")
 })
 
-class Email extends Component{
+class Guild extends Component{
     constructor(props){
         super(props)
-        this.handleEmailChange = this.handleEmailChange.bind(this)
+        this.handleGuildChange = this.handleGuildChange.bind(this)
         this.handleGoBack = this.handleGoBack.bind(this)
     }
     componentDidMount(){
-        document.body.style.backgroundColor="#ecc6ec";
+        document.body.style.backgroundColor="#8EE3EF";
     }
-    handleEmailChange(email) {
-        this.props.changeEmail(email)
+
+    handleGuildChange(guild) {
+        this.props.changeGuild(guild)
     }
     handleGoBack() {
         this.props.history.goBack()
@@ -32,13 +32,13 @@ class Email extends Component{
     render(){
         return(
             <Container className="emailMain p-3 col-4">
-                <p style={{textAlign:"center", fontFamily: "Bangers, cursive", fontSize: "300%"}}>Email Change</p>
+                <p style={{textAlign:"center", fontFamily: "Bangers, cursive", fontSize: "300%"}}>Guild Change</p>
                 <Formik
-                  initialValues={{email:""}}
+                  initialValues={{guild:""}}
                   onSubmit={(values, {setSubmitting}) => {
 
                     //document.body.style.backgroundColor = 'white';
-                    this.handleEmailChange(values.email)
+                    this.handleGuildChange(values.guild)
                   }}
                   validationSchema={schema}
                 >
@@ -51,19 +51,19 @@ class Email extends Component{
                 handleBlur
                 }) => (
                     <Form onSubmit={handleSubmit}>
-                        <Form.Group controlId="formChangeEmail">
+                        <Form.Group controlId="formChangeGuild">
                             <Form.Control
-                            type="email"
-                            placeholder="Enter Your New Email"
-                            name="email"
+                            type="text"
+                            placeholder="Enter Your New Guild"
+                            name="guild"
                             size="lg"
-                            value={values.email}
+                            value={values.guild}
                             onChange={handleChange}
                             onBlur={handleBlur}
-                            isInvalid={touched.email && errors.email}
+                            isInvalid={touched.guild && errors.guild}
                             /> 
                             <Form.Control.Feedback type="invalid">
-                                {errors.email}
+                                {errors.guild}
                             </Form.Control.Feedback>
                         </Form.Group>
                         <Row className="Buttons">
@@ -89,7 +89,7 @@ function mapStateToProps(state) {
 }
 
 const actionCreators = {
-    changeEmail: userActions.changeEmail,
+    changeGuild: userActions.changeGuild,
 }
 
-export default connect(mapStateToProps, actionCreators)(Email);
+export default connect(mapStateToProps, actionCreators)(Guild);

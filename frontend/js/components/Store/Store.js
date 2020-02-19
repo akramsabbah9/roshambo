@@ -5,6 +5,8 @@ import { skins } from '../Settings/Skins';
 import { Link } from 'react-router-dom';
 import { history } from '../../utils/history';
 import { connect } from 'react-redux';
+import { userActions } from '../../redux/actions/UsersActions';
+import "../Fonts.css";
 
 /* 
     To Do:
@@ -25,6 +27,12 @@ class OnlineStore extends Component {
             products: skins,
             toPurchase: null
         }
+
+        this.handleSignOut = this.handleSignOut.bind(this)
+    }
+
+    componentDidMount(){
+        document.body.style.backgroundColor = "white";
     }
 
     handlePurchase(product) {
@@ -40,7 +48,7 @@ class OnlineStore extends Component {
 
     handleSignOut(e) {
         e.preventDefault();
-        history.push('/login');
+        this.props.logout()
     }
 
     addProductCards(products) {
@@ -48,7 +56,7 @@ class OnlineStore extends Component {
             <Col key={index}>
                 <Card>
                     <Card.Header className="col d-flex align-items-center justify-content-center">
-                        <FontAwesomeIcon style={product.avatar.style} icon={product.avatar.name} size='10x'/>
+                        <FontAwesomeIcon style={product.avatar.style} icon={product.avatar.name} size='7x'/>
                     </Card.Header>
                     <Card.Body>
                         <Card.Title>{product.name}</Card.Title>
@@ -59,7 +67,8 @@ class OnlineStore extends Component {
                         <Card.Text>{product.description}</Card.Text>
                     </Card.Body>
                     <Card.Footer className="col d-flex align-items-center justify-content-center">
-                        <Button onClick={() => this.handlePurchase(product)} disabled={this.props.ownedSkins.some(ownedSkin => ownedSkin == product.id)}>Buy</Button>
+                        <Button className="Buttons" variant="outline-primary"
+                         onClick={() => this.handlePurchase(product)} disabled={this.props.ownedSkins.some(ownedSkin => ownedSkin == product.id)}>Buy</Button>
                     </Card.Footer>
                 </Card>
                 <div style={{margin:50}} />
@@ -76,12 +85,14 @@ class OnlineStore extends Component {
                 return product
         })
         return(
-            <Container>
-                <Navbar bg="light"> 
+            <Container className="Words">
+                <Navbar bg="light" className="Buttons"> 
                     <Link to='/userdashboard'>       
-                        <Navbar.Brand style={{marginLeft:8, fontFamily:"'Bangers', cursive", fontSize:"30px"}}>Roshambo</Navbar.Brand>
+                        <Navbar.Brand style={{fontSize:"30px"}}>Roshambo</Navbar.Brand>
                     </Link>  
-                    <Button style={{marginLeft:'76%', justifyCenter:'Center'}} variant="outline-danger" onClick={this.handleSignOut}>Sign Out</Button>
+                    <Navbar.Collapse className="justify-content-end">
+                        <Button variant="outline-danger" onClick={this.handleSignOut}>Sign Out</Button>
+                    </Navbar.Collapse>
                 </Navbar>
                 <Col>
                     <h1 style={{marginTop:10, marginBottom: 10}}>Store</h1>
@@ -93,9 +104,12 @@ class OnlineStore extends Component {
 }
 
 function mapStateToProps (state) {
-    const { ownedSkins } = state.skins
-
+    const { ownedSkins } = state.skins;
     return { ownedSkins }
 }
 
-export default connect(mapStateToProps)(OnlineStore);
+const actionCreators = {
+    logout: userActions.logout
+}
+
+export default connect(mapStateToProps, actionCreators)(OnlineStore);

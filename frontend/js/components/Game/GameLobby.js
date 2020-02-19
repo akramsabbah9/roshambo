@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { Container, Navbar, Button, Row, Col, Card} from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMehRollingEyes, faDragon } from "@fortawesome/free-solid-svg-icons";
+import { faDragon } from "@fortawesome/free-solid-svg-icons";
 import { history } from '../../utils/history';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { skins } from '../Settings/Skins';
-
-
+import { userActions } from '../../redux/actions/UsersActions';
+import '../Fonts.css';
 
 class GameLobby extends Component {
     constructor(props) {
@@ -16,9 +16,14 @@ class GameLobby extends Component {
             bettingAmount: '$0',
             myselfReady: false,
         }
-        this.handleExit = this.handleExit.bind(this)
-        this.handleReady = this.handleReady.bind(this)
-        this.handleBet = this.handleBet.bind(this)
+        this.handleExit = this.handleExit.bind(this);
+        this.handleReady = this.handleReady.bind(this);
+        this.handleBet = this.handleBet.bind(this);
+        this.handleSignOut = this.handleSignOut.bind(this);
+    }
+    
+    componentDidMount(){
+        this.props.getCurrent()
     }
 
     handleExit(e) {
@@ -46,14 +51,12 @@ class GameLobby extends Component {
 
     handleSignOut(e) {
         e.preventDefault();
-        history.push('/login');
+        this.props.logout()
     }
 
     render(){
         const mySkin = skins[this.props.activeSkin]
         const myself = this.props.user
-
-        console.log(JSON.stringify(mySkin))
 
         const styles = {
             profilePic: {
@@ -81,24 +84,26 @@ class GameLobby extends Component {
         
 
         return(
-            <Container>
+            <Container className="Words">
                 <Navbar bg="light"> 
                     <Link to='/userdashboard'>       
-                        <Navbar.Brand style={{marginLeft:8, fontFamily:"'Bangers', cursive", fontSize:"30px"}}>Roshambo</Navbar.Brand>
+                        <Navbar.Brand className="Buttons" style={{fontSize: '30px'}}>Roshambo</Navbar.Brand>
                     </Link>  
-                    <Button style={{marginLeft:'76%', justifyCenter:'Center'}} variant="outline-danger" onClick={this.handleSignOut}>Sign Out</Button>
+                    <Navbar.Collapse className="justify-content-end">
+                        <Button variant="outline-danger" className="Buttons" onClick={this.handleSignOut}>Sign Out</Button>
+                    </Navbar.Collapse>
                 </Navbar>
                 <Row>
-                    <Col>
+                    <Col xs={4}>
                         <div style={styles.profilePic} className="col d-flex align-items-center justify-content-center">
                             <FontAwesomeIcon  style={mySkin.avatar.style} icon={mySkin.avatar.name} size='6x' />
                              {this.state.myselfReady ? <p>READY</p> : null}   
                         </div>
                         <div className="col d-flex align-items-center justify-content-center">
-                            <h5>ME: {myself.name}</h5>
+                            <h5 style={{margin: 15}}>ME: {myself.username}</h5>
                         </div>
                     </Col>
-                    <Col>
+                    <Col xs={4}>
                         <div className="col d-flex align-items-center justify-content-center">
                             <p style={styles.versus}>VS</p>
                             </div>
@@ -108,32 +113,32 @@ class GameLobby extends Component {
                                 </div>
                             </Card>
                     </Col>
-                    <Col>
+                    <Col xs={4}>
                         <div style={styles.profilePic} className="col d-flex align-items-center justify-content-center">
                             <FontAwesomeIcon  style={mySkin.avatar.style} icon={faDragon} size='6x' />
                         </div>
                         <div className="col d-flex align-items-center justify-content-center">
-                            <h5>THEM: Jared18</h5>
+                            <h5 style={{margin: 15}}>THEM: Jared18</h5>
                         </div>
                     </Col>
                 </Row>
                 <Row style={{margin:50}}>
-                    <Col>
+                    <Col xs={6}>
                         <Card style={styles.chatBox}>
                             <Card.Body>
                                 Chat Box
                             </Card.Body>
                         </Card>
                     </Col>
-                    <Col>
+                    <Col xs={6}>
                         <Row>
-                                <Button variant="outline-success" style={styles.btn} block size="lg" onClick={this.handleReady}>Ready</Button>      
+                                <Button style={{margin:5}} variant="outline-success" className="Buttons" block size="lg" onClick={this.handleReady}>Ready</Button>      
                         </Row>
                         <Row>
-                                <Button variant="outline-success"style={styles.btn} block size="lg" onClick={this.handleBet}>Bet</Button>                       
+                                <Button style={{margin:5}} variant="outline-warning" className="Buttons" block size="lg" onClick={this.handleBet}>Bet</Button>                       
                         </Row>
                         <Row>                          
-                                <Button variant="outline-danger" style={styles.btn} block size="lg" onClick={this.handleExit}>Exit</Button>
+                                <Button style={{margin:5}} variant="outline-danger" className="Buttons" block size="lg" onClick={this.handleExit}>Exit</Button>
                         </Row>
                     </Col>
                 </Row>
@@ -146,10 +151,15 @@ class GameLobby extends Component {
 
 function mapStateToProps (state) {
     const { activeSkin } = state.skins
-    const { user } = state.auth
+    const user = state.user.currentUser
 
     return { activeSkin, user }
 }
 
+const actionCreators = {
+    logout: userActions.logout,
+    getCurrent: userActions.getCurrent,
+}
 
-export default connect(mapStateToProps)(GameLobby);
+
+export default connect(mapStateToProps, actionCreators)(GameLobby);

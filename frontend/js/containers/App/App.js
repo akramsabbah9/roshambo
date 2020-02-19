@@ -13,8 +13,9 @@ import BettingPage from '../../components/Betting/BettingPage';
 import Payment from '../../components/Payment/payment';
 import OnlineStore from '../../components/Store/Store';
 import Appearance from '../../components/Settings/Appearance';
+import Guild from '../../components/Settings/Guild';;
 import Erehwon from '../../components/404 Page/404page';
-import { PrivateRoute } from '../../components/PrivateRoute/PrivateRoute';
+import { PrivateRoute, HomeRoute } from '../../components/PrivateRoute/PrivateRoute';
 import { history } from '../../utils/history';
 
 
@@ -22,9 +23,9 @@ import { history } from '../../utils/history';
 const App = () => (
   <Router history={history}>
     <Switch>
-        <Route exact path="/" component={Menu}/>
+        <HomeRoute exact path="/" component={Menu}/>
         <Route exact path="/Register" component={Register}/>
-        <Route exact path="/Login" component={LoginPage}/>
+        <Route exact path="/login" component={LoginPage}/>
         <PrivateRoute exact path="/UserDashBoard" component={UserDashBoard} />   
         <PrivateRoute exact path="/GameLobby" component={GameLobby} />  
         <PrivateRoute exact path="/GamePage" component={GamePage} />
@@ -32,6 +33,7 @@ const App = () => (
         <PrivateRoute exact path="/Settings/Password" component={Password} />
         <PrivateRoute exact path="/Settings/Email" component={Email} />    
         <PrivateRoute exact path="/Settings/Skin" component={Appearance} />  
+        <PrivateRoute exact path="/Settings/Guild" component={Guild} />  
         <PrivateRoute exact path="/GamePage" component={GamePage} />   
         <PrivateRoute exact path="/Betting" component={BettingPage} />
         <PrivateRoute exact path="/Payment" component={Payment} />

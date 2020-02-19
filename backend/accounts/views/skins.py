@@ -6,10 +6,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.serializers import ValidationError
 
+import requests
+import json
 
 from ..models import SkinsInventory, Skins, RoshamboUser as User
 from ..serializers import SkinsSerializer, SkinsInventorySerializer
-from ..utils import check_for_edit_validation_errors, flatten_skin_data
+from ..utils import check_for_edit_validation_errors, flatten_skin_data, flatten_purchased_skins
 
 import json
 from django.http import HttpResponse
@@ -82,8 +84,8 @@ class PurchasedUserSkins(APIView):
             value: list of positive integers representing purchased skins.
     @PUT: 
         @param skin: 
-            key: purchased_skins
-            value: list of positive integers representing purchased skins to add. Must be available according to GET /accounts/skins/.
+            key: purchased_skin
+            value: positive integer representing purchased skin.. Must be available according to GET /accounts/skins/.
         @return: the now-updated purchased_skins, akin to GET.
     """
     def get(self, request, format='json'):
@@ -94,33 +96,51 @@ class PurchasedUserSkins(APIView):
         self._validate_put_request(request)
 
         # TODO(benjibrandt): need to check based on Stripe token
-        newly_purchased_skins = request.data['purchased_skins']
-        for skin in newly_purchased_skins:
-            skin_object = SkinsInventory.objects.filter(skin=skin)
-            if skin_object:
-                request.user.skins.purchased_skins.add(skin_object)
-                request.user.skins.save()
-            else:
-                return Response({'error': '{} is not a valid skin.'.format(skin)}, status=status.HTTP_404_NOT_FOUND)
+        newly_purchased_skin = request.data['purchased_skin']
 
+        skin_object = SkinsInventory.objects.filter(skin=newly_purchased_skin).values('skin', 'price').first()
+        if not skin_object:
+            return Response({'error': '{} is not a valid skin.'.format(newly_purchased_skin)}, status=status.HTTP_400_BAD_REQUEST)
+
+        already_purchased_skins = flatten_purchased_skins(list(request.user.skins.purchased_skins.values('skin')))
+        if newly_purchased_skin in already_purchased_skins:
+            return Response({'purchased_skin': '{} has already been purchased.'.format(newly_purchased_skin)}, status=status.HTTP_400_BAD_REQUEST)
+        
+        purchase = self._make_purchase(request, skin_object['price'])
+        if not (purchase.status_code >= 200 and purchase.status_code < 300):
+            return Response(
+                json.loads(purchase.content), 
+                status=status.HTTP_402_PAYMENT_REQUIRED
+            )
+
+        request.user.skins.purchased_skins.add(skin_object['skin'])
+        request.user.skins.save()
         data = self._generate_response_data(request)
         return Response(data, status=status.HTTP_200_OK)
+
+    def _make_purchase(self, request, cost):
+        headers = {
+            'content-type': 'application/json',
+            'Authorization': 'Token {}'.format(request.user.auth_token)
+        }
+        data = {
+            'amount': cost,
+            'action': 'sub'
+        }
+        return requests.put(request.build_absolute_uri('/accounts/wallet/'), headers=headers, data=json.dumps(data))
 
     def _validate_put_request(self, request):
         
         if not request.data:
             raise ValidationError({'error': 'request is empty'}, code='invalid')
 
-        skin_fields = [field.name for field in Skins._meta.get_fields()]
-        check_for_edit_validation_errors(set(skin_fields), set(['purchased_skins']), set(request.data.keys()))
-
-        if not isinstance(request.data['purchased_skins'], list):
-            return Response(
-                {'purchased_skins': 'purchased_skins be formatted as a list.'}, 
-                status=status.HTTP_400_BAD_REQUEST
+        check_for_edit_validation_errors(set(['purchased_skin']), set(['purchased_skin']), set(request.data.keys()))
+        if not isinstance(request.data['purchased_skin'], int):
+            raise ValidationError(
+                {'purchased_skin': 'purchased_skin must be an integer.'}, 
+                code='invalid'
             )
 
     def _generate_response_data(self, request):
-        skin_data = SkinsSerializer(request.user.skins).data
-        flatten_skin_data(skin_data)
+        skin_data = flatten_skin_data(SkinsSerializer(request.user.skins).data)
         return {'purchased_skins': skin_data['purchased_skins']}

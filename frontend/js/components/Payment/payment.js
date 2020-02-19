@@ -4,6 +4,7 @@ import { Formik } from 'formik';
 import * as yup from 'yup';
 import { connect } from 'react-redux';
 import { skinsActions } from '../../redux/actions/SkinsActions';
+import '../Fonts.css'
 
 
 
@@ -60,14 +61,12 @@ class PaymentPage extends Component {
     handleSubmit(values) {
         const skinPurchase = "Custom Skin"
         const { id, type } = this.state.items[0]
+        const data = {purchased_skin: id}
+
+
         // Process payment information here
-        //console.log(this.state.items[0].type)
-        //console.log(this.state.items[0].type == skinPurchase)
-        // Add redux logic to add skin
         if (type == skinPurchase) {
-            // dispatch add skins action
-            //console.log("Entered adding skin")
-            this.props.addSkin(this.props.ownedSkins, this.props.activeSkin, id)
+            this.props.addSkin(data)
             this.props.history.push('/userdashboard')
         } else {
             this.props.history.push('/gameLobby')
@@ -123,7 +122,7 @@ class PaymentPage extends Component {
         }
 
         return(
-            <Container>
+            <Container className="Words">
                 <Row className="col d-flex align-items-center justify-content-center">
                     <h1 style={{marginTop: 50}}>Checkout</h1>
                     <Card style={{margin: 50}}>
@@ -325,9 +324,9 @@ class PaymentPage extends Component {
                             </Form.Row>
 
                             <div style={{margin:50}} />
-                            <Col className="col d-flex align-items-center justify-content-center">
+                            <Col className="col d-flex align-items-center justify-content-center Buttons">
                                 <Button style={styles.checkOutBtn} variant="success" type="submit">Confirm</Button>
-                                <Button style={styles.cancelBtn} variant="outline-danger" onClick={this.handleCancel}>Cancel</Button>
+                                <Button style={styles.cancelBtn} variant="danger" onClick={this.handleCancel}>Cancel</Button>
                             </Col>
                         </Form>
                     )}
@@ -342,8 +341,8 @@ class PaymentPage extends Component {
 }
 
 function mapStateToProps(state) {
-    const { ownedSkins, activeSkin } = state.skins
-    return { ownedSkins, activeSkin }
+    const { ownedSkins, activeSkin, error } = state.skins
+    return { ownedSkins, activeSkin, error }
 }
 
 const actionCreators = {
