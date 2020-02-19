@@ -30,9 +30,9 @@ class Menu extends Component{
                     <Link to="/Login" style={{color: '#b3d7ff'}}>Login</Link>
                   </div>
                   </Col>
-                  <Col xs={2}>
+                <Col xs={2}>
                   <FontAwesomeIcon icon={faHandRock} className="toRight Icon" size="7x"/>
-                  </Col>
+                </Col>
                   <FontAwesomeIcon className="toLeft Icon" icon={faHandPaper} size="7x"/>
               </Row>
             </Container>   
