@@ -21,6 +21,7 @@ def charge(request):
             description='A Django charge',
             source=request.POST['stripeToken']
         )
-        return render(request, 'charge.html')
+        if charge.outcome.network_status == 'approved_by_network' and charge.outcome.type == "authorized":
+            return render(request, 'charge.html')
 
 

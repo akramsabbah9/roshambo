@@ -11,6 +11,8 @@ from ..models import SkinsInventory, Skins, RoshamboUser as User
 from ..serializers import SkinsSerializer, SkinsInventorySerializer
 from ..utils import check_for_edit_validation_errors, flatten_skin_data
 
+import json
+from django.http import HttpResponse
 
 @api_view(['GET'])
 def available_skins(request):
@@ -105,6 +107,7 @@ class PurchasedUserSkins(APIView):
         return Response(data, status=status.HTTP_200_OK)
 
     def _validate_put_request(self, request):
+        
         if not request.data:
             raise ValidationError({'error': 'request is empty'}, code='invalid')
 

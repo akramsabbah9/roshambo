@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'chat',
     'payments.apps.PaymentsConfig',
     'rest_framework.authtoken',
-    'accounts',
+    'accounts'
 ]
 
 MIDDLEWARE = [
