@@ -25,7 +25,8 @@ def join_match(user_id):
     """
     already_joined_matches = list(Match.objects.filter(Q(user1=user_id) | Q(user2=user_id)))
     if len(already_joined_matches) > 0:
-        return already_joined_matches[0].id, 'Already joined match {}. Re-sending ID.'.format(already_joined_matches[0].id)
+        match = already_joined_matches[0]
+        return match.id, 'Already joined match {}. Re-sending ID.'.format(already_joined_matches[0].id)
 
     # find a match
     matches = list(Match.objects.filter(user_count__lte=1, lock=False))
