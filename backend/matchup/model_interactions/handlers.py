@@ -7,10 +7,9 @@ import random
 
 from ..models import Match
 from ..exceptions import ExistError
+from ..utils import evaluate_rps
 
 from .utils import get_match, get_user_slot_in_match, RPSMove
-
-from ..utils import evaluate_rps
 
 @database_sync_to_async
 def join_match(user_id):
@@ -21,12 +20,12 @@ def join_match(user_id):
     :param UUID user_id: the id of the user trying to join the match.
     :rtype: UUID, str
     :return: 
-        the UUID of the match. None if the user is disallowed from joining due to already being in another match.
+        the UUID of the match. Will return the match a user is already a part of if they are part of one.
         a message describing the transaction
     """
     already_joined_matches = list(Match.objects.filter(Q(user1=user_id) | Q(user2=user_id)))
     if len(already_joined_matches) > 0:
-        return None, 'Already joined match {}. Cannot join another.'.format(already_joined_matches[0].id)
+        return already_joined_matches[0].id, 'Already joined match {}. Re-sending ID.'.format(already_joined_matches[0].id)
 
     # find a match
     matches = list(Match.objects.filter(user_count__lte=1, lock=False))
@@ -196,3 +195,18 @@ def user_first_to_ready(match_id, user_id):
     match = get_match(match_id)
     
     return match.first_to_ready == user_id
+
+@database_sync_to_async
+def get_serialized_user_data(user):
+    """
+    :param RoshamboUser user: the user to get info for.
+    :rtype: dict
+    :return: the user's public info (id, username, guild, country_code).
+    """
+    # Somewhat janky since we don't want to import accounts' models/serializers
+    return {
+        'id': str(user.id),
+        'username': user.username,
+        'guild': user.guild,
+        'country_code': user.country_code,
+    }

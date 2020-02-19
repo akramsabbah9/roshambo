@@ -10,7 +10,7 @@ import json
 from .model_interactions.handlers import \
     join_match, leave_match, round_started, set_user_move, \
     set_user_ready_status, both_users_ready, evaluate_round, \
-    user_first_to_ready, set_round_as_started
+    user_first_to_ready, set_round_as_started, get_serialized_user_data
 from .utils import wait_then_call, get_time_seconds
 
 ROUND_TIMER = 5
@@ -53,6 +53,16 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_add(
             self.match_group_id,
             self.channel_name
+        )
+
+        user_data = await get_serialized_user_data(self.user)
+        
+        await self.channel_layer.group_send(
+            self.match_group_id,
+            {
+                'type': 'user_joined',
+                'user': user_data
+            }
         )
 
         await self.accept(subprotocol='Token')
@@ -109,8 +119,8 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_send(
             self.match_group_id,
             {
-                'type': 'winner_determined',
-                'winner': winner
+                'type': 'user_joined',
+                'user': self.user
             }
         )
 
@@ -210,6 +220,14 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
     #------------------------------------------------------------------
     # Channel Event Handlers
     #------------------------------------------------------------------
+    async def user_joined(self, event):
+        user = event['user']
+
+        await self._send_channel_message({
+            'command': 'channel',
+            'user_joined': user
+        })
+    
     async def chat_message(self, event):
         message = event['message']
 
@@ -338,6 +356,8 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                             'error': 'start request must include an int value for key \'start\'.'
                         }, status=status.HTTP_400_BAD_REQUEST)
                         return False
+                    elif command == 'user_joined':
+                        break # only can be sent by the server itself, it better be right
                     else: # command == 'user_readied' or command == 'winner'
                         if not isinstance(data[command], str): # TODO: string or uuid
                             await self._send_response({
@@ -360,7 +380,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
     #------------------------------------------------------------------
     # Command Definitions
     #------------------------------------------------------------------
-    channel_commands = ['start', 'user_readied', 'winner']
+    channel_commands = ['start', 'user_readied', 'winner', 'user_joined']
     rps_commands = ['ready', 'move']
     rps_move_values = ['rock', 'paper', 'scissors']
     chat_commands = ['message']

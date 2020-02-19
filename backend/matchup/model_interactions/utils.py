@@ -1,6 +1,7 @@
 # matchup/model_interactions/utils.py
 
 from channels.db import database_sync_to_async
+from rest_framework import serializers
 
 from enum import Enum
 
