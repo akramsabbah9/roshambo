@@ -1,10 +1,11 @@
 import { socketConstants } from '../actions/types';
 
+import WebSocketAsPromised from 'websocket-as-promised';
 
 const socketInitialState = {
     socketLoading: true,
     error: null,
-    socket: null
+    socket: null,
 }
 
 export function socket(state = socketInitialState, action) {

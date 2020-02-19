@@ -6,12 +6,10 @@ import { history } from '../../utils/history';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { skins } from '../Settings/Skins';
-import '../Game.css';
 import Chat from '../Chat';
-
-
-import { userActions } from '../../redux/actions/UsersActions';
 import { socketActions } from '../../redux/actions/SocketActions';
+import { userActions } from '../../redux/actions/UsersActions';
+import '../Game.css';
 
 
 class GameLobby extends Component {
@@ -25,7 +23,10 @@ class GameLobby extends Component {
         this.handleReady = this.handleReady.bind(this);
         this.handleBet = this.handleBet.bind(this);
         this.handleSignOut = this.handleSignOut.bind(this);
-        this.props.constructSocket();
+        if (this.props.socket == null) {
+            this.props.constructSocket()
+            console.log("socket constructed!")
+        }
     }
 
     handleExit(e) {
@@ -39,7 +40,7 @@ class GameLobby extends Component {
     }
 
     handleReady(e) {
-        e.preventDefault()
+        e.preventDefault();
         if (this.state.myselfReady) {
             this.props.socket.sendPacked({
                 'command': 'rps',
@@ -153,11 +154,10 @@ class GameLobby extends Component {
     }
 }
 
-
 function mapStateToProps (state) {
     const { activeSkin } = state.skins
-    const user = state.user.currentUser
-    const socket = state.socket
+    const user = state.user.currentUser;
+    const socket = state.socket.socket;
     return { activeSkin, user, socket }
 }
 

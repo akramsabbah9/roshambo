@@ -14,7 +14,9 @@ function constructSocket() {
         const socket = new WebSocketAsPromised(socketConstants.SOCKET_URL, {
             createWebSocket: url => new WebSocket(url, ['Token', localStorage.getItem('token')]),
             packMessage: data => JSON.stringify(data),
-            unpackMessage: data => JSON.parse(data)
+            unpackMessage: data => JSON.parse(data),
+            attachRequestId: (data, id) => Object.assign({id}, data),
+            extractRequestId: data => data && data.id
           });
         socket.open()
             .then(() => {

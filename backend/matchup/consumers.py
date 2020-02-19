@@ -144,6 +144,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                 'message': message
             }
         )
+        await self._send_response(status=status.HTTP_204_NO_CONTENT, id=data['id'])
 
     async def _process_rps_command(self, data):
         """
@@ -234,6 +235,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         message = event['message']
 
         await self._send_channel_message({
+            'user': self.user.username,
             'command': 'chat',
             'message': message
         })

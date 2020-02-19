@@ -14,6 +14,7 @@ import { skins } from '../Settings/Skins';
 import '../Game.css'
 
 
+
 class UserDashBoard extends Component {
     constructor(props) {
         super(props)
@@ -178,8 +179,9 @@ function mapStateToProps (state) {
     const usersLoading = state.users.usersLoading
     const { users } = state.users
     const { activeSkin, getActiveSkinLoading } = state.skins
+    const socket = state.socket.socket
 
-    return { user, users, activeSkin, getActiveSkinLoading, userLoading, usersLoading }
+    return { user, users, activeSkin, getActiveSkinLoading, userLoading, usersLoading, socket }
 }
 
 const actionCreators = {
@@ -188,7 +190,6 @@ const actionCreators = {
     getCurrent: userActions.getCurrent,
     getActiveSkin: skinsActions.getActiveSkin,
     getOwnedSkins: skinsActions.getOwnedSkins,
-    
 }
 
 export default connect(mapStateToProps, actionCreators)(UserDashBoard);
