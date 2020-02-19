@@ -108,7 +108,8 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
 
     async def _send_channel_message(self, data):
         """
-        Same as _send_response, but intended for the channel (hence no status).
+        Same as _send_response, but it is a message which originated from the channel (hence no status, nor request ID).
+        This way, on the user's end, they know this not in response to some request they made.
         :param dict data: the data to send.
         """
         await self.send(text_data=json.dumps(data))
@@ -119,8 +120,8 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_send(
             self.match_group_id,
             {
-                'type': 'user_joined',
-                'user': self.user
+                'type': 'winner_determined',
+                'winner': winner
             }
         )
 
@@ -196,31 +197,27 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
 
         # TODO: call db func to add bet
 
-    async def _process_channel_command(self, data):
+    async def _process_order_start_command(self, data):
         """
-        Handle intersocket, channel-based messages.
+        Handle user-generated (not channel-generated) order start commands.
         """
-        # Send the interchannel command to our client.
-        if 'start' in data:
-            # need to restrict arbitrary sending of 'channel': 'start', just as we restrict 'order_start'
-            if not await both_users_ready(self.match_id):
-                return
-            if not await round_started(self.match_id):
-                return
-            if self.seen_round_start:
-                return
-            self.seen_round_start = True
-        
-        await self._send_response(data)
+        allowed_order_start, allowance_reason = self._order_start_allowed()
+        if not allowed_order_start:
+            await self._send_response({
+                    'error': 'Round cannot be started. {}'.format(allowance_reason)
+                }, status=status.HTTP_409_CONFLICT)
+            return
 
-        if 'start' in data and await user_first_to_ready(self.match_id, self.user.id):
-            # Since we were the first to ready, we now officially start the timer
-            wait_then_call(ROUND_TIMER, self._handle_round_end)
-    
+        self._start_a_round()
+
     #------------------------------------------------------------------
     # Channel Event Handlers
+    # ALL of these can ONLY be called by a call to group_send(), and so must have come from an internal source.
     #------------------------------------------------------------------
     async def user_joined(self, event):
+        """
+        Alert consumers/users that someone has a joined.
+        """
         user = event['user']
 
         await self._send_channel_message({
@@ -229,6 +226,9 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         })
     
     async def chat_message(self, event):
+        """
+        Send a received chat message to all users.
+        """
         message = event['message']
 
         await self._send_channel_message({
@@ -237,6 +237,9 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         })
 
     async def round_start(self, event):
+        """
+        Alert all users that a round has started.
+        """
         start_time = event['start']
 
         await self._send_channel_message({
@@ -245,6 +248,9 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         })
 
     async def readied_up(self, event):
+        """
+        Alert all users that someone has readied up.
+        """
         user = event['user']
 
         await self._send_channel_message({
@@ -253,39 +259,26 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         })
 
     async def order_start(self, event):
-        if not await user_first_to_ready(self.match_id, self.user.id) :
+        """
+        Handle a channel-generated (not user-generated) order start command.
+        As of now, this is called if the user who was first to ready up readies up, and both users are ready at that time.
+        """
+        allowed_order_start, _ = self._order_start_allowed()
+        if not allowed_order_start:
             return
-        if not await both_users_ready(self.match_id):
-            return
-        if await round_started(self.match_id):
-            return
-        if self.seen_round_start:
-            return
-        
-        await self.channel_layer.group_send(
-            self.match_group_id,
-            {
-                'type': 'round_start',
-                'start': get_time_seconds()
-            }
-        )
-        await set_round_as_started(self.match_id)
+
+        self._start_a_round()
+
 
     async def winner_determined(self, event):
-        if not self.seen_round_start:
-            return
-        if self.seen_round_start and await round_started(self.match_id):
-            # If we've seen the round start and _handle_round_end hasn't set round_started to False, this command is BS
-            return
-        
-        # this is a legit command, we can now set the seen_round_start to False in anticipation of seeing a new round start
-        self.seen_round_start = False
         winner = event['winner']
 
         await self._send_channel_message({
             'command': 'channel',
             'winner': winner
         })
+
+        self.seen_round_start = False
 
     #------------------------------------------------------------------
     # Data Validation
@@ -307,8 +300,8 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             }, status=status.HTTP_400_BAD_REQUEST)
             return False
 
-        # order start commands have no additional info
-        if command_group == 'order_start': 
+        # order start/begin_round commands have no additional info, and their allowance is determined within the function itself
+        if command_group == 'begin_round': 
             return True
 
         if not await self._command_valid(data, command_group):
@@ -324,7 +317,6 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             'rps': self.rps_commands,
             'chat': self.chat_commands,
             'bet': self.bet_commands,
-            'channel': self.channel_commands
         }
 
         commands = switch[command_group]
@@ -349,21 +341,6 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                             'error': 'rps move request must include one of {} as value for key \'move\'.'.format(rps_move_values)
                         }, status=status.HTTP_400_BAD_REQUEST)
                         return False
-                elif command_group == 'channel':
-                    if command == 'start':
-                        if not isinstance(data[command], int):
-                            await self._send_response({
-                            'error': 'start request must include an int value for key \'start\'.'
-                        }, status=status.HTTP_400_BAD_REQUEST)
-                        return False
-                    elif command == 'user_joined':
-                        break # only can be sent by the server itself, it better be right
-                    else: # command == 'user_readied' or command == 'winner'
-                        if not isinstance(data[command], str): # TODO: string or uuid
-                            await self._send_response({
-                            'error': 'user_readied request must include a uuid value for key \'user_readied\'.'
-                        }, status=status.HTTP_400_BAD_REQUEST)
-                        return False
                 else: # command_group == 'bet'
                     if not isinstance(data[command], int):
                         await self._send_response({
@@ -377,20 +354,54 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             }, status=status.HTTP_400_BAD_REQUEST)
         return False
 
+    async def _order_start_allowed(self):
+        """
+        Determines if an order_start command is allowed to be called).
+
+        :rtype: bool, str
+        :return:
+            True if it is allowed, False otherwise.
+            Reason why it is disallowed/allowed.
+        """
+        if not await user_first_to_ready(self.match_id, self.user.id) :
+            return False, '{} is not the first user to ready up, and cannot order round starts.'.format(self.user.id)
+        if not await both_users_ready(self.match_id):
+            return False, 'Both users are not ready. A round start cannot be ordered.'
+        if await round_started(self.match_id) or self.seen_round_start:
+            return False, 'The round has already started. A round start cannot be ordered in the middle of a round.'
+        return True, '{} is allowed to order a start.'.format(self.user.id)
+
+    async def _start_a_round(self):
+        """
+        Starts a round of RPS!
+        """
+        self.seen_round_start = True # used to prevent the next round from starting until we're sure winner info has been dispatched
+        
+        await self.channel_layer.group_send(
+            self.match_group_id,
+            {
+                'type': 'round_start',
+                'start': get_time_seconds()
+            }
+        )
+        await set_round_as_started(self.match_id)
+        wait_then_call(ROUND_TIMER, self._handle_round_end)
+
     #------------------------------------------------------------------
     # Command Definitions
     #------------------------------------------------------------------
+    # these are specified for doc's sake -- no user can call these, only .send_group() messages can
     channel_commands = ['start', 'user_readied', 'winner', 'user_joined']
+    # these are commands which can be called by the user, hence available in dispatch_command
     rps_commands = ['ready', 'move']
     rps_move_values = ['rock', 'paper', 'scissors']
     chat_commands = ['message']
     bet_commands = ['amount']
-    command_groups = ['rps', 'chat', 'bet', 'channel', 'order_start']
+    command_groups = ['rps', 'chat', 'bet', 'begin_round']
     dispatch_command = {
         'rps': _process_rps_command,
         'bet': _process_bet_command,
         'chat': _process_chat_command,
-        'channel': _process_channel_command,
-        'begin_round': order_start
+        'begin_round': _process_order_start
     }
     seen_round_start = False
