@@ -2,13 +2,15 @@ import React, { Component } from 'react';
 import { Container, Navbar, Button, Row, Col, Card} from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDragon } from "@fortawesome/free-solid-svg-icons";
-import { history } from '../../utils/history';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { skins } from '../Settings/Skins';
-import { userActions } from '../../redux/actions/UsersActions';
 import Chat from '../Chat';
+import Loading from '../Loading/Loading';
+import { userActions } from '../../redux/actions/UsersActions';
 import { socketActions } from '../../redux/actions/SocketActions';
+
+
 import '../Fonts.css';
 
 
@@ -18,6 +20,8 @@ class GameLobby extends Component {
         this.state = {
             bettingAmount: '$0',
             myselfReady: false,
+            matched: false,
+            socketResponseHandlerAdded: false,
         }
         this.handleExit = this.handleExit.bind(this);
         this.handleReady = this.handleReady.bind(this);
@@ -30,6 +34,47 @@ class GameLobby extends Component {
     
     componentDidMount(){
         this.props.getCurrent()
+    }
+
+    componentDidUpdate() {
+        if (this.props.socket && !this.state.socketResponseHandlerAdded) {
+            this.props.socket.onMessage.addListener(data => this.handleSocketMessage(data))
+            this.setState({socketResponseHandlerAdded: true})
+        }
+    }
+
+    handleSocketMessage(data) {
+        let json = JSON.parse(data)
+        const command = json.command;
+        switch (command) {
+            case 'channel':
+                if (json.hasOwnProperty('start')) {
+                    console.log("got start")
+
+                }
+                else if (json.hasOwnProperty('user_readied')) {
+                    console.log("got user_readied")
+
+                }
+                else if (json.hasOwnProperty('winner')) {
+                    console.log("got winner")
+
+                }
+                else if (json.hasOwnProperty('user_joined')) {
+                    console.log("got user_joined")
+                    // this.setState(matched: true);
+                }
+                break
+            case 'chat':
+                console.log("got chat msg")
+                break
+            case 'rps':
+                console.log("got rps msg")
+                break
+            case 'bet':
+                console.log("got bet msg")
+                break
+        }
     }
 
     handleExit(e) {
@@ -48,13 +93,13 @@ class GameLobby extends Component {
             this.props.socket.sendRequest({
                 'command': 'rps',
                 'ready': false
-            }).then(() => this.setState({myselfReady: false}));
+            }).then(this.setState({myselfReady: false}));
         }
         else {
             this.props.socket.sendRequest({
                 'command': 'rps',
                 'ready': true
-            }).then(() => this.setState({myselfReady: true}));
+            }).then(this.setState({myselfReady: true}));
         }
     }
 
@@ -103,44 +148,50 @@ class GameLobby extends Component {
                     </Navbar.Collapse>
                 </Navbar>
                 <Row>
+                    {/*---- OUR user info ----*/}
                     <Col xs={4}>
                         <div style={styles.profilePic} className="col d-flex align-items-center justify-content-center">
                             <FontAwesomeIcon  style={mySkin.avatar.style} icon={mySkin.avatar.name} size='6x' />
-                             {this.state.myselfReady ? <p>READY</p> : null}   
                         </div>
+                        {this.state.myselfReady ? <div className="col d-flex align-items-center justify-content-center"><h6>READY</h6></div> : null}   
                         <div className="col d-flex align-items-center justify-content-center">
-                            <h5 style={{margin: 15}}>ME: {myself.username}</h5>
+                            <h5 style={{margin: 15}}>{myself.username}</h5>
                         </div>
                     </Col>
+                    {/*---- central detail pane ----*/}
                     <Col xs={4}>
                         <div className="col d-flex align-items-center justify-content-center">
                             <p style={styles.versus}>VS</p>
                             </div>
                             <Card style={styles.betBox}>
                                 <div className="d-flex align-items-center justify-content-center">
-                                    <Card.Body>Betting Amount: {this.state.bettingAmount}</Card.Body>
+                                    <Card.Body>Pot of Money: {this.state.bettingAmount}</Card.Body>
                                 </div>
                             </Card>
                     </Col>
+                    {/*---- OPPONENT user info ----*/}
                     <Col xs={4}>
+                        {this.state.matched ? 
                         <div style={styles.profilePic} className="col d-flex align-items-center justify-content-center">
                             <FontAwesomeIcon  style={mySkin.avatar.style} icon={faDragon} size='6x' />
                         </div>
+                        :
+                        <div className="col d-flex align-items-center justify-content-center" style={{marginTop: '4em'}}>Searching for an opponent...</div>}
                         <div className="col d-flex align-items-center justify-content-center">
-                            <h5 style={{margin: 15}}>THEM: Jared18</h5>
+                            <h5 style={{margin: 15}}>{this.state.matched ? Jared18 : <Loading />}</h5>
                         </div>
                     </Col>
                 </Row>
                 <Row style={{margin:50}}>
                     <Col style={{maxWidth: '100%', flex: '0 0 100%', marginLeft: '1em'}}>
                         <Row>
-                                <Button style={{margin:5}} variant="outline-success" className="Buttons" block size="lg" onClick={this.handleReady}>Ready</Button>      
+                                <Button style={{margin:5}} variant="outline-success" className="Buttons" block size="lg" onClick={this.handleReady.bind(this)}>Ready</Button>      
                         </Row>
                         <Row>
-                                <Button style={{margin:5}} variant="outline-warning" className="Buttons" block size="lg" onClick={this.handleBet}>Bet</Button>                       
+                                <Button style={{margin:5}} variant="outline-warning" className="Buttons" block size="lg" onClick={this.handleBet.bind(this)}>Bet</Button>                       
                         </Row>
                         <Row>                          
-                                <Button style={{margin:5}} variant="outline-danger" className="Buttons" block size="lg" onClick={this.handleExit}>Exit</Button>
+                                <Button style={{margin:5}} variant="outline-danger" className="Buttons" block size="lg" onClick={this.handleExit.bind(this)}>Exit</Button>
                         </Row>
                     </Col>
                 </Row>

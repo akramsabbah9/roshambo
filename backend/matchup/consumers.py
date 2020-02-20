@@ -36,7 +36,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             await self.close()
             return
 
-        self.match_id, join_status = await join_match(self.user.id)
+        self.match_id, join_status, opponent = await join_match(self.user.id)
 
         if self.match_id is None:
             await self.accept(subprotocol='Token')
@@ -65,6 +65,15 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             }
         )
 
+        if opponent is not None:
+            await self.channel_layer.group_send(
+            self.match_group_id,
+            {
+                'type': 'user_joined',
+                'user': opponent
+            }
+        )
+
         await self.accept(subprotocol='Token')
 
     async def disconnect(self, close_code):
@@ -90,7 +99,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             return
 
         command = data['command']
-
+        print('validated {}'.format(command))
         await self.dispatch_command[command](self, data)
 
     #------------------------------------------------------------------
@@ -152,6 +161,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         """
         # because we validated, we can make assumptions like else will be the other command for rps
         if 'move' in data:
+            print('move in data')
             if not await round_started(self.match_id):
                 await self._send_response({
                     'error': 'rps move request cannot be made until both players have readied up, and the match has started.'
@@ -160,6 +170,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             await set_user_move(self.match_id, self.user.id, move)
             await self._send_response(status=status.HTTP_204_NO_CONTENT, id=data['id'])
         else: # 'ready' in data
+            print('in ready state')
             ready_status = data['ready']
             await set_user_ready_status(self.match_id, self.user.id, ready_status)
 
@@ -168,7 +179,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                 self.match_group_id,
                 {
                     'type': 'readied_up',
-                    'user_readied': self.user.id
+                    'user_readied': str(self.user.id)
                 }
             )
 
@@ -275,7 +286,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         """
         Alert all users that someone has readied up.
         """
-        user = event['user']
+        user = event['user_readied']
 
         await self._send_channel_message({
             'command': 'channel',
@@ -360,10 +371,11 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                 elif command_group == 'rps':
                     if command == 'ready':
                         if not isinstance(data[command], bool):
+                            print("no bool")
                             await self._send_response({
                             'error': 'rps ready request must include a bool value for key \'ready\'.'
                         }, status=status.HTTP_400_BAD_REQUEST, id=data['id'])
-                        return False
+                            return False
                     else:
                         if data[command] not in rps_move_values:
                             await self._send_response({

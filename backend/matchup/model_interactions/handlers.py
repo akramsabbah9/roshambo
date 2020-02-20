@@ -18,15 +18,19 @@ def join_match(user_id):
     Either way, returns the ID of the joined match.
 
     :param UUID user_id: the id of the user trying to join the match.
-    :rtype: UUID, str
+    :rtype: UUID, str, UUID
     :return: 
         the UUID of the match. Will return the match a user is already a part of if they are part of one.
         a message describing the transaction
+        the UUIID of the opponent. None if there are none in the match at joining.
     """
     already_joined_matches = list(Match.objects.filter(Q(user1=user_id) | Q(user2=user_id)))
     if len(already_joined_matches) > 0:
         match = already_joined_matches[0]
-        return match.id, 'Already joined match {}. Re-sending ID.'.format(already_joined_matches[0].id)
+        opponent = None
+        if match.user_count == 2:
+            opponent = match.user1 if match.user1 != user_id else match.user2
+        return match.id, 'Already joined match {}. Re-sending ID.'.format(already_joined_matches[0].id), opponent
 
     # find a match
     matches = list(Match.objects.filter(user_count__lte=1, lock=False))
@@ -41,8 +45,9 @@ def join_match(user_id):
     # matches are only allowed 2 users; lock ensures someone can't join in the middle of a match if someone else quits
     if match.user_count == 2:
         match.lock = True
+        opponent = match.user1 if match.user1 != user_id else match.user2
     match.save()
-    return match.id, 'Joined match {} successfully'.format(match.id)
+    return match.id, 'Joined match {} successfully'.format(match.id), opponent
 
 
 @database_sync_to_async
