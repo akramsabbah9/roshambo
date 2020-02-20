@@ -1,9 +1,11 @@
-<!-- chat/templates/chat/index.html -->
+<!-- matchup/templates/matchup/matcher.html -->
+<!-- TODO: change name? Add rooms functionality from channels_presence -->
+
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8"/>
-    <title>Chat Rooms</title>
+    <title>Matchmaker</title>
 </head>
 <body>
     What chat room would you like to enter?<br/>
@@ -20,7 +22,7 @@
 
         document.querySelector('#room-name-submit').onclick = function(e) {
             var roomName = document.querySelector('#room-name-input').value;
-            window.location.pathname = '/chat/' + roomName + '/';
+            window.location.pathname = '/matchup/' + roomName + '/';
         };
     </script>
 </body>

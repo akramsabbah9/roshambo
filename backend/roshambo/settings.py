@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'accounts',
+    'matchup',
 ]
 
 MIDDLEWARE = [
@@ -147,23 +148,21 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# Channels configuration
+ASGI_APPLICATION = 'matchup.routing.application'
+
+# Channels
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("roshambo_redis", 6379)],
+        },
+    },
+}
+
 # we whitelist localhost:3000 because that's where frontend will be served
 CORS_ORIGIN_WHITELIST = (
         'http://localhost:3000',
         'http://localhost:8000',
     )
-
-import channels.layers
-#from channels_redis.core import RedisChannelLayer
-#from asgiref.sync import async_to_sync
-# Channels configuration
-ASGI_APPLICATION = 'roshambo.routing.application'
-
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('roshambo_redis', 6379)],
-        },
-    },
-}
