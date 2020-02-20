@@ -9,7 +9,6 @@ import { skins } from '../Settings/Skins';
 import { userActions } from '../../redux/actions/UsersActions';
 import Chat from '../Chat';
 import { socketActions } from '../../redux/actions/SocketActions';
-import { userActions } from '../../redux/actions/UsersActions';
 import '../Fonts.css';
 
 
