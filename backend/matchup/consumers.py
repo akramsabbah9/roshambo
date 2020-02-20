@@ -66,11 +66,12 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         )
 
         if opponent is not None:
+            print("{} requesting info!".format(self.user.username))
             await self.channel_layer.group_send(
             self.match_group_id,
             {
                 'type': 'request_info',
-                'user_id': opponent
+                'user_id': str(opponent)
             }
         )
 
@@ -318,9 +319,12 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
 
     async def request_info(self, event):
         user_id = event['user_id']
-        if self.user.id != user_id:
+        print("{} got info send request!".format(self.user.username))
+        
+        if str(self.user.id) != user_id:
             return
 
+        print("{} sending info!".format(self.user.username))
         user_data = await get_serialized_user_data(self.user)
 
         await self.channel_layer.group_send(
@@ -333,12 +337,14 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
     async def declare_info(self, event):
         user_data = event['user']
 
-        if user_data['id'] == self.user.id:
+        if str(user_data['id']) == self.user.id:
             return
+
+        print("{} got info!".format(self.user.username))
 
         await self._send_channel_message({
             'command': 'channel',
-            'user_joined': user
+            'user_joined': user_data
         })
 
     #------------------------------------------------------------------

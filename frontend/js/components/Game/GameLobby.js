@@ -22,6 +22,7 @@ class GameLobby extends Component {
             myselfReady: false,
             matched: false,
             socketResponseHandlerAdded: false,
+            opponent: null,
         }
         this.handleExit = this.handleExit.bind(this);
         this.handleReady = this.handleReady.bind(this);
@@ -61,8 +62,9 @@ class GameLobby extends Component {
 
                 }
                 else if (json.hasOwnProperty('user_joined')) {
-                    console.log("got user_joined")
-                    // this.setState(matched: true);
+                    if (json.user_joined.username != this.props.user.username) {
+                        this.setState({opponent: json.user_joined, matched: true});
+                    }
                 }
                 break
             case 'chat':
@@ -178,7 +180,7 @@ class GameLobby extends Component {
                         :
                         <div className="col d-flex align-items-center justify-content-center" style={{marginTop: '4em'}}>Searching for an opponent...</div>}
                         <div className="col d-flex align-items-center justify-content-center">
-                            <h5 style={{margin: 15}}>{this.state.matched ? Jared18 : <Loading />}</h5>
+                            <h5 style={{margin: 15}}>{this.state.matched ? this.state.opponent.username : <Loading />}</h5>
                         </div>
                     </Col>
                 </Row>

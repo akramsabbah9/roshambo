@@ -43,6 +43,7 @@ def join_match(user_id):
     # increment user_count of that match
     match.user_count += 1
     # matches are only allowed 2 users; lock ensures someone can't join in the middle of a match if someone else quits
+    opponent = None
     if match.user_count == 2:
         match.lock = True
         opponent = match.user1 if match.user1 != user_id else match.user2
