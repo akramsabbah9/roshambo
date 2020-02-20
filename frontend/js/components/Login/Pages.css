@@ -14,7 +14,8 @@
 }
 .mid{
     margin-top: 5%;
-  }
+    width: 35%;
+}
 
 .sign{
   font-family: 'Bangers', cursive;
@@ -38,4 +39,22 @@
   border-left: white;
   border-right: white;
   border-bottom: black 1px solid;
+}
+
+@media only screen and (max-width: 900px){
+  .button{
+    font-size: 10px;
+  }
+  .sign{
+    font-size: 20px;
+  }
+  .mid{
+    width: 50%;
+  }
+}
+
+@media only screen and (max-width: 550px){
+  .mid{
+    width: 70%;
+  }
 }

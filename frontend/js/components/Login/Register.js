@@ -65,7 +65,7 @@ class Register extends Component{
             <Nav.Link className="sign" href="/">ROSHAMBO</Nav.Link>
           </Nav.Item>
         </Nav>
-        <Container className="main border rounded p-3 mid col-5">
+        <Container className="main border rounded mid p-3">
           <Formik
             initialValues={{first_name:"", last_name:"", email:"", username:"", password:"", confirmPassword: ""}}
             onSubmit={(values, {setSubmitting}) => {
@@ -93,13 +93,13 @@ class Register extends Component{
                 placeholder="First Name" 
                 className="inputbox"
                 name="first_name"
-                value={values.firstName}
+                value={values.first_name}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                isInvalid={(touched.firstName && errors.firstName)}
+                isInvalid={(touched.first_name && errors.first_name)}
                 />
               <Form.Control.Feedback type="invalid">
-                    {errors.firstName}
+                    {errors.first_name}
               </Form.Control.Feedback>
             </Form.Group>
             <Form.Group controlId="formLastName">
@@ -108,13 +108,13 @@ class Register extends Component{
                 placeholder="Last Name" 
                 className="inputbox"
                 name="last_name"
-                value={values.lastName}
+                value={values.last_name}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                isInvalid={(touched.lastName && errors.lastName)}
+                isInvalid={(touched.last_name && errors.last_name)}
                 />
               <Form.Control.Feedback type="invalid">
-                    {errors.lastName}
+                    {errors.last_name}
               </Form.Control.Feedback>
             </Form.Group>
             <Form.Group controlId="formBasicEmail">

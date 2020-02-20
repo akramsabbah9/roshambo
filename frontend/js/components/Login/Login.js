@@ -50,7 +50,7 @@ class Login extends Component{
         <Nav.Link className="sign" href="/">ROSHAMBO</Nav.Link>
       </Nav.Item>
     </Nav>
-    <Container className="main border rounded p-3 mid col-4">
+    <Container className="main border rounded mid p-3">
       <p className="sign">Sign In</p>
       <Formik
         initialValues = {{email: '', password: ''}}
@@ -106,13 +106,13 @@ class Login extends Component{
             </Form.Control.Feedback>
           </Form.Group>
         <Row>
-          <Col>
-            <Button variant="primary" type="submit" className="offset-md-3 button">
+          <Col xs={6}>
+            <Button variant="primary" type="submit" className="button">
               Submit
             </Button>
           </Col>
-          <Col>
-            <Link to="/Register" className="offset-md-2">
+          <Col xs={6} className="d-flex justify-content-end">
+            <Link to="/Register">
               <Button className="button">
               Register
               </Button>
