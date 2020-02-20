@@ -20,7 +20,22 @@ const common = {
       {
         test: /\.css$/,
         use: ["style-loader", "css-loader"]
-      }
+      },
+      {
+        test: /\.svg$/,
+        use: [{loader: 'svg-url-loader', options: {limit: 10000,},},
+        ],
+      },
+      {
+        test: /\.mp3$/,
+        include: nodeModules,
+        loader: 'file-loader'
+      },
+      {
+        test: /\.png$/, 
+        include: nodeModules,
+        loader: 'file-loader?name=images/[name].[ext]'
+      },
     ]
   },
   resolve: { extensions: ["*", ".js", ".jsx"] },
@@ -39,6 +54,7 @@ const common = {
     //     aggregateTimeout: 500, // delay before reloading
     //     poll: 1000 // enable polling since fsevents are not supported in docker
     // }
+    historyApiFallback: true
   }
 };
 

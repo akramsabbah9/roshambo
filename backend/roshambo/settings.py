@@ -39,7 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'chat'
+    'rest_framework.authtoken',
+    'accounts',
+    'matchup',
 ]
 
 MIDDLEWARE = [
@@ -54,6 +56,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'roshambo.urls'
+
+APPEND_SLASH = True
 
 TEMPLATES = [
     {
@@ -107,6 +111,24 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Authentication via REST
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+}
+
+AUTH_USER_MODEL = 'accounts.RoshamboUser'
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'accounts.backends.RoshamboUserBackend',
+]
+
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
@@ -126,24 +148,21 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# Channels configuration
+ASGI_APPLICATION = 'matchup.routing.application'
+
+# Channels
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("roshambo_redis", 6379)],
+        },
+    },
+}
+
 # we whitelist localhost:3000 because that's where frontend will be served
 CORS_ORIGIN_WHITELIST = (
         'http://localhost:3000',
         'http://localhost:8000',
-        'http://localhost:8080',
     )
-
-import channels.layers
-#from channels_redis.core import RedisChannelLayer
-#from asgiref.sync import async_to_sync
-# Channels configuration
-ASGI_APPLICATION = 'roshambo.routing.application'
-
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('roshambo_redis', 6379)],
-        },
-    },
-}
