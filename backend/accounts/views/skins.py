@@ -10,7 +10,7 @@ import requests
 import json
 
 from ..models import SkinsInventory, Skins, RoshamboUser as User
-from ..serializers import SkinsSerializer, SkinsInventorySerializer
+from ..serializers import SkinsSerializer, SkinsInventorySerializer, WalletSerializer
 from ..utils import check_for_edit_validation_errors, flatten_skin_data, flatten_purchased_skins
 
 import json
@@ -50,7 +50,6 @@ class ActiveUserSkin(APIView):
 
     def put(self, request, format='json'):
         self._validate_put_request(request)
-
         desired_active_skin = request.data['active_skin']
         active_skin = request.user.skins.purchased_skins.filter(skin=desired_active_skin)
         if not active_skin:
@@ -95,7 +94,6 @@ class PurchasedUserSkins(APIView):
     def put(self, request, format='json'):
         self._validate_put_request(request)
 
-        # TODO(benjibrandt): need to check based on Stripe token
         newly_purchased_skin = request.data['purchased_skin']
 
         skin_object = SkinsInventory.objects.filter(skin=newly_purchased_skin).values('skin', 'price').first()
@@ -123,11 +121,19 @@ class PurchasedUserSkins(APIView):
             'content-type': 'application/json',
             'Authorization': 'Token {}'.format(request.user.auth_token)
         }
-        data = {
-            'amount': cost,
-            'action': 'sub'
-        }
-        return requests.put(request.build_absolute_uri('/accounts/wallet/'), headers=headers, data=json.dumps(data))
+
+        current_cash = request.user.wallet.cash
+        if cost > current_cash:
+            return Response(
+                {'amount': '{} is greater than user\'s current balance of {}. Cannot complete transaction.'.format(amount, current_cash)}, 
+                    status=status.HTTP_402_PAYMENT_REQUIRED
+                )
+        request.user.wallet.cash = current_cash - cost
+        request.user.wallet.save()
+
+        updated_wallet = WalletSerializer(request.user.wallet)
+
+        return Response(updated_wallet.data, status=status.HTTP_200_OK)
 
     def _validate_put_request(self, request):
         if not request.data:

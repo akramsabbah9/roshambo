@@ -1,5 +1,7 @@
 # accounts/views/stats.py
 
+import stripe
+
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
@@ -32,33 +34,23 @@ class WalletAPI(GenericAPIView, UpdateModelMixin):
 
     def put(self, request, format='json'):
         self._validate_put_request(request)
+        amountToAdd = request.data['amount']
         charge = stripe.Charge.create(
-            amount=500,
+            amount=amountToAdd,
             currency='usd',
             description='A Django charge',
-            source=request.POST['stripeToken']
+            source=request.data['stripe_token']
         )
-        amount = 5000
         if charge.outcome.network_status == 'approved_by_network' and charge.outcome.type == "authorized":
-            '''
-            amount = request.data['amount']
-            action = request.data['action']
             current_cash = request.user.wallet.cash
-            if action == 'sub' and amount > current_cash:
-                return Response(
-                    {'amount': '{} is greater than user\'s current balance of {}. Cannot complete transaction.'.format(amount, current_cash)}, 
-                    status=status.HTTP_402_PAYMENT_REQUIRED
-                )
-            '''
-            current_cash = request.user.wallet.cash
-            request.user.wallet.cash = current_cash + amount #if action == 'add' else current_cash - amount
+            request.user.wallet.cash = current_cash + amountToAdd 
             request.user.wallet.save()
 
             updated_wallet = WalletSerializer(request.user.wallet)
 
             return Response(updated_wallet.data, status=status.HTTP_200_OK)
         else: 
-            raiseValidationError({'error': 'charge did not go through'})
+            raise ValidationError({'error': 'charge did not go through'})
 
     def _validate_put_request(self, request):
         if not request.data:
