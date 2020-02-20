@@ -130,7 +130,6 @@ class PurchasedUserSkins(APIView):
         return requests.put(request.build_absolute_uri('/accounts/wallet/'), headers=headers, data=json.dumps(data))
 
     def _validate_put_request(self, request):
-        
         if not request.data:
             raise ValidationError({'error': 'request is empty'}, code='invalid')
 

@@ -20,7 +20,6 @@ class WalletAPI(GenericAPIView, UpdateModelMixin):
             values: 
                 amount == amount to add/sub
                 action MUST be one of [add, sub]. If add, amount will be added. If sub, amount will be subtracted.
-
     @PUT: 
         @param stat-type:
             key: games_(won|lost)
@@ -33,22 +32,33 @@ class WalletAPI(GenericAPIView, UpdateModelMixin):
 
     def put(self, request, format='json'):
         self._validate_put_request(request)
-        # TODO(benjibrandt): need to verify transaction has occurred
-        amount = request.data['amount']
-        action = request.data['action']
-        current_cash = request.user.wallet.cash
-        if action == 'sub' and amount > current_cash:
-            return Response(
-                {'amount': '{} is greater than user\'s current balance of {}. Cannot complete transaction.'.format(amount, current_cash)}, 
-                status=status.HTTP_402_PAYMENT_REQUIRED
-            )
+        charge = stripe.Charge.create(
+            amount=500,
+            currency='usd',
+            description='A Django charge',
+            source=request.POST['stripeToken']
+        )
+        amount = 5000
+        if charge.outcome.network_status == 'approved_by_network' and charge.outcome.type == "authorized":
+            '''
+            amount = request.data['amount']
+            action = request.data['action']
+            current_cash = request.user.wallet.cash
+            if action == 'sub' and amount > current_cash:
+                return Response(
+                    {'amount': '{} is greater than user\'s current balance of {}. Cannot complete transaction.'.format(amount, current_cash)}, 
+                    status=status.HTTP_402_PAYMENT_REQUIRED
+                )
+            '''
+            current_cash = request.user.wallet.cash
+            request.user.wallet.cash = current_cash + amount #if action == 'add' else current_cash - amount
+            request.user.wallet.save()
 
-        request.user.wallet.cash = current_cash + amount if action == 'add' else current_cash - amount
-        request.user.wallet.save()
+            updated_wallet = WalletSerializer(request.user.wallet)
 
-        updated_wallet = WalletSerializer(request.user.wallet)
-
-        return Response(updated_wallet.data, status=status.HTTP_200_OK)
+            return Response(updated_wallet.data, status=status.HTTP_200_OK)
+        else: 
+            raiseValidationError({'error': 'charge did not go through'})
 
     def _validate_put_request(self, request):
         if not request.data:

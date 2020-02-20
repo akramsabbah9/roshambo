@@ -41,10 +41,7 @@ stripe==2.42.0
 Twisted==19.10.0
 txaio==20.1.1
 urllib3==1.25.8
-<<<<<<< HEAD
 virtualenv==20.0.1
 virtualenv-clone==0.5.3
 zipp==2.2.0
-=======
->>>>>>> frontend-accounts-merge
 zope.interface==4.7.1
