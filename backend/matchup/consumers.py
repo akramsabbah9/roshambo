@@ -69,8 +69,8 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_send(
             self.match_group_id,
             {
-                'type': 'user_joined',
-                'user': opponent
+                'type': 'request_info',
+                'user_id': opponent
             }
         )
 
@@ -228,6 +228,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             return
 
         self._start_a_round()
+        
 
     # EXPERIMENTAL
     '''async def _stop_the_game(self):
@@ -314,6 +315,31 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         })
 
         self.seen_round_start = False
+
+    async def request_info(self, event):
+        user_id = event['user_id']
+        if self.user.id != user_id:
+            return
+
+        user_data = await get_serialized_user_data(self.user)
+
+        await self.channel_layer.group_send(
+            self.match_group_id,
+            {
+                'type': 'declare_info',
+                'user': user_data
+            })
+
+    async def declare_info(self, event):
+        user_data = event['user']
+
+        if user_data['id'] == self.user.id:
+            return
+
+        await self._send_channel_message({
+            'command': 'channel',
+            'user_joined': user
+        })
 
     #------------------------------------------------------------------
     # Data Validation
@@ -432,7 +458,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
     # Command Definitions
     #------------------------------------------------------------------
     # these are specified for doc's sake -- no user can call these, only .send_group() messages can
-    channel_commands = ['start', 'user_readied', 'winner', 'user_joined']
+    channel_commands = ['start', 'user_readied', 'winner', 'user_joined', 'request_info', 'declare_info']
     # these are commands which can be called by the user, hence available in dispatch_command
     rps_commands = ['ready', 'move']
     rps_move_values = ['rock', 'paper', 'scissors']
@@ -443,6 +469,6 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         'rps': _process_rps_command,
         'bet': _process_bet_command,
         'chat': _process_chat_command,
-        'begin_round': _process_order_start_command
+        'begin_round': _process_order_start_command,
     }
     seen_round_start = False

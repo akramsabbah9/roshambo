@@ -41,30 +41,6 @@ def current_user(request):
 
 
 @api_view(['GET'])
-def current_user_2(request):
-    """
-    @auth-required: yes
-    @method-supported: GET
-    @GET: 
-        @return: 
-            keys:
-                country_code
-                email
-                guild
-                username
-                id
-            value: appropriate values corresponding to the keys.
-    """
-    # TODO(benjibrandt): this is sorty janky to filter the entire user set...
-    user = User.objects.filter(id=request.user.id).annotate(
-        games_won=F('stats__games_won'), 
-        games_lost=F('stats__games_lost'),
-        cash=F('wallet__cash')
-    ).values('first_name', 'last_name', 'email', 'username', 'guild', 'games_won', 'games_lost', 'cash').first()
-    return Response(user)
-
-
-@api_view(['GET'])
 def users(request):
     """
     @auth-required: yes
