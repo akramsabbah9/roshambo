@@ -25,7 +25,6 @@ class GameLobby extends Component {
         this.handleSignOut = this.handleSignOut.bind(this);
         if (this.props.socket == null) {
             this.props.constructSocket()
-            console.log("socket constructed!")
         }
     }
 
@@ -42,22 +41,17 @@ class GameLobby extends Component {
     handleReady(e) {
         e.preventDefault();
         if (this.state.myselfReady) {
-            this.props.socket.sendPacked({
+            this.props.socket.sendRequest({
                 'command': 'rps',
                 'ready': false
-            }).then(this.setState({myselfReady: false}));
+            }).then(() => this.setState({myselfReady: false}));
         }
         else {
-            this.props.socket.sendPacked({
+            this.props.socket.sendRequest({
                 'command': 'rps',
                 'ready': true
-            }).then(this.setState({myselfReady: true}));
+            }).then(() => this.setState({myselfReady: true}));
         }
-
-        
-        setTimeout( () => {
-            this.props.history.push('/GamePage')
-        }, 1200)
     }
 
     handleSignOut(e) {
@@ -68,8 +62,6 @@ class GameLobby extends Component {
     render(){
         const mySkin = skins[this.props.activeSkin]
         const myself = this.props.user
-
-        console.log(JSON.stringify(mySkin))
 
         const styles = {
             profilePic: {

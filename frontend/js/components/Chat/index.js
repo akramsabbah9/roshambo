@@ -47,9 +47,7 @@ class Chat extends Component {
     this.props.socket.sendRequest({
         'command': 'chat',
         'message': message
-    }).then((resp) => {console.log("Message is away!"); console.log(resp)});
-    this.setState({unrepliedMessages: 0})
-    // this.props.socket.sendRequest(message).then(resp => console.log(resp));
+    }).then(() => {this.setState({unrepliedMessages: 0})});
   }
 
   render() {
