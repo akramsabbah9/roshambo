@@ -145,13 +145,15 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         Handle incoming chat-related commands.
         """
         message = data['message']
+        user = self.user.username
 
         # Send message to match group
         await self.channel_layer.group_send(
             self.match_group_id,
             {
                 'type': 'chat_message',
-                'message': message
+                'message': message,
+                'user': user
             }
         )
         await self._send_response(status=status.HTTP_204_NO_CONTENT, id=data['id'])
@@ -180,19 +182,15 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                 self.match_group_id,
                 {
                     'type': 'readied_up',
-                    'user_readied': str(self.user.id)
+                    'user_readied': self.user.username
                 }
             )
-
-            #EXPERIMENTAL
-            # Wait to see if other user is ready. If not, we need to exit the game.
-            #if not await both_users_ready(self.match_id):
-            #    wait_then_call(120, self._stop_the_game)
 
             # If both users are ready, first_to_ready must send the start communication
             # This way, we incentivize faster readying, as you become the 'host'
             if await both_users_ready(self.match_id):
-                if await user_first_to_ready(self.user.id):
+                if await user_first_to_ready(self.match_id, self.user.id):
+                    print("bothj users ready, {} is the first!".format(self.user.username))
                     # Send message to match group
                     await self.channel_layer.group_send(
                         self.match_group_id,
@@ -202,6 +200,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                         }
                     )
                 else:
+                    print("both users ready, {} is not the first!".format(self.user.username))
                     await self.channel_layer.group_send(
                         self.match_group_id,
                         {
@@ -221,14 +220,14 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         """
         Handle user-generated (not channel-generated) order start commands.
         """
-        allowed_order_start, allowance_reason = self._order_start_allowed()
+        allowed_order_start, allowance_reason = await self._order_start_allowed()
         if not allowed_order_start:
             await self._send_response({
                     'error': 'Round cannot be started. {}'.format(allowance_reason)
                 }, status=status.HTTP_409_CONFLICT, id=data['id'])
             return
 
-        self._start_a_round()
+        await self._start_a_round()
         
 
     # EXPERIMENTAL
@@ -266,9 +265,10 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         Send a received chat message to all users.
         """
         message = event['message']
+        user = event['user']
 
         await self._send_channel_message({
-            'user': self.user.username,
+            'user': user,
             'command': 'chat',
             'message': message
         })
@@ -278,7 +278,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         Alert all users that a round has started.
         """
         start_time = event['start']
-
+        print("{} sending channel start_time message!".format(self.user.username))
         await self._send_channel_message({
             'command': 'channel',
             'start': start_time
@@ -300,11 +300,11 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         Handle a channel-generated (not user-generated) order start command.
         As of now, this is called if the user who was first to ready up readies up, and both users are ready at that time.
         """
-        allowed_order_start, _ = self._order_start_allowed()
+        allowed_order_start, _ = await self._order_start_allowed()
         if not allowed_order_start:
             return
-
-        self._start_a_round()
+        print("{} is starting the round!".format(self.user.username))
+        await self._start_a_round()
 
 
     async def winner_determined(self, event):
@@ -409,7 +409,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                         }, status=status.HTTP_400_BAD_REQUEST, id=data['id'])
                             return False
                     else:
-                        if data[command] not in rps_move_values:
+                        if data[command] not in self.rps_move_values:
                             await self._send_response({
                             'error': 'rps move request must include one of {} as value for key \'move\'.'.format(rps_move_values)
                         }, status=status.HTTP_400_BAD_REQUEST, id=data['id'])
@@ -459,6 +459,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         )
         await set_round_as_started(self.match_id)
         wait_then_call(ROUND_TIMER, self._handle_round_end)
+        print("after wait_then_call")
 
     #------------------------------------------------------------------
     # Command Definitions

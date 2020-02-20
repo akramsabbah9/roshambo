@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Container, Navbar, Button, Row, Col, Card} from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDragon } from "@fortawesome/free-solid-svg-icons";
+import { faDragon, faThumbsDown } from "@fortawesome/free-solid-svg-icons";
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { skins } from '../Settings/Skins';
@@ -9,6 +9,7 @@ import Chat from '../Chat';
 import Loading from '../Loading/Loading';
 import { userActions } from '../../redux/actions/UsersActions';
 import { socketActions } from '../../redux/actions/SocketActions';
+import { Redirect } from 'react-router-dom'
 
 
 import '../Fonts.css';
@@ -20,9 +21,11 @@ class GameLobby extends Component {
         this.state = {
             bettingAmount: '$0',
             myselfReady: false,
+            otherReady: false,
             matched: false,
             socketResponseHandlerAdded: false,
             opponent: null,
+            gameStarted: false,
         }
         this.handleExit = this.handleExit.bind(this);
         this.handleReady = this.handleReady.bind(this);
@@ -50,12 +53,12 @@ class GameLobby extends Component {
         switch (command) {
             case 'channel':
                 if (json.hasOwnProperty('start')) {
-                    console.log("got start")
-
+                    this.setState({gameStarted: true});
                 }
                 else if (json.hasOwnProperty('user_readied')) {
-                    console.log("got user_readied")
-
+                    if (json.user_readied != this.props.user.username) {
+                        this.setState({otherReady: !this.state.otherReady});
+                    }
                 }
                 else if (json.hasOwnProperty('winner')) {
                     console.log("got winner")
@@ -137,8 +140,14 @@ class GameLobby extends Component {
                 margin: 10,
             }
         }
-        
-
+        if (this.state.gameStarted) {
+            return <Redirect to={{
+                pathname: '/GamePage',
+                //props.location.state.opponent
+                state: { opponent: this.state.opponent, bettingAmount: this.state.bettingAmount }
+              }} />;
+        }
+        else {
         return(
             <Container className="Words">
                 <Navbar bg="light"> 
@@ -167,7 +176,7 @@ class GameLobby extends Component {
                             </div>
                             <Card style={styles.betBox}>
                                 <div className="d-flex align-items-center justify-content-center">
-                                    <Card.Body>Pot of Money: {this.state.bettingAmount}</Card.Body>
+                                    <Card.Body>Pot of AkramBucks: {this.state.bettingAmount}</Card.Body>
                                 </div>
                             </Card>
                     </Col>
@@ -179,6 +188,7 @@ class GameLobby extends Component {
                         </div>
                         :
                         <div className="col d-flex align-items-center justify-content-center" style={{marginTop: '4em'}}>Searching for an opponent...</div>}
+                        {this.state.otherReady && this.state.matched ? <div className="col d-flex align-items-center justify-content-center" style={{marginTop: '0.5em'}}><h6>READY</h6></div> : null}   
                         <div className="col d-flex align-items-center justify-content-center">
                             <h5 style={{margin: 15}}>{this.state.matched ? this.state.opponent.username : <Loading />}</h5>
                         </div>
@@ -200,6 +210,7 @@ class GameLobby extends Component {
             <Chat />
             </Container>
         )
+    }
     }
 }
 
