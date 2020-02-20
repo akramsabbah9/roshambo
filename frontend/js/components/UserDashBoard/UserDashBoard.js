@@ -110,12 +110,12 @@ class UserDashBoard extends Component {
         }
         return (
             <Container className="Words">
-                <Navbar bg="light"> 
+                <Navbar bg="light" className="Buttons"> 
                     <Link to='/userdashboard'>     
                         <Navbar.Brand style={{marginLeft:8, fontFamily:"'Bangers', cursive", fontSize:"30px"}}>Roshambo</Navbar.Brand>
                     </Link>
                     <Navbar.Collapse className="justify-content-end">
-                        <Button variant="outline-danger"  style={styles.signOutBtn} onClick={this.handleSignOut}>Sign Out</Button>
+                        <Button variant="outline-danger" onClick={this.handleSignOut}>Sign Out</Button>
                     </Navbar.Collapse>
                 </Navbar>
                 <Row>

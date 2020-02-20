@@ -83,12 +83,12 @@ class Betting extends Component {
         }
         return(
             <Container className="Words">
-                <Navbar bg="light"> 
+                <Navbar bg="light" className="Buttons"> 
                     <Link to='/userdashboard'>       
-                        <Navbar.Brand className="Buttons" style={{fontSize:"30px"}}>Roshambo</Navbar.Brand>
+                        <Navbar.Brand style={{fontSize:"30px"}}>Roshambo</Navbar.Brand>
                     </Link>
                     <Navbar.Collapse className="justify-content-end">
-                        <Button className="Buttons" variant="outline-danger" onClick={this.handleSignOut}>Sign Out</Button>
+                        <Button variant="outline-danger" onClick={this.handleSignOut}>Sign Out</Button>
                     </Navbar.Collapse>
                 </Navbar>
                 <div style={{margin:50}} />

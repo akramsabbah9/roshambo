@@ -21,18 +21,21 @@ const schema = yup.object({
 });
 
 class Login extends Component{
-  componentDidMount() {
-    document.body.style.backgroundColor = '#e1edfc';
-  }
+
   constructor(props){
     super(props);
     this.state = {
       email: '',
       password: '',
       submitted: false,
-      changed: false
+      changed: false,
+      loginerror: null
     };
     this.handleLogin = this.handleLogin.bind(this)
+  }
+
+  componentDidMount() {
+    document.body.style.backgroundColor = '#e1edfc';
   }
 
   handleLogin(values){
@@ -42,7 +45,7 @@ class Login extends Component{
   }
 
   render(){
-  const {error} = this.props
+  const {error} = this.props;
   return (
     <div>
     <Nav variant="pills">
@@ -119,10 +122,10 @@ class Login extends Component{
             </Link>
           </Col>
         </Row>
-        {error != null && !this.state.changed ? <h3 className="Words" style={{fontSize: '17.5px', color: 'red', marginTop: '5%'}}>{error.response.status == 404 ? 'Username and/or password are incorrect.' : error.response.error}</h3> : null}
       </Form>
       )}
-      </Formik>      
+      </Formik>  
+      {error != null && !this.state.changed ? <h3 className="Words" style={{fontSize: '17.5px', color: 'red', marginTop: '5%'}}>{error.response.status == 404 ? 'Username and/or password are incorrect.' : error.response.error}</h3> : null}    
     </Container>
     </div>
   );

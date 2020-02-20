@@ -3,6 +3,7 @@ import { Container, Row, Col, Card,
          ButtonToolbar, Button, ButtonGroup} from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMehRollingEyes, faDragon, faHandPaper, faHandScissors, faHandRock, faHandPeace } from "@fortawesome/free-solid-svg-icons";
+import { userActions } from '../../redux/actions/UsersActions';
 import { history } from '../../utils/history';
 import { connect } from 'react-redux';
 import { skins } from '../Settings/Skins';
@@ -33,8 +34,8 @@ class GamePage extends Component {
         this.CountDownEffect = this.CountDownEffect.bind(this);
         this.Quit = this.Quit.bind(this);
     }
-    Quit(){
-        history.push('/userdashboard');
+    Quit(wins, loses){
+        this.props.changeStats(wins, loses);
     }
     onClick(selection){
         this.state.GameStarted = true;
@@ -136,6 +137,7 @@ render() {
     const mySkin = skins[this.props.activeSkin]
     const myself = this.props.user
     const { myWins, CPUwins } = this.state
+    const user = this.props.user
 
     const styles = {
         profilePic: {
@@ -285,7 +287,9 @@ render() {
             </Row>
             <Row>
                 <div className="col d-flex justify-content-center align-items-center">
-                    <Button variant='danger' className="Buttons" size="lg" onClick={this.Quit}>
+                    <Button variant='danger' className="Buttons" size="lg" onClick={() => {
+                        this.Quit(user.games_won + this.state.myWins, user.games_lost + this.state.CPUwins)
+                    }}>
                         Get Me Out
                     </Button>
                 </div>
@@ -300,9 +304,12 @@ render() {
 function mapStateToProps (state) {
     const { activeSkin } = state.skins
     const user = state.user.currentUser
-
     return { activeSkin, user }
 }
 
+const actionCreators = {
+    changeStats: userActions.changeStats,
+}
 
-export default connect(mapStateToProps)(GamePage);
+
+export default connect(mapStateToProps, actionCreators)(GamePage);

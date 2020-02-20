@@ -104,7 +104,20 @@ export function user(state = userInitialState, action) {
                 error: action.error,
             }
 
-
+        //Update Stats
+        case userConstants.CHANGE_STATS_REQUEST:
+            return {
+                ...state,
+            }
+        case userConstants.CHANGE_STATS_SUCCESS:
+            return {
+                ...state,
+            }
+        case userConstants.CHANGE_GUILD_FAILURE:
+            return {
+                ...state,
+                error: action.error,
+            }
     
         default:
             return state

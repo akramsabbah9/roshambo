@@ -69,12 +69,12 @@ class Appearance extends Component {
 
         return(
             <Container className="Words">
-                <Navbar bg="light"> 
+                <Navbar bg="light" className="Buttons"> 
                     <Link to='/userdashboard'>     
                         <Navbar.Brand style={{marginLeft:8, fontFamily:"'Bangers', cursive", fontSize:"30px"}}>Roshambo</Navbar.Brand>
                     </Link>
                     <Navbar.Collapse className="justify-content-end">
-                        <Button className='Buttons' variant="outline-danger" onClick={this.handleSignOut}>Sign Out</Button>
+                        <Button variant="outline-danger" onClick={this.handleSignOut}>Sign Out</Button>
                     </Navbar.Collapse>
                 </Navbar>
                 <Col>

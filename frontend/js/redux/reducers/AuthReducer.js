@@ -12,6 +12,7 @@ export function auth(state=initialState, action) {
             return {
                 ...state,
                 loggingIn: true,
+                error: null
             }
         case userConstants.LOGIN_SUCCESS:
             return {
