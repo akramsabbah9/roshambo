@@ -17,4 +17,6 @@ application = ProtocolTypeRouter({
             websocket_urlpatterns
         )
     ),
+    #'channel': ChannelNameRouter({'arbiter1', ArbiterConsumer}),
+    # the channel name is arbiter1 just in case of name collisions
 })

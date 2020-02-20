@@ -7,7 +7,7 @@ import random
 
 from ..models import Match
 from ..exceptions import ExistError
-from ..utils import evaluate_rps
+from ..utils import evaluate_rps, get_time_seconds
 
 from .utils import get_match, get_user_slot_in_match, RPSMove
 
@@ -138,6 +138,16 @@ def both_users_ready(match_id):
     :return: True if user1_ready and user2_ready are both True. False otherwise.
     """
     match = get_match(match_id)
+
+    # EXPERIMENTAL
+    # update the timestamp of ready users. 2 save calls because we expect to have no users ready more often than not.
+    if match.user1_ready:
+        match.user1_ts = get_time_seconds()
+        match.save()
+    if match.user2_ready:
+        match.user2_ts = get_time_seconds()
+        match.save()
+
     return match.user1_ready and match.user2_ready
 
 @database_sync_to_async
