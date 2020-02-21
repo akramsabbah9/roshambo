@@ -1,5 +1,6 @@
 import { skinsConstants } from './types';
 import { editActiveSkin, editPurchasedSkins, getPurchasedSkins, getActiveSkin as getSkin} from '../../utils/api';
+import { history } from '../../utils/history';
 
 export const skinsActions = {
     change,
@@ -30,13 +31,16 @@ function change(id) {
 }
 
 function add(id) {
+    const data = {
+        purchased_skin: id
+    }
     return dispatch => {
         dispatch(request());
 
-        editPurchasedSkins(id) 
+        editPurchasedSkins(data) 
         .then( response => {
-            console.log(response)
-            dispatch(success(response))
+            dispatch(success(response.purchased_skins))
+            history.push('/userdashboard')
         })
         .catch( error => {
             console.log(error)
@@ -45,7 +49,7 @@ function add(id) {
     }
 
     function request() { return { type: skinsConstants.ADD_REQUEST}}
-    function success(id) { return { type: skinsConstants.ADD_SUCCESS, id}}
+    function success(purchased_skins) { return { type: skinsConstants.ADD_SUCCESS, purchased_skins}}
     function failure(error) { return { type: skinsConstants.ADD_FAILURE, error}}
 }
 

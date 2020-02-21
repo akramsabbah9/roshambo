@@ -14,6 +14,7 @@ from .utils import get_match, get_user_slot_in_match, RPSMove
 
 Wallet = apps.get_model('accounts', 'Wallet')
 Stats = apps.get_model('accounts', 'Stats')
+Skins = apps.get_model('accounts', 'Skins')
 
 @database_sync_to_async
 def join_match(user_id):
@@ -323,3 +324,9 @@ def proper_round_time_elapsed(match_id, round_time):
     match = get_match(match_id)
 
     return match.round_start_ts + round_time >= get_time_seconds()
+
+@database_sync_to_async
+def get_user_skin(user_id):
+    skin = Skins.objects.get(user_id=user_id)
+
+    return skin.active_skin.skin

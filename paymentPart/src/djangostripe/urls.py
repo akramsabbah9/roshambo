@@ -1,5 +1,4 @@
-"""
-roshambo URL Configuration
+"""djangostripe URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.0/topics/http/urls/
@@ -14,17 +13,10 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.urls import include, path
-from django.conf.urls import include
-from rest_framework import routers
-
-router = routers.DefaultRouter()
 from django.contrib import admin
+from django.urls import path, include
 
-# Wire up our API using automatic URL routing.
-# Additionally, we include login URLs for the browsable API.
 urlpatterns = [
-    path('accounts/', include('accounts.urls')),
-    path('matchup/', include('matchup.urls')),
-    path('payments/', include('payments.urls')),
+    path('admin/', admin.site.urls),
+    path('payments/', include('payments.urls'))
 ]

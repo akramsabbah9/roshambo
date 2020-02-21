@@ -3,6 +3,7 @@ import { Container, Row, Col, Card,
          ButtonToolbar, Button, ButtonGroup} from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMehRollingEyes, faDragon, faHandPaper, faHandScissors, faHandRock, faHandPeace } from "@fortawesome/free-solid-svg-icons";
+import { userActions } from '../../redux/actions/UsersActions';
 import { history } from '../../utils/history';
 import { connect } from 'react-redux';
 import { skins } from '../Settings/Skins';
@@ -26,7 +27,7 @@ class GamePage extends Component {
             opponentMove: null,
             winnerReceived: false,
             rounds: 1,
-            matchOver: false
+            matchOver: false,
         }
         this.onClick = this.onClick.bind(this);
         this.CountDown = this.CountDown.bind(this);
@@ -173,7 +174,7 @@ render() {
     const mySkin = skins[this.props.activeSkin]
     const myself = this.props.user
     const { myWins, opponentWins } = this.state
-    const { opponent } = this.props.location.state;
+    const { opponent, opponentSkin } = this.props.location.state;
 
     const styles = {
         profilePic: {
@@ -242,7 +243,7 @@ render() {
                 {/*---- OPPONENT user info ----*/}
                 <Col sm={4}>
                         <div style={styles.profilePic} className="col d-flex align-items-center justify-content-center">
-                            <FontAwesomeIcon  style={mySkin.avatar.style} icon={faDragon} size='6x' />
+                            <FontAwesomeIcon  style={skins[opponentSkin].avatar.style} icon={skins[opponentSkin].avatar.name} size='6x' />
                         </div>
                         <div className="col d-flex align-items-center justify-content-center">
                             <h5 style={{margin: 15}}>{opponent.username}</h5>
@@ -362,6 +363,5 @@ function mapStateToProps (state) {
 
     return { activeSkin, user, socket }
 }
-
 
 export default connect(mapStateToProps)(GamePage);

@@ -44,7 +44,7 @@ export const currentUser = () => {
   return _request('http://localhost:8000/accounts/users/current/', {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Token ${localStorage.getItem('token')}`
+       Authorization: `Token ${localStorage.getItem('token')}`
     }
   });
 };
@@ -142,6 +142,17 @@ export const editActiveSkin = (data) => {
 
 export const editPurchasedSkins = (data) => {
   return _request('http://localhost:8000/accounts/skins/purchased/', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Token ${localStorage.getItem('token')}`
+    },
+    body: JSON.stringify(data)
+  });
+};
+
+export const editUserWallet = (data) => {
+  return _request('http://localhost:8000/accounts/wallet/', {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',

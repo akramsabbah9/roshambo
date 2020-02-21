@@ -25,7 +25,8 @@ export function skins(state=initialState, action) {
             return {
                 ...state,
                 activeSkin: action.id,
-                changeSkinLoading: false
+                changeSkinLoading: false,
+                error: null,
             }
         case skinsConstants.CHANGE_FAILURE:
             return {
@@ -37,12 +38,13 @@ export function skins(state=initialState, action) {
         case skinsConstants.ADD_REQUEST:
             return {
                 ...state,
-                addSkinLoading: true
+                addSkinLoading: true,
+                error: null,
             }
         case skinsConstants.ADD_SUCCESS:
             return {
                 ...state,
-                ownedSkins: [...state.ownedSkins, action.id],
+                ownedSkins: action.purchased_skins,
                 addSkinLoading: false,
             }
         case skinsConstants.ADD_FAILURE:
@@ -62,7 +64,8 @@ export function skins(state=initialState, action) {
             return {
                 ...state,
                 getActiveSkinLoading: false,
-                activeSkin: id
+                activeSkin: id,
+                error: null,
             }
         case skinsConstants.GETACTIVE_FAILURE:
             return {
@@ -80,7 +83,8 @@ export function skins(state=initialState, action) {
             return {
                 ...state,
                 ownedSkins: action.ownedSkins,
-                getOwnedSkinLoading: false
+                getOwnedSkinLoading: false,
+                error: null,
             }
         case skinsConstants.GETOWNED_FAILURE:
             return {

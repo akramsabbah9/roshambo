@@ -33,7 +33,7 @@ class Settings extends Component{
             profilePic: {
                 margin: 30,
                 marginLeft: '30%',
-                color: 'green'
+                color: mySkin.avatar.style.color
             }
         }
         return (

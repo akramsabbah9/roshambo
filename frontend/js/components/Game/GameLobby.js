@@ -27,6 +27,7 @@ class GameLobby extends Component {
             opponent: null,
             gameStarted: false,
             betingDisabled: false,
+            opponentSkin: null,
         }
         this.handleExit = this.handleExit.bind(this);
         this.handleReady = this.handleReady.bind(this);
@@ -70,8 +71,9 @@ class GameLobby extends Component {
 
                 }
                 else if (json.hasOwnProperty('user_joined')) {
+                    console.log(json)
                     if (json.user_joined.username != this.props.user.username) {
-                        this.setState({opponent: json.user_joined, matched: true});
+                        this.setState({opponent: json.user_joined, matched: true, opponentSkin: json.active_skin});
                     }
                     if (json.hasOwnProperty('total_bet')) {
                         console.log("setting total bet!")
@@ -166,18 +168,18 @@ class GameLobby extends Component {
             return <Redirect to={{
                 pathname: '/GamePage',
                 //props.location.state.opponent
-                state: { opponent: this.state.opponent, bettingAmount: this.state.bettingAmount }
+                state: { opponent: this.state.opponent, bettingAmount: this.state.bettingAmount, opponentSkin: this.state.opponentSkin }
               }} />;
         }
         else {
         return(
             <Container className="Words">
-                <Navbar bg="light"> 
+                <Navbar bg="light" className="Buttons"> 
                     <Link to='/userdashboard'>       
-                        <Navbar.Brand className="Buttons" style={{fontSize: '30px'}}>Roshambo</Navbar.Brand>
+                        <Navbar.Brand style={{fontSize: '30px'}}>Roshambo</Navbar.Brand>
                     </Link>  
                     <Navbar.Collapse className="justify-content-end">
-                        <Button variant="outline-danger" className="Buttons" onClick={this.handleSignOut}>Sign Out</Button>
+                        <Button variant="outline-danger" onClick={this.handleSignOut}>Sign Out</Button>
                     </Navbar.Collapse>
                 </Navbar>
                 <Row>
@@ -210,7 +212,7 @@ class GameLobby extends Component {
                     <Col xs={4}>
                         {this.state.matched ? 
                         <div style={styles.profilePic} className="col d-flex align-items-center justify-content-center">
-                            <FontAwesomeIcon  style={mySkin.avatar.style} icon={faDragon} size='6x' />
+                            <FontAwesomeIcon  style={skins[this.state.opponentSkin].avatar.style} icon={skins[this.state.opponentSkin].avatar.name} size='6x' />
                         </div>
                         :
                         <div className="col d-flex align-items-center justify-content-center" style={{marginTop: '4em'}}>Searching for an opponent...</div>}

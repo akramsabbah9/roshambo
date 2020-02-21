@@ -11,7 +11,8 @@ from .model_interactions.handlers import \
     join_match, leave_match, round_started, set_user_move, set_user_bet, \
     set_user_ready_status, both_users_ready, evaluate_round, \
     user_first_to_ready, set_round_as_started, get_serialized_user_data, \
-    proper_round_time_elapsed, match_complete, get_wallet_cash, get_total_bet
+    proper_round_time_elapsed, match_complete, get_wallet_cash, get_total_bet, \
+    get_user_skin
 from .utils import wait_then_call, get_time_seconds
 
 ROUND_TIMER = 5
@@ -58,13 +59,15 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
 
         user_data = await get_serialized_user_data(self.user)
         total_bet = await get_total_bet(self.match_id)
+        skin = await get_user_skin(self.user.id)
         
         await self.channel_layer.group_send(
             self.match_group_id,
             {
                 'type': 'user_joined',
                 'user': user_data,
-                'bet': total_bet
+                'bet': total_bet,
+                'active_skin': skin,
             }
         )
 
@@ -304,7 +307,8 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         await self._send_channel_message({
             'command': 'channel',
             'user_joined': user,
-            'total_bet': event['bet']
+            'total_bet': event['bet'],
+            'active_skin': event['active_skin']
         })
     
     async def chat_message(self, event):
@@ -379,12 +383,14 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
 
         print("{} sending info!".format(self.user.username))
         user_data = await get_serialized_user_data(self.user)
+        skin = await get_user_skin(self.user.id)
 
         await self.channel_layer.group_send(
             self.match_group_id,
             {
                 'type': 'declare_info',
-                'user': user_data
+                'user': user_data,
+                'active_skin': skin
             })
 
     async def declare_info(self, event):
@@ -397,7 +403,8 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
 
         await self._send_channel_message({
             'command': 'channel',
-            'user_joined': user_data
+            'user_joined': user_data,
+            'active_skin': event['active_skin']
         })
 
     #EXPERIMENTAL
