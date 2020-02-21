@@ -1,6 +1,13 @@
 import { history } from '../../utils/history';
-import { userConstants } from './types';
-import { signup, currentUser, login as loginAPI, allUsers, editUser, logout as logoutAPI, editStats } from '../../utils/api';
+import { userConstants, walletConstants } from './types';
+import {    signup, 
+            currentUser, 
+            login as loginAPI, 
+            allUsers, 
+            editUser, 
+            logout as logoutAPI, 
+            editUserWallet,
+        } from '../../utils/api';
 
 
 export const userActions = {
@@ -12,7 +19,7 @@ export const userActions = {
     changeEmail,
     changePassword,
     changeGuild,
-    changeStats,
+    addToWallet,
 }
 
 
@@ -156,30 +163,6 @@ function changePassword(password) {
     function failure(error) {return { type: userConstants.CHANGE_PASSWORD_FAILURE, error}}
 }
 
-function changeStats(games_won, games_lost) {
-    const data = {
-        games_won: games_won,
-        games_lost: games_lost,
-    }
-    return dispatch => {
-        dispatch(request());
-        
-        editStats(data)
-        .then(response => {
-            console.log(response)
-            dispatch(success(response))
-            history.push('/userdashboard')
-        })
-        .catch(error => {
-            dispatch(failure(error))
-        })
-    };
-
-    function request() {return { type: userConstants.CHANGE_STATS_REQUEST}}
-    function success() {return { type: userConstants.CHANGE_STATS_SUCCESS}}
-    function failure(error) {return { type: userConstants.CHANGE_STATS_FAILURE, error}}
-}
-
 function changeGuild(guild) {
     const data = {
         guild: guild,
@@ -202,4 +185,29 @@ function changeGuild(guild) {
     function request() {return { type: userConstants.CHANGE_GUILD_REQUEST}}
     function success() {return { type: userConstants.CHANGE_GUILD_SUCCESS}}
     function failure(error) {return { type: userConstants.CHANGE_GUILD_FAILURE, error}}
+}
+
+function addToWallet(token) {
+    const data = {
+        stripe_token: token,
+        amount: 500
+    }
+
+    return dispatch => {
+        dispatch(request());
+        
+        editUserWallet(data)
+        .then(response => {
+            console.log(response)
+            dispatch(success(response))
+            history.push('/userdashboard')
+        })
+        .catch(error => {
+            dispatch(failure(error))
+        })
+    };
+
+    function request() {return { type: walletConstants.ADD_TO_WALLET_REQUEST}}
+    function success() {return { type: walletConstants.ADD_TO_WALLET_SUCCESS}}
+    function failure(error) {return { type: walletConstants.ADD_TO_WALLET_FAILURE, error}}
 }

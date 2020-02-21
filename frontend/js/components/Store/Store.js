@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Container, Navbar, Button, Col, Card } from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMoneyBillWave } from "@fortawesome/free-solid-svg-icons";
 import { skins } from '../Settings/Skins';
 import { Link } from 'react-router-dom';
 import { history } from '../../utils/history';
@@ -8,16 +9,6 @@ import { connect } from 'react-redux';
 import { userActions } from '../../redux/actions/UsersActions';
 import "../Fonts.css";
 
-/* 
-    To Do:
-
-    - add logic for already owned skins
-        - can not but already owned skins
-        - connect redux for ownedSkins
-        - disable button if is owned skin
-
-
-*/
 
 
 class OnlineStore extends Component {
@@ -29,6 +20,8 @@ class OnlineStore extends Component {
         }
 
         this.handleSignOut = this.handleSignOut.bind(this)
+        this.handlePurchase = this.handlePurchase.bind(this)
+        this.handleAkramPurchase = this.handleAkramPurchase.bind(this)
     }
 
     componentDidMount(){
@@ -42,8 +35,19 @@ class OnlineStore extends Component {
             id: product.id,
             price: product.price
         }
+        
+        history.push('/payment', paymentProps)
+    }
 
-        this.props.history.push('/payment', paymentProps)
+    handleAkramPurchase() {
+        const paymentProps = {
+            type: "Akram Bucks",
+            description: "℟ 5 Akram Bucks",
+            id: null,
+            price: 500
+        }
+        
+        history.push('/payment', paymentProps)
     }
 
     handleSignOut(e) {
@@ -62,13 +66,13 @@ class OnlineStore extends Component {
                         <Card.Title>{product.name}</Card.Title>
                         { (this.props.ownedSkins.some(ownedSkin => ownedSkin == product.id)) 
                             ? <h3>Owned</h3>
-                            : <h3>${product.price}.00</h3>
+                            : <h3>℟ {product.price}.00</h3>
                         }
                         <Card.Text>{product.description}</Card.Text>
                     </Card.Body>
                     <Card.Footer className="col d-flex align-items-center justify-content-center">
                         <Button className="Buttons" variant="outline-primary"
-                         onClick={() => this.handlePurchase(product)} disabled={this.props.ownedSkins.some(ownedSkin => ownedSkin == product.id)}>Buy</Button>
+                         onClick={() => this.handlePurchase(product)} disabled={this.props.ownedSkins.some(ownedSkin => ownedSkin == product.id)}>Buy using Akram Bucks</Button>
                     </Card.Footer>
                 </Card>
                 <div style={{margin:50}} />
@@ -84,6 +88,7 @@ class OnlineStore extends Component {
             if (product.id != 0)
                 return product
         })
+        const { user } = this.props
         return(
             <Container className="Words">
                 <Navbar bg="light" className="Buttons"> 
@@ -96,8 +101,26 @@ class OnlineStore extends Component {
                 </Navbar>
                 <Col>
                     <h1 style={{marginTop:10, marginBottom: 10}}>Store</h1>
+                    <h2 style={{marginTop:10, marginBottom: 30}}>Your Akram Bucks ℟ {user.cash}.00</h2>
                 </Col>
                     {this.addProductCards(products)}
+                <Col>
+                    <Card>
+                        <Card.Header className="col d-flex align-items-center justify-content-center">
+                            <FontAwesomeIcon style={{color: 'green'}} icon={faMoneyBillWave} size='7x'/>
+                        </Card.Header>
+                        <Card.Body>
+                            <Card.Title>Purchase 5 Akram Bucks</Card.Title>
+                            <h3>$ 5.00</h3>
+                            <Card.Text>Add 5 more Akram bucks to your wallet to purchase skins and bet agianst opponents.</Card.Text>
+                        </Card.Body>
+                        <Card.Footer className="col d-flex align-items-center justify-content-center">
+                            <Button className="Buttons" variant="outline-primary"
+                            onClick={() => this.handleAkramPurchase()}>Buy</Button>
+                        </Card.Footer>
+                    </Card>
+                    <div style={{margin:50}} />
+                </Col>
             </Container>
         )
     }
@@ -105,7 +128,8 @@ class OnlineStore extends Component {
 
 function mapStateToProps (state) {
     const { ownedSkins } = state.skins;
-    return { ownedSkins }
+    const user = state.user.currentUser
+    return { ownedSkins, user }
 }
 
 const actionCreators = {
