@@ -26,6 +26,7 @@ class OnlineStore extends Component {
 
     componentDidMount(){
         document.body.style.backgroundColor = "white";
+        this.props.getUser()
     }
 
     handlePurchase(product) {
@@ -42,7 +43,7 @@ class OnlineStore extends Component {
     handleAkramPurchase() {
         const paymentProps = {
             type: "Akram Bucks",
-            description: "℟ 5 Akram Bucks",
+            description: "℟ 500 Akram Bucks",
             id: null,
             price: 500
         }
@@ -66,7 +67,7 @@ class OnlineStore extends Component {
                         <Card.Title>{product.name}</Card.Title>
                         { (this.props.ownedSkins.some(ownedSkin => ownedSkin == product.id)) 
                             ? <h3>Owned</h3>
-                            : <h3>℟ {product.price}.00</h3>
+                            : <h3>℟ {product.price}</h3>
                         }
                         <Card.Text>{product.description}</Card.Text>
                     </Card.Body>
@@ -89,6 +90,7 @@ class OnlineStore extends Component {
                 return product
         })
         const { user } = this.props
+        const cash = user.cash 
         return(
             <Container className="Words">
                 <Navbar bg="light" className="Buttons"> 
@@ -101,7 +103,7 @@ class OnlineStore extends Component {
                 </Navbar>
                 <Col>
                     <h1 style={{marginTop:10, marginBottom: 10}}>Store</h1>
-                    <h2 style={{marginTop:10, marginBottom: 30}}>Your Akram Bucks ℟ {user.cash}.00</h2>
+                    <h2 style={{marginTop:10, marginBottom: 30}}>Your Akram Bucks ℟ {cash}</h2>
                 </Col>
                     {this.addProductCards(products)}
                 <Col>
@@ -110,9 +112,9 @@ class OnlineStore extends Component {
                             <FontAwesomeIcon style={{color: 'green'}} icon={faMoneyBillWave} size='7x'/>
                         </Card.Header>
                         <Card.Body>
-                            <Card.Title>Purchase 5 Akram Bucks</Card.Title>
+                            <Card.Title>Purchase 500 Akram Bucks</Card.Title>
                             <h3>$ 5.00</h3>
-                            <Card.Text>Add 5 more Akram bucks to your wallet to purchase skins and bet agianst opponents.</Card.Text>
+                            <Card.Text>Add 500 more Akram bucks to your wallet to purchase skins and bet agianst opponents.</Card.Text>
                         </Card.Body>
                         <Card.Footer className="col d-flex align-items-center justify-content-center">
                             <Button className="Buttons" variant="outline-primary"
@@ -133,7 +135,8 @@ function mapStateToProps (state) {
 }
 
 const actionCreators = {
-    logout: userActions.logout
+    logout: userActions.logout,
+    getUser: userActions.getCurrent
 }
 
 export default connect(mapStateToProps, actionCreators)(OnlineStore);

@@ -84,6 +84,7 @@ class UserDashBoard extends Component {
     render() {
         const { user, users, activeSkin, getActiveSkinLoading, userLoading, usersLoading } = this.props
         const mySkin = skins[activeSkin]
+        const cash = user.cash 
         
         //const mySkin = skins[0]
         const styles = {
@@ -139,7 +140,7 @@ class UserDashBoard extends Component {
                                             ? <ListGroup.Item>Guild: None</ListGroup.Item>
                                             : <ListGroup.Item>Guild: {user.guild}</ListGroup.Item>
                                         }
-                                        <ListGroup.Item>ReiherRubles: ℟{user.cash}</ListGroup.Item>
+                                        <ListGroup.Item>ReiherRubles: ℟ {cash}</ListGroup.Item>
                                         <ListGroup.Item>Games Won: {user.games_won}</ListGroup.Item>
                                         <ListGroup.Item>Games Lost: {user.games_lost}</ListGroup.Item>
                                     </React.Fragment>

@@ -44,7 +44,7 @@ export const currentUser = () => {
   return _request('http://localhost:8000/accounts/users/current/', {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Token ${localStorage.getItem('token')}`
+       Authorization: `Token ${localStorage.getItem('token')}`
     }
   });
 };

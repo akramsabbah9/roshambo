@@ -188,8 +188,9 @@ function changeGuild(guild) {
 }
 
 function addToWallet(token) {
+    console.log(token)
     const data = {
-        stripe_token: token,
+        stripe_token: token.id,
         amount: 500
     }
 

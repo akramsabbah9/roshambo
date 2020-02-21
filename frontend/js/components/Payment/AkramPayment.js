@@ -33,6 +33,7 @@ class PurchasePage extends Component {
 
     handleConfirm(e) {
         e.preventDefault()
+        const { id } = this.state.items[0]
         this.props.addSkin(id)
     }
 
@@ -52,7 +53,7 @@ class PurchasePage extends Component {
                 <td>{item.type}</td>
                 <td>{item.description}</td>
                 {item.type == skinPurchase
-                    ? <td>℟ {item.price}.00</td>
+                    ? <td>℟ {item.price}</td>
                     : <td>$ 5.00</td>
                 }
             </tr>
@@ -89,6 +90,7 @@ class PurchasePage extends Component {
             }
         }
         const { user } = this.props
+        const cash = user.cash 
         const { id, type, price } = this.state.items[0]
         const skinPurchase = "Custom Skin"
 
@@ -100,7 +102,7 @@ class PurchasePage extends Component {
                     <h1 style={{marginTop: 50}}>Checkout</h1>
                     <Card style={{margin: 50}}>
                     <Card.Body>
-                        <Card.Title>Your Wallet: ℟ {user.cash}.00</Card.Title>
+                        <Card.Title>Your Wallet: ℟ {cash}</Card.Title>
                         <div style={{margin:30}} />
                         <Card.Title style={{marginTop:20}}>Items</Card.Title>
                             <Table>
@@ -116,7 +118,7 @@ class PurchasePage extends Component {
                                 </tbody>
                             </Table>
                             { type == skinPurchase 
-                                ? <p style={styles.total}>Total: ℟ {this.calculateTotal(this.state.items)}.00</p>
+                                ? <p style={styles.total}>Total: ℟ {this.calculateTotal(this.state.items)}</p>
                                 : <p style={styles.total}>Total: $ 5.00</p>
                             }
                             
@@ -125,11 +127,10 @@ class PurchasePage extends Component {
                         { type == skinPurchase 
                             ? <Button variant="outline-success" style={styles.checkOutBtn} onClick={this.handleConfirm}>Confirm</Button>
                             : <StripeCheckout
-                                    name="Purchase Akram Bucks"
+                                    name="Purchase 500 Akram Bucks"
                                     stripeKey="pk_test_Ux3dsI7uw62rLZ2Ni5TvoSV400Pjv0N2Sn"
                                     token={this.onToken}
                                     zipCode={true}
-                                    email={false}
                                     amount={500}
                                     currency="USD"
                                 />

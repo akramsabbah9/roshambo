@@ -25,6 +25,6 @@ from django.contrib import admin
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('accounts/', include('accounts.urls')),
-    path('matchup/', include('matchup.urls'))
+    path('matchup/', include('matchup.urls')),
     path('payments/', include('payments.urls')),
 ]
