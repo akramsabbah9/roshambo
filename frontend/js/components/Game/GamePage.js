@@ -55,8 +55,6 @@ class GamePage extends Component {
 
         if (this.state.matchOver) {
             setTimeout(() => {
-                // TODO: make call to deal with AkramBucks
-                // TODO: call stats update
                 this.props.socket.removeAllListeners();
                 this.props.socket.close().then(
                     history.push('/userdashboard')

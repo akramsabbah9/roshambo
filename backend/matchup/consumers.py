@@ -8,10 +8,10 @@ from rest_framework import status
 import json
 
 from .model_interactions.handlers import \
-    join_match, leave_match, round_started, set_user_move, \
+    join_match, leave_match, round_started, set_user_move, set_user_bet, \
     set_user_ready_status, both_users_ready, evaluate_round, \
     user_first_to_ready, set_round_as_started, get_serialized_user_data, \
-    proper_round_time_elapsed, match_complete
+    proper_round_time_elapsed, match_complete, get_wallet_cash, get_total_bet
 from .utils import wait_then_call, get_time_seconds
 
 ROUND_TIMER = 5
@@ -57,12 +57,14 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         )
 
         user_data = await get_serialized_user_data(self.user)
+        total_bet = await get_total_bet(self.match_id)
         
         await self.channel_layer.group_send(
             self.match_group_id,
             {
                 'type': 'user_joined',
-                'user': user_data
+                'user': user_data,
+                'bet': total_bet
             }
         )
 
@@ -198,13 +200,34 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                         }
                     )
                     
+    #EXPERIMENTAL
     async def _process_bet_command(self, data):
         """
-        Handle incoming rock-paper-scissors-related commands.
+        Handle incoming betting-related commands.
         """
         amount = data['amount']
+        user = self.user.id
 
-        # TODO: call db func to add bet
+        # determine whether this amount can be safely bet.
+        my_cash, bet_cash = await get_wallet_cash(self.match_id, user)
+        if (my_cash - bet_cash) - amount < 0:
+            await self._send_response({
+                    'command': 'bet',
+                    'error': 'Not enough money to bet.',
+                    'user': str(user)
+                }, status=status.HTTP_409_CONFLICT, id=data['id'])
+            return
+        else:
+            await set_user_bet(self.match_id, user, amount)
+
+        await self.channel_layer.group_send(
+            self.match_group_id,
+            {
+                'type': 'bet_made',
+                'user': str(user),
+                'amount': amount
+            }
+        )
 
     async def _process_order_start_command(self, data):
         """
@@ -280,7 +303,8 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
 
         await self._send_channel_message({
             'command': 'channel',
-            'user_joined': user
+            'user_joined': user,
+            'total_bet': event['bet']
         })
     
     async def chat_message(self, event):
@@ -374,6 +398,17 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         await self._send_channel_message({
             'command': 'channel',
             'user_joined': user_data
+        })
+
+    #EXPERIMENTAL
+    async def bet_made(self, event):
+        user = event['user']
+        amount = event['amount']
+
+        await self._send_channel_message({
+            'command': 'bet',
+            'user_betting': user,
+            'bet_amount': amount
         })
 
     #------------------------------------------------------------------

@@ -19,13 +19,14 @@ class GameLobby extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            bettingAmount: '$0',
+            bettingAmount: 0,
             myselfReady: false,
             otherReady: false,
             matched: false,
             socketResponseHandlerAdded: false,
             opponent: null,
             gameStarted: false,
+            betingDisabled: false,
         }
         this.handleExit = this.handleExit.bind(this);
         this.handleReady = this.handleReady.bind(this);
@@ -72,6 +73,10 @@ class GameLobby extends Component {
                     if (json.user_joined.username != this.props.user.username) {
                         this.setState({opponent: json.user_joined, matched: true});
                     }
+                    if (json.hasOwnProperty('total_bet')) {
+                        console.log("setting total bet!")
+                        this.setState({bettingAmount: json.total_bet});
+                    }
                 }
                 break
             case 'chat':
@@ -82,6 +87,12 @@ class GameLobby extends Component {
                 break
             case 'bet':
                 console.log("got bet msg")
+                if (json.status > 399 && (!this.state.opponent || json.user_betting != this.state.opponent.id)) {
+                    this.setState({bettingDisabled: true})
+                }
+                else {
+                    this.setState({bettingAmount: this.state.bettingAmount + 5})
+                }
                 break
         }
     }
@@ -92,8 +103,14 @@ class GameLobby extends Component {
     }
 
     handleBet(e) {
+        if (this.state.bettingDisabled) {
+            return;
+        }
         e.preventDefault()
-        this.props.history.push('/betting')
+        this.props.socket.sendRequest({
+            'command': 'bet',
+            'amount': 5
+        });
     }
 
     handleReady(e) {
@@ -114,6 +131,7 @@ class GameLobby extends Component {
 
     handleSignOut(e) {
         e.preventDefault();
+        this.props.socket.close()
         this.props.logout()
     }
 
@@ -182,6 +200,10 @@ class GameLobby extends Component {
                                 <div className="d-flex align-items-center justify-content-center">
                                     <Card.Body>Pot of AkramBucks: {this.state.bettingAmount}</Card.Body>
                                 </div>
+                                {this.state.bettingDisabled ? 
+                                <div className="d-flex align-items-center justify-content-center">
+                                    <Card.Body>You have fewer than 5 AkramBucks in your account, and can make no more bets on this game.</Card.Body>
+                                </div> : null}
                             </Card>
                     </Col>
                     {/*---- OPPONENT user info ----*/}
@@ -204,7 +226,7 @@ class GameLobby extends Component {
                                 <Button style={{margin:5}} variant="outline-success" className="Buttons" block size="lg" onClick={this.handleReady.bind(this)}>Ready</Button>      
                         </Row>
                         <Row>
-                                <Button style={{margin:5}} variant="outline-warning" className="Buttons" block size="lg" onClick={this.handleBet.bind(this)}>Bet</Button>                       
+                                <Button style={{margin:5}} variant="outline-warning" className="Buttons" block size="lg" onClick={this.handleBet.bind(this)} disabled={this.state.betingDisabled}>Bet 5 AkramBucks</Button>                       
                         </Row>
                         <Row>                          
                                 <Button style={{margin:5}} variant="outline-danger" className="Buttons" block size="lg" onClick={this.handleExit.bind(this)}>Exit</Button>
