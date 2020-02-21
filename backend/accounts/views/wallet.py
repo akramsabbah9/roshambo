@@ -8,6 +8,8 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.serializers import ValidationError
 
+from django.conf import settings
+
 from ..models import Wallet
 from ..serializers import WalletSerializer
 from ..utils import check_for_edit_validation_errors
@@ -28,13 +30,18 @@ class WalletAPI(GenericAPIView, UpdateModelMixin):
             value: positive integer to set the respective field to.
         @return: the newly-updated games_won and games_lost, akin to GET.
     """
+
     def get(self, request, format='json'):
         wallet = WalletSerializer(request.user.wallet)
         return Response(wallet.data)
 
-    def put(self, request, format='json'):
+    def put(self, request, format='json', **kwargs):
         self._validate_put_request(request)
         amountToAdd = request.data['amount']
+
+        # context = super().get_context_data(**kwargs)
+        # context['key'] = settings.STRIPE_PUBLISHABLE_KEY
+
         charge = stripe.Charge.create(
             amount=amountToAdd,
             currency='usd',
@@ -62,3 +69,7 @@ class WalletAPI(GenericAPIView, UpdateModelMixin):
         wallet_fields = [field.name for field in Wallet._meta.get_fields()]
         check_for_edit_validation_errors(set(['amount', 'action']), set(['amount', 'action']), set(request.data.keys()))
 
+    def get_context_data(self, **kwargs): 
+        context = super().get_context_data(**kwargs)
+        context['key'] = settings.STRIPE_PUBLISHABLE_KEY
+        return context
