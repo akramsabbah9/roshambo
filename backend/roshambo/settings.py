@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'chat',
     'payments.apps.PaymentsConfig',
     'rest_framework.authtoken',
     'accounts',
