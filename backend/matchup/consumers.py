@@ -1,5 +1,6 @@
 # matchup/consumers.py
 
+from django.apps import apps
 from channels.generic.websocket import AsyncWebsocketConsumer, WebsocketConsumer
 from channels.generic.websocket import SyncConsumer
 from channels.db import database_sync_to_async
@@ -14,6 +15,7 @@ from .model_interactions.handlers import \
 from .utils import wait_then_call, get_time_seconds
 
 ROUND_TIMER = 5
+Wallet = apps.get_model('accounts', 'Wallet')
 
 class MatchmakingConsumer(AsyncWebsocketConsumer):
     #------------------------------------------------------------------
@@ -208,13 +210,26 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                         }
                     )
                     
+    #EXPERIMENTAL
     async def _process_bet_command(self, data):
         """
-        Handle incoming rock-paper-scissors-related commands.
+        Handle incoming betting-related commands.
         """
         amount = data['amount']
+        user = self.user.id
 
-        # TODO: call db func to verify and add bet
+        # determine whether this amount can be safely bet.
+        my_wallet = Wallet.objects.get(user_id=user)
+        my_money = my_wallet.cash
+        if my_money < amount:
+            await self._send_response({
+                    'error': 'Not enough money to bet.'
+                }, status=status.HTTP_409_CONFLICT, id=data['id'])
+            return
+        else:
+            my_wallet.cash = my_money - amount
+            my_wallet.save()
+            
 
         await self.channel_layer.group_send(
             self.match_group_id,
@@ -340,12 +355,12 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             'user_joined': user_data
         })
 
+    #EXPERIMENTAL
     async def bet_made(self, event):
-        #TODO
         user = event['user']
         amount = event['amount']
 
-        await self.send_channel_message({
+        await self._send_channel_message({
             'command': 'channel',
             'user_betting': user,
             'bet_amount': amount
