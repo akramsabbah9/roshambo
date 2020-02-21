@@ -214,7 +214,16 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         """
         amount = data['amount']
 
-        # TODO: call db func to add bet
+        # TODO: call db func to verify and add bet
+
+        await self.channel_layer.group_send(
+            self.match_group_id,
+            {
+                'type': 'bet_made',
+                'user_betting': user,
+                'amount': amount
+            }
+        )
 
     async def _process_order_start_command(self, data):
         """
@@ -228,22 +237,6 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             return
 
         await self._start_a_round()
-        
-
-    # EXPERIMENTAL
-    '''async def _stop_the_game(self):
-        """
-        we have reached here because the other user never readied up.
-        if there was supposed to be another user, but they haven't been
-        doing anything for the past 2 minutes, leave the match.
-        """
-        if not await both_users_ready(self.match_id):
-            # disconnect somehow
-            await leave_match(self.match_id, self.user.id)
-            await self.channel_layer.group_discard(
-                self.match_group_id,
-                self.channel_name
-            )'''
 
     #------------------------------------------------------------------
     # Channel Event Handlers
@@ -345,6 +338,17 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         await self._send_channel_message({
             'command': 'channel',
             'user_joined': user_data
+        })
+
+    async def bet_made(self, event):
+        #TODO
+        user = event['user']
+        amount = event['amount']
+
+        await self.send_channel_message({
+            'command': 'channel',
+            'user_betting': user,
+            'bet_amount': amount
         })
 
     #------------------------------------------------------------------
