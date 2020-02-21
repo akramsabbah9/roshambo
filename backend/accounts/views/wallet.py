@@ -41,12 +41,22 @@ class WalletAPI(GenericAPIView, UpdateModelMixin):
 
         # context = super().get_context_data(**kwargs)
         # context['key'] = settings.STRIPE_PUBLISHABLE_KEY
+        stripe.api_key = "sk_test_cpnWw7EDAwNoJN89JVde1DXY002fOniVkX"
 
+        result = stripe.Token.create(
+            card={
+                "number": "4242424242424242",
+                "exp_month": 2,
+                "exp_year": 2021,
+                "cvc": "314",
+            },
+        )
         charge = stripe.Charge.create(
             amount=amountToAdd,
             currency='usd',
             description='A Django charge',
-            source=request.data['stripe_token']
+            source=result.id
+            # source=request.data['stripe_token']
         )
         if charge.outcome.network_status == 'approved_by_network' and charge.outcome.type == "authorized":
             current_cash = request.user.wallet.cash
