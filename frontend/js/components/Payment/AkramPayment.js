@@ -55,7 +55,6 @@ class PurchasePage extends Component {
                     ? <td>℟ {item.price}.00</td>
                     : <td>$ 5.00</td>
                 }
-                
             </tr>
         ))
 
