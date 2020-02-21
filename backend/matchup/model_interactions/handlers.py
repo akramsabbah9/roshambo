@@ -109,9 +109,9 @@ def set_user_move(match_id, user_id, move):
     user_slot = get_user_slot_in_match(match, user_id)
 
     if user_slot == 1:
-        match.user1_choice = RPSMove['move'].value
+        match.user1_choice = RPSMove[move].value
     else:
-        match.user2_choice = RPSMove['move'].value
+        match.user2_choice = RPSMove[move].value
     match.save()
 
 @database_sync_to_async
@@ -157,7 +157,7 @@ def both_users_ready(match_id):
     return match.user1_ready and match.user2_ready
 
 @database_sync_to_async
-def evaluate_round(match_id):
+def evaluate_round(match_id, user_id):
     """
     Evaluates the round based on the current state, randomly assigning selections to players if they have not made one.
 
@@ -167,14 +167,16 @@ def evaluate_round(match_id):
         increments the winning user's win count
 
     :param UUID match_id: the id of the match.
-    :rtype: uuid
-    :return: the winner of round. None if no one won.
+    :rtype: uuid, str
+    :return: 
+        the winner of round. None if no one won.
+        opponent move
     """
     match = get_match(match_id)
 
-    if not match.user1_choice:
+    if match.user1_choice is None:
         match.user1_choice = random.randint(0, 2)
-    if not match.user2_choice:
+    if match.user2_choice is None:
         match.user2_choice = random.randint(0, 2)
 
     winner = evaluate_rps(RPSMove(match.user1_choice), RPSMove(match.user2_choice))
@@ -190,14 +192,17 @@ def evaluate_round(match_id):
         match.rounds_finished += 1
     else:
         winner = None
-    
+
+    user1_choice = match.user1_choice
+    user2_choice = match.user2_choice
+
     match.user1_choice = None
     match.user2_choice = None
     match.started = False # this way the client can again order a new start
 
     match.save()
 
-    return winner
+    return winner, match.user1, match.user2, RPSMove(user1_choice).name.lower(), RPSMove(user2_choice).name.lower()
 
 @database_sync_to_async
 def user_first_to_ready(match_id, user_id):
@@ -227,3 +232,12 @@ def get_serialized_user_data(user):
         'guild': user.guild,
         'country_code': user.country_code,
     }
+
+@database_sync_to_async
+def proper_round_time_elapsed(match_id, round_time):
+    """
+    Returns true if it's been round_time since match_id started.
+    """
+    match = get_match(match_id)
+
+    return match.round_start_ts + round_time >= get_time_seconds()

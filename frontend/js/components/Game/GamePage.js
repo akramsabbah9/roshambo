@@ -17,19 +17,21 @@ class GamePage extends Component {
         super(props)
         this.state = {
             counter: 5,
-            winnerName: 'No-one',
+            winnerName: 'No one!',
             playerMove: -1,
-            opponentMove: -1,
-            GameEnded: false,
             GameStarted: false,
             myWins: 0,
             opponentWins: 0,
             socketResponseHandlerAdded: false,
+            opponentMove: null,
+            winnerReceived: false,
+            rounds: 1,
         }
         this.onClick = this.onClick.bind(this);
         this.CountDown = this.CountDown.bind(this);
         this.CountDownEffect = this.CountDownEffect.bind(this);
         this.Quit = this.Quit.bind(this);
+        this.handleSocketMessage = this.handleSocketMessage.bind(this);
     }
 
     componentDidMount() {
@@ -37,7 +39,10 @@ class GamePage extends Component {
             this.props.socket.onMessage.addListener(data => this.handleSocketMessage(data))
             this.setState({socketResponseHandlerAdded: true})
         }
-        this.CountDown();
+        if (this.state.rounds == 1) {
+            this.setState({GameStarted: true})
+            this.CountDown();
+        }
     }
 
     handleSocketMessage(data) {
@@ -46,15 +51,42 @@ class GamePage extends Component {
         switch (command) {
             case 'channel':
                 if (json.hasOwnProperty('winner')) {
-                    if (json.winner != this.props.location.state.opponent.id) {
-                        this.setState({winnerName: this.state.user.username, myWins: this.state.myWins+1});
+                    console.log(json)
+                    const opponentMove = this.props.location.state.opponent.id == json.user1 ? json.user1_move : json.user2_move;
+                    if (json.winner == 'None') {
+                        this.setState({
+                            winnerName: 'No one!', 
+                            opponentMove: opponentMove,
+                            winnerReceived: true,
+                            rounds: ths.state.rounds+1,
+                        });
+                    }
+                    else if (json.winner != this.props.location.state.opponent.id) {
+                        this.setState({
+                            winnerName: this.props.user.username, 
+                            myWins: this.state.myWins+1, 
+                            opponentMove: opponentMove,
+                            winnerReceived: true,
+                            rounds: this.state.rounds+1
+                        });
                     }
                     else {
                         this.setState({
                             winnerName: this.props.location.state.opponent.username, 
-                            opponentWins: this.state.opponentWins+1
+                            opponentWins: this.state.opponentWins+1,
+                            opponentMove: opponentMove,
+                            winnerReceived: true,
+                            rounds: this.state.rounds+1,
                         });
                     }
+                    // this.props.socket.sendRequest({'command': 'begin_round'}).then(() => {
+                    //     this.setState({
+                    //         winnerName: 'New round!',
+                    //         opponentMove: null,
+                    //         playerMove: null,
+                    //     });
+                    //     this.CountDown()
+                    // });
                 }
                 break
         }
@@ -65,7 +97,6 @@ class GamePage extends Component {
     }
 
     onClick(selection) {
-        this.state.GameStarted = true;
         switch(selection){
             case ROCK:
                 this.props.socket.sendRequest({
@@ -93,14 +124,17 @@ class GamePage extends Component {
         let timerID = setInterval(() => {
             this.CountDownEffect();
             this.setState({counter: --secs});
-            console.log(secs);
         }, 1000);
         setTimeout(() => {
             clearInterval(timerID);
             this.setState({counter: 5});
-            this.setState({GameEnded: true, GameStarted: false});
+            this.setState({GameStarted: false});
+            this.props.socket.sendRequest({
+                'command': 'end_round'
+            });
         }, 5000);
     }
+
     CountDownEffect(){
         var ele = document.getElementById("CountDown");
         ele.animate([ { opacity: '0%'},
@@ -216,11 +250,11 @@ render() {
                 </Col>
                 <Col sm={3}>
                     {
-                        this.state.opponentMove == 0 ?
+                        this.state.opponentMove == 'rock' ?
                         <FontAwesomeIcon icon={faHandRock} size="5x"/> : (
-                            this.state.opponentMove == 1 ?
+                            this.state.opponentMove == 'paper' ?
                             <FontAwesomeIcon icon={faHandPaper} size="5x"/> :(
-                                this.state.opponentMove == 2 ?
+                                this.state.opponentMove == 'scissors' ?
                                 <FontAwesomeIcon icon={faHandPeace} size="5x"/> :
                                 <div></div>
                             )
@@ -235,7 +269,7 @@ render() {
                             value={"rock"} 
                             onClick={() => this.onClick(ROCK)} 
                             style={{marginRight: "1%"}}
-                            disabled={this.state.GameStarted}
+                            disabled={!this.state.GameStarted}
                         >
                             <FontAwesomeIcon icon={faHandRock}/>
                         </Button>
@@ -243,7 +277,7 @@ render() {
                             value={"paper"} 
                             onClick={() => this.onClick(PAPER)} 
                             style={{marginRight: "1%"}}
-                            disabled={this.state.GameStarted}
+                            disabled={!this.state.GameStarted}
                         >
                             <FontAwesomeIcon icon={faHandPaper}/>
                         </Button>
@@ -251,7 +285,7 @@ render() {
                             value={"scissors"} 
                             onClick={() => this.onClick(SCISSORS)} 
                             style={{marginRight: "1%"}}
-                            disabled={this.state.GameStarted}
+                            disabled={!this.state.GameStarted}
                         >
                             <FontAwesomeIcon icon={faHandPeace}/>
                         </Button>
@@ -261,7 +295,7 @@ render() {
             <Row style={{margin:25}}>
                 <div className="col d-flex align-items-center justify-content-center"
                 style={{fontFamily: "Bangers, cursive", fontSize: "2em"}}>
-                    {this.state.GameEnded ? this.state.winnerName : ""}
+                    {this.state.winnerReceived ? `Winner: ${this.state.winnerName}` : ""}
                 </div>
             </Row>
             <Row>

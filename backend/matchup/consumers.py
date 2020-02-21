@@ -10,7 +10,8 @@ import json
 from .model_interactions.handlers import \
     join_match, leave_match, round_started, set_user_move, \
     set_user_ready_status, both_users_ready, evaluate_round, \
-    user_first_to_ready, set_round_as_started, get_serialized_user_data
+    user_first_to_ready, set_round_as_started, get_serialized_user_data, \
+    proper_round_time_elapsed
 from .utils import wait_then_call, get_time_seconds
 
 ROUND_TIMER = 5
@@ -126,17 +127,6 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         """
         await self.send(text_data=json.dumps(data))
 
-    async def _handle_round_end(self):
-        winner = evaluate_round(self.match_id)
-        # Send message to match group that the winner has been found out
-        await self.channel_layer.group_send(
-            self.match_group_id,
-            {
-                'type': 'winner_determined',
-                'winner': winner
-            }
-        )
-
     #------------------------------------------------------------------
     # Command Processors
     #------------------------------------------------------------------
@@ -228,6 +218,28 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             return
 
         await self._start_a_round()
+
+    async def _process_round_end_command(self, data):
+        if not self.seen_round_start:
+            return
+        if not await round_started(self.match_id):
+            return
+        if not await proper_round_time_elapsed(self.match_id, ROUND_TIMER):
+            return
+        print("---handle ROUND END----")
+        winner, user1_id, user2_id, user1_move, user2_move = await evaluate_round(self.match_id, self.user.id)
+        # Send message to match group that the winner has been found out
+        await self.channel_layer.group_send(
+            self.match_group_id,
+            {
+                'type': 'winner_determined',
+                'winner': str(winner),
+                'user1': str(user1_id),
+                'user2': str(user2_id),
+                'user1_move': user1_move,
+                'user2_move': user2_move
+            }
+        )
         
 
     # EXPERIMENTAL
@@ -312,7 +324,11 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
 
         await self._send_channel_message({
             'command': 'channel',
-            'winner': winner
+            'winner': winner,
+            'user1': event['user1'],
+            'user2': event['user2'],
+            'user1_move': event['user1_move'],
+            'user2_move': event['user2_move']
         })
 
         self.seen_round_start = False
@@ -372,8 +388,8 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             }, status=status.HTTP_400_BAD_REQUEST, id=data['id'])
             return False
 
-        # order start/begin_round commands have no additional info, and their allowance is determined within the function itself
-        if command_group == 'begin_round': 
+        # order start/begin_round & end_round commands have no additional info, and their allowance is determined within the function itself
+        if command_group == 'begin_round' or 'end_round': 
             return True
 
         if not await self._command_valid(data, command_group):
@@ -458,8 +474,6 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             }
         )
         await set_round_as_started(self.match_id)
-        wait_then_call(ROUND_TIMER, self._handle_round_end)
-        print("after wait_then_call")
 
     #------------------------------------------------------------------
     # Command Definitions
@@ -471,11 +485,12 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
     rps_move_values = ['rock', 'paper', 'scissors']
     chat_commands = ['message']
     bet_commands = ['amount']
-    command_groups = ['rps', 'chat', 'bet', 'begin_round']
+    command_groups = ['rps', 'chat', 'bet', 'begin_round', 'end_round']
     dispatch_command = {
         'rps': _process_rps_command,
         'bet': _process_bet_command,
         'chat': _process_chat_command,
         'begin_round': _process_order_start_command,
+        'end_round': _process_round_end_command
     }
     seen_round_start = False
