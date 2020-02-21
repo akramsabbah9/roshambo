@@ -9,7 +9,7 @@ from rest_framework import status
 import json
 
 from .model_interactions.handlers import \
-    join_match, leave_match, round_started, set_user_move, \
+    join_match, leave_match, round_started, set_user_move, set_user_bet, \
     set_user_ready_status, both_users_ready, evaluate_round, \
     user_first_to_ready, set_round_as_started, get_serialized_user_data
 from .utils import wait_then_call, get_time_seconds
@@ -220,16 +220,13 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
 
         # determine whether this amount can be safely bet.
         my_wallet = Wallet.objects.get(user_id=user)
-        my_money = my_wallet.cash
-        if my_money < amount:
+        if my_wallet.cash < amount:
             await self._send_response({
                     'error': 'Not enough money to bet.'
                 }, status=status.HTTP_409_CONFLICT, id=data['id'])
             return
         else:
-            my_wallet.cash = my_money - amount
-            my_wallet.save()
-            
+            await set_user_bet(self.match_id, self.user.id, amount)
 
         await self.channel_layer.group_send(
             self.match_group_id,

@@ -1,5 +1,6 @@
 # matchup/model_interactions/handlers.py
 
+from django.apps import apps
 from channels.db import database_sync_to_async
 from django.db.models import Q
 
@@ -10,6 +11,8 @@ from ..exceptions import ExistError
 from ..utils import evaluate_rps, get_time_seconds
 
 from .utils import get_match, get_user_slot_in_match, RPSMove
+
+Wallet = apps.get_model('accounts', 'Wallet')
 
 @database_sync_to_async
 def join_match(user_id):
@@ -114,6 +117,25 @@ def set_user_move(match_id, user_id, move):
         match.user2_choice = RPSMove['move'].value
     match.save()
 
+#EXPERIMENTAL
+@database_sync_to_async
+def set_user_bet(match_id, user_id, amount):
+    """
+    Sets the user's bet.
+
+    :param UUID match_id: the id of the match.
+    :param UUID user_id: the id of the user betting.
+    :param int amount: the amount the user wishes to bet.
+    """
+    match = get_match(match_id)
+    user_slot = get_user_slot_in_match(match, user_id)
+
+    if user_slot == 1:
+        match.user1_bet = amount
+    else:
+        match.user2_bet = amount
+    match.save()
+
 @database_sync_to_async
 def set_user_ready_status(match_id, user_id, ready_status):
     """
@@ -159,12 +181,13 @@ def both_users_ready(match_id):
 @database_sync_to_async
 def evaluate_round(match_id):
     """
-    Evaluates the round based on the current state, randomly assigning selections to players if they have not made one.
+    Evaluates the round based on the current state, randomly assigning selections to players if they have not made one. Then deducts bets from cash.
 
     After winner determined: 
         sets user1_choice, user2_choice to None
         increments rounds_finished
         increments the winning user's win count
+        sets user bets back to 0
 
     :param UUID match_id: the id of the match.
     :rtype: uuid
@@ -179,21 +202,35 @@ def evaluate_round(match_id):
 
     winner = evaluate_rps(RPSMove(match.user1_choice), RPSMove(match.user2_choice))
 
+    wallet_1 = Wallet.objects.get(user_id=match.user1)
+    wallet_2 = Wallet.objects.get(user_id=match.user2)
+
     # don't count the round if we tied
+    #EXPERIMENTAL if user1 won, then add user2's bet to their money, and vice-versa if user2 won.
     if winner != 0:
         if winner == 1: 
             winner = match.user1
             match.user1_wins += 1
+            wallet_1.cash += match.user2_bet
+            wallet_2.cash -= match.user2_bet
         else: 
             winner = match.user2
             match.user2_wins += 1
+            wallet_2.cash += match.user1_bet
+            wallet_1.cash -= match.user1_bet
+
         match.rounds_finished += 1
+        wallet_1.save()
+        wallet_2.save()
+
     else:
         winner = None
     
     match.user1_choice = None
     match.user2_choice = None
     match.started = False # this way the client can again order a new start
+    match.user1_bet = 0
+    match.user2_bet = 0
 
     match.save()
 
