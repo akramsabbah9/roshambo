@@ -205,6 +205,12 @@ def evaluate_round(match_id, user_id):
     return winner, match.user1, match.user2, RPSMove(user1_choice).name.lower(), RPSMove(user2_choice).name.lower()
 
 @database_sync_to_async
+def match_complete(match_id):
+    match = get_match(match_id)
+
+    return match.user1_wins >= 2 or match.user2_wins >= 2
+
+@database_sync_to_async
 def user_first_to_ready(match_id, user_id):
     """
     Determines if user was the first one to ready up.

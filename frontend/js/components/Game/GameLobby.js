@@ -40,6 +40,10 @@ class GameLobby extends Component {
         this.props.getCurrent()
     }
 
+    componentWillUnmount() {
+        this.props.socket.removeAllListeners();
+    }
+
     componentDidUpdate() {
         if (this.props.socket && !this.state.socketResponseHandlerAdded) {
             this.props.socket.onMessage.addListener(data => this.handleSocketMessage(data))

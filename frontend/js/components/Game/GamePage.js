@@ -18,7 +18,7 @@ class GamePage extends Component {
         this.state = {
             counter: 5,
             winnerName: 'No one!',
-            playerMove: -1,
+            playerMove: null,
             GameStarted: false,
             myWins: 0,
             opponentWins: 0,
@@ -26,6 +26,7 @@ class GamePage extends Component {
             opponentMove: null,
             winnerReceived: false,
             rounds: 1,
+            matchOver: false
         }
         this.onClick = this.onClick.bind(this);
         this.CountDown = this.CountDown.bind(this);
@@ -45,20 +46,39 @@ class GamePage extends Component {
         }
     }
 
+    componentDidUpdate() {
+        if (!this.state.GameStarted && this.state.winnerReceived && !this.state.matchOver) {
+            setTimeout(() => {
+                this.props.socket.sendRequest({'command': 'begin_round'});
+            }, 3000);
+        }
+
+        if (this.state.matchOver) {
+            setTimeout(() => {
+                // TODO: make call to deal with AkramBucks
+                // TODO: call stats update
+                this.props.socket.removeAllListeners();
+                this.props.socket.close().then(
+                    history.push('/userdashboard')
+                );
+                
+            }, 6000);
+        }
+    }
+
     handleSocketMessage(data) {
         let json = JSON.parse(data)
         const command = json.command;
         switch (command) {
             case 'channel':
                 if (json.hasOwnProperty('winner')) {
-                    console.log(json)
                     const opponentMove = this.props.location.state.opponent.id == json.user1 ? json.user1_move : json.user2_move;
                     if (json.winner == 'None') {
                         this.setState({
                             winnerName: 'No one!', 
                             opponentMove: opponentMove,
                             winnerReceived: true,
-                            rounds: ths.state.rounds+1,
+                            rounds: this.state.rounds+1,
                         });
                     }
                     else if (json.winner != this.props.location.state.opponent.id) {
@@ -79,14 +99,20 @@ class GamePage extends Component {
                             rounds: this.state.rounds+1,
                         });
                     }
-                    // this.props.socket.sendRequest({'command': 'begin_round'}).then(() => {
-                    //     this.setState({
-                    //         winnerName: 'New round!',
-                    //         opponentMove: null,
-                    //         playerMove: null,
-                    //     });
-                    //     this.CountDown()
-                    // });
+
+                    if (json.match_over) {
+                        this.setState({matchOver: true});
+                    }
+                }
+                else if (json.hasOwnProperty('start')) {
+                    this.setState({
+                        winnerName: null,
+                        opponentMove: null,
+                        playerMove: null,
+                        GameStarted: true,
+                        winnerReceived: false,
+                    });
+                    this.CountDown();
                 }
                 break
         }
@@ -135,12 +161,14 @@ class GamePage extends Component {
         }, 5000);
     }
 
-    CountDownEffect(){
-        var ele = document.getElementById("CountDown");
-        ele.animate([ { opacity: '0%'},
-               { opacity: '25%', offset: 0.5 },
-               { opacity: '50%'},
-               { opacity: '100%'} ], 1000);
+    CountDownEffect() {
+        let ele = document.getElementById("CountDown");
+        if (ele) {
+            ele.animate([ { opacity: '0%'},
+                { opacity: '25%', offset: 0.5 },
+                { opacity: '50%'},
+                { opacity: '100%'} ], 1000);
+        }
     }
 
 render() {
@@ -179,8 +207,8 @@ render() {
             margin: 5,
             marginBottom: 25,
         }
-
     }
+    
     return (
         <>
         <Container className="Words" style={{marginTop: '5%'}}>
@@ -226,6 +254,8 @@ render() {
                         </div>
                 </Col>
             </Row>
+            {!this.state.matchOver ?
+            <React.Fragment>
             <Row style={{marginTop:50, marginBottom:50}}>
                 <Col sm={3}>
                     {
@@ -300,11 +330,25 @@ render() {
             </Row>
             <Row>
                 <div className="col d-flex justify-content-center align-items-center">
-                    <Button variant='danger' className="Buttons" size="lg" onClick={this.Quit}>
+                    <Button variant='danger' className="Buttons" size="lg" onClick={this.Quit} disabled={this.state.matchOver}>
                         Get Me Out
                     </Button>
                 </div>
             </Row>
+            </React.Fragment>
+        :
+            <React.Fragment>
+                <div className="col d-flex justify-content-center align-items-center">
+                    <p>Match over!</p>
+                </div>
+                <div className="col d-flex justify-content-center align-items-center">
+                    <p>{this.state.myWins > this.state.opponentWins ? 'You won!' : 'You lost!'}</p>
+                </div>
+                <div className="col d-flex justify-content-center align-items-center">
+                    <p>All the AkramBucks go to {this.state.myWins > this.state.opponentWins ? 'you' : this.props.location.state.opponent.username}!!</p>
+                </div>
+            </React.Fragment>
+        }
         </Container>
         </>
     )

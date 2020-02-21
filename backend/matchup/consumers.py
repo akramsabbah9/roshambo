@@ -11,7 +11,7 @@ from .model_interactions.handlers import \
     join_match, leave_match, round_started, set_user_move, \
     set_user_ready_status, both_users_ready, evaluate_round, \
     user_first_to_ready, set_round_as_started, get_serialized_user_data, \
-    proper_round_time_elapsed
+    proper_round_time_elapsed, match_complete
 from .utils import wait_then_call, get_time_seconds
 
 ROUND_TIMER = 5
@@ -212,9 +212,6 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         """
         allowed_order_start, allowance_reason = await self._order_start_allowed()
         if not allowed_order_start:
-            await self._send_response({
-                    'error': 'Round cannot be started. {}'.format(allowance_reason)
-                }, status=status.HTTP_409_CONFLICT, id=data['id'])
             return
 
         await self._start_a_round()
@@ -226,20 +223,34 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             return
         if not await proper_round_time_elapsed(self.match_id, ROUND_TIMER):
             return
-        print("---handle ROUND END----")
         winner, user1_id, user2_id, user1_move, user2_move = await evaluate_round(self.match_id, self.user.id)
-        # Send message to match group that the winner has been found out
-        await self.channel_layer.group_send(
-            self.match_group_id,
-            {
-                'type': 'winner_determined',
-                'winner': str(winner),
-                'user1': str(user1_id),
-                'user2': str(user2_id),
-                'user1_move': user1_move,
-                'user2_move': user2_move
-            }
-        )
+        if await match_complete(self.match_id):
+            await self.channel_layer.group_send(
+                self.match_group_id,
+                {
+                    'type': 'winner_determined',
+                    'winner': str(winner),
+                    'user1': str(user1_id),
+                    'user2': str(user2_id),
+                    'user1_move': user1_move,
+                    'user2_move': user2_move,
+                    'match_over': True
+                }
+            )
+        else:
+            # Send message to match group that the winner has been found out
+            await self.channel_layer.group_send(
+                self.match_group_id,
+                {
+                    'type': 'winner_determined',
+                    'winner': str(winner),
+                    'user1': str(user1_id),
+                    'user2': str(user2_id),
+                    'user1_move': user1_move,
+                    'user2_move': user2_move,
+                    'match_over': False
+                }
+            )
         
 
     # EXPERIMENTAL
@@ -321,6 +332,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
 
     async def winner_determined(self, event):
         winner = event['winner']
+        match_over = event['match_over']
 
         await self._send_channel_message({
             'command': 'channel',
@@ -328,7 +340,8 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             'user1': event['user1'],
             'user2': event['user2'],
             'user1_move': event['user1_move'],
-            'user2_move': event['user2_move']
+            'user2_move': event['user2_move'],
+            'match_over': match_over
         })
 
         self.seen_round_start = False
