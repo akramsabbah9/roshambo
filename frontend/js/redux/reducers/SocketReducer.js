@@ -13,19 +13,32 @@ export function socket(state = socketInitialState, action) {
         case socketConstants.CONSTRUCTION_REQUEST:
             return {
                 ...state,
-                socketLoading: true
+                socketLoading: true,
+                error: null
             }
         case socketConstants.CONSTRUCTION_SUCCESS:
             return {
                 ...state,
                 socketLoading: false,
                 socket: action.socket,
+                error: null
             }
         case socketConstants.CONSTRUCTION_FAILURE:
             return {
                 ...state,
                 error: action.error,
                 socketLoading: false,
+            }
+        case socketConstants.DESTRUCTION_SUCCESS:
+            return {
+                ...state,
+                socket: null,
+                error: null
+            }
+        case socketConstants.DESTRUCTION_FAILURE:
+            return {
+                ...state,
+                error: action.error
             }
         default:
             return state

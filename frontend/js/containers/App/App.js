@@ -35,7 +35,6 @@ const App = () => (
         <PrivateRoute exact path="/Settings/Email" component={Email} />    
         <PrivateRoute exact path="/Settings/Skin" component={Appearance} />  
         <PrivateRoute exact path="/Settings/Guild" component={Guild} />  
-        <PrivateRoute exact path="/Betting" component={BettingPage} />
         <PrivateRoute exact path="/Payment" component={Payment} />
         <PrivateRoute exact path="/Store" component={OnlineStore} />
         <Route component={Erehwon}/>

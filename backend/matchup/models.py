@@ -40,10 +40,11 @@ class Match(models.Model):
 
     # How many rounds we've done
     rounds_finished = models.PositiveSmallIntegerField(default=0)
+    round_start_ts = models.PositiveIntegerField(default=2147483647)
 
     # Timestamps for when the users last sent a message
-    user1_ts = models.PositiveSmallIntegerField(default=0)
-    user2_ts = models.PositiveSmallIntegerField(default=0)
+    user1_ts = models.PositiveIntegerField(default=0)
+    user2_ts = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return 'match {} with {} users'.format(id, user_count)

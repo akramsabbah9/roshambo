@@ -140,7 +140,7 @@ class UserDashBoard extends Component {
                                             ? <ListGroup.Item>Guild: None</ListGroup.Item>
                                             : <ListGroup.Item>Guild: {user.guild}</ListGroup.Item>
                                         }
-                                        <ListGroup.Item>ReiherRubles: ℟ {cash}</ListGroup.Item>
+                                        <ListGroup.Item>AkramBucks: {user.cash}</ListGroup.Item>
                                         <ListGroup.Item>Games Won: {user.games_won}</ListGroup.Item>
                                         <ListGroup.Item>Games Lost: {user.games_lost}</ListGroup.Item>
                                     </React.Fragment>

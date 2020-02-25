@@ -3,7 +3,7 @@ import { Container, Row, Col, Card,
          ButtonToolbar, Button, ButtonGroup} from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMehRollingEyes, faDragon, faHandPaper, faHandScissors, faHandRock, faHandPeace } from "@fortawesome/free-solid-svg-icons";
-import { userActions } from '../../redux/actions/UsersActions';
+import { socketActions } from '../../redux/actions/SocketActions';
 import { history } from '../../utils/history';
 import { connect } from 'react-redux';
 import { skins } from '../Settings/Skins';
@@ -17,127 +17,178 @@ class GamePage extends Component {
     constructor(props){
         super(props)
         this.state = {
-            bettingAmount: '$40',
-            counter: 3,
-            winnerName: 'No-one',
-            playerMove: -1,
-            CPUMove: -1,
-            GameEnded: false,
+            counter: 5,
+            winnerName: 'No one!',
+            playerMove: null,
             GameStarted: false,
-            CPUwins: 0,
             myWins: 0,
+            opponentWins: 0,
+            socketResponseHandlerAdded: false,
+            opponentMove: null,
+            winnerReceived: false,
+            rounds: 1,
+            matchOver: false,
+            belaySocketClosing: false,
+            userMustVacate: false,
+            roundTimer: null,
+            timerCounter: null,
         }
         this.onClick = this.onClick.bind(this);
-        this.CPUMove = this.CPUMove.bind(this);
         this.CountDown = this.CountDown.bind(this);
-        this.GameEndLogic = this.GameEndLogic.bind(this);
         this.CountDownEffect = this.CountDownEffect.bind(this);
         this.Quit = this.Quit.bind(this);
+        this.handleSocketMessage = this.handleSocketMessage.bind(this);
     }
-    Quit(wins, loses){
-        this.props.changeStats(wins, loses);
+
+    componentDidMount() {
+        if (this.props.socket && !this.state.socketResponseHandlerAdded) {
+            this.props.socket.onMessage.addListener(data => this.handleSocketMessage(data))
+            this.setState({socketResponseHandlerAdded: true})
+        }
+        if (this.state.rounds == 1) {
+            this.setState({GameStarted: true})
+            this.CountDown();
+        }
     }
-    onClick(selection){
-        this.state.GameStarted = true;
+
+    componentWillUnmount() {
+        // listeners MUST be removed once the react component is gone, as the socket itself will persists thanks to the redux store
+        this.props.socket.removeAllListeners();
+        if (!this.state.belaySocketClosing) {
+            this.props.destructSocket();
+        }
+        clearInterval(this.state.timerCounter);
+        clearTimeout(this.state.roundTimer);
+    }
+
+    componentDidUpdate() {
+        if (!this.state.GameStarted && this.state.winnerReceived && !this.state.matchOver) {
+            setTimeout(() => {
+                this.props.socket.sendRequest({'command': 'begin_round'});
+            }, 3000);
+        }
+
+        if (this.state.matchOver || this.state.userMustVacate) {
+            setTimeout(() => {
+                history.push('/userdashboard');
+            }, 4500);
+        }
+    }
+
+    handleSocketMessage(data) {
+        let json = JSON.parse(data)
+        const command = json.command;
+        switch (command) {
+            case 'channel':
+                if (json.hasOwnProperty('winner')) {
+                    const opponentMove = this.props.location.state.opponent.id == json.user1 ? json.user1_move : json.user2_move;
+                    if (json.winner == 'None') {
+                        this.setState({
+                            winnerName: 'No one!', 
+                            opponentMove: opponentMove,
+                            winnerReceived: true,
+                            rounds: this.state.rounds+1,
+                        });
+                    }
+                    else if (json.winner != this.props.location.state.opponent.id) {
+                        this.setState({
+                            winnerName: this.props.user.username, 
+                            myWins: this.state.myWins+1, 
+                            opponentMove: opponentMove,
+                            winnerReceived: true,
+                            rounds: this.state.rounds+1
+                        });
+                    }
+                    else {
+                        this.setState({
+                            winnerName: this.props.location.state.opponent.username, 
+                            opponentWins: this.state.opponentWins+1,
+                            opponentMove: opponentMove,
+                            winnerReceived: true,
+                            rounds: this.state.rounds+1,
+                        });
+                    }
+
+                    if (json.match_over) {
+                        this.setState({matchOver: true});
+                    }
+                }
+                else if (json.hasOwnProperty('start')) {
+                    this.setState({
+                        winnerName: null,
+                        opponentMove: null,
+                        playerMove: null,
+                        GameStarted: true,
+                        winnerReceived: false,
+                    });
+                    this.CountDown();
+                }
+                else if (json.hasOwnProperty('user_left')) {
+                    this.setState({userMustVacate: true})
+                }  
+                break
+        }
+    }
+
+    Quit() {
+        history.push('/userdashboard');
+    }
+
+    onClick(selection) {
         switch(selection){
             case ROCK:
-                console.log("ROCK");
-                this.setState({playerMove: ROCK});
+                this.props.socket.sendRequest({
+                    'command': 'rps',
+                    'move': 'rock',
+                }).then(this.setState({playerMove: ROCK}));
                 break;
             case PAPER:
-                console.log("PAPER");
-                this.setState({playerMove: PAPER});
+                this.props.socket.sendRequest({
+                    'command': 'rps',
+                    'move': 'paper',
+                }).then(this.setState({playerMove: PAPER}));
                 break;
             case SCISSORS:
-                console.log("SCISSORS");
-                this.setState({playerMove: SCISSORS});
-                break;
-        }
-        this.CountDown();
-    }
-    CPUMove(){
-        var rand = Math.floor(Math.random() * 3);
-        switch(rand){
-            case ROCK:
-                console.log("CPU Move: ROCK");
-                this.setState({CPUMove: ROCK});
-                break;
-            case PAPER:
-                console.log("CPU Move: PAPER");
-                this.setState({CPUMove: PAPER});
-                break;
-            case SCISSORS:
-                console.log("CPU Move: SCISSORS");
-                this.setState({CPUMove: SCISSORS});
+                this.props.socket.sendRequest({
+                    'command': 'rps',
+                    'move': 'scissors',
+                }).then(this.setState({playerMove: SCISSORS}));
                 break;
         }
     }
-    CountDown(){
-        var secs = 3;
-        var timerID = setInterval(() => {
+
+    CountDown() {
+        let secs = 5;
+        const timerCounter = setInterval(() => {
             this.CountDownEffect();
-            this.setState({CPUMove: -1});
             this.setState({counter: --secs});
-            console.log(secs);
         }, 1000);
-        setTimeout(() => {
-            clearInterval(timerID);
-            this.setState({counter: 3});
-            this.CPUMove();
-            this.setState({GameEnded: true, GameStarted: false});
-            this.GameEndLogic();
-        }, 3000);
+        const roundTimer = setTimeout(() => {
+            clearInterval(timerCounter);
+            this.setState({counter: 5});
+            this.setState({GameStarted: false});
+            this.props.socket.sendRequest({
+                'command': 'end_round'
+            });
+        }, 5000);
+        this.setState({roundTimer: roundTimer, timerCounter: timerCounter})
     }
-    CountDownEffect(){
-        var ele = document.getElementById("CountDown");
-        ele.animate([ { opacity: '0%'},
-               { opacity: '25%', offset: 0.5 },
-               { opacity: '50%'},
-               { opacity: '100%'} ], 1000);
-    }
-    GameEndLogic(){
-        switch(this.state.playerMove){
-            case PAPER:
-                if(this.state.CPUMove == SCISSORS){
-                    let wins = this.state.CPUwins + 1
-                    this.setState({winnerName: "You have been defeated", CPUwins: wins});
-                } 
-                if(this.state.CPUMove == ROCK) {
-                    let wins = this.state.myWins + 1
-                    this.setState({winnerName: "You are Victorious", myWins: wins});
-                } 
-                if(this.state.CPUMove == PAPER) this.setState({winnerName: "No one wins"});
-                break;
-            case SCISSORS:
-                if(this.state.CPUMove == SCISSORS) this.setState({winnerName: "No one wins"});
-                if(this.state.CPUMove == ROCK) {
-                    let wins = this.state.CPUwins + 1
-                    this.setState({winnerName: "You have been defeated", CPUwins: wins});
-                } 
-                if(this.state.CPUMove == PAPER) {
-                    let wins = this.state.myWins + 1
-                    this.setState({winnerName: "You are Victorious", myWins: wins});
-                }
-                break;
-            case ROCK:
-                if(this.state.CPUMove == SCISSORS) {
-                    let wins = this.state.myWins + 1
-                    this.setState({winnerName: "You are Victorious", myWins: wins});
-                } 
-                if(this.state.CPUMove == ROCK) this.setState({winnerName: "No one wins"});
-                if(this.state.CPUMove == PAPER) {
-                    let wins = this.state.CPUwins + 1
-                    this.setState({winnerName: "You have been defeated", CPUwins: wins});
-                } 
-                break;
+
+    CountDownEffect() {
+        let ele = document.getElementById("CountDown");
+        if (ele) {
+            ele.animate([ { opacity: '0%'},
+                { opacity: '25%', offset: 0.5 },
+                { opacity: '50%'},
+                { opacity: '100%'} ], 1000);
         }
     }
 
 render() {
     const mySkin = skins[this.props.activeSkin]
     const myself = this.props.user
-    const { myWins, CPUwins } = this.state
-    const user = this.props.user
+    const { myWins, opponentWins } = this.state
+    const { opponent, opponentSkin } = this.props.location.state;
 
     const styles = {
         profilePic: {
@@ -169,147 +220,183 @@ render() {
             margin: 5,
             marginBottom: 25,
         }
-
     }
-    return (
-        <>
-        <Container className="Words" style={{marginTop: '5%'}}>
-            <Row>
-                <Col sm={4}>
-                    <div style={styles.profilePic} className="col d-flex align-items-center justify-content-center">
-                        <FontAwesomeIcon  style={mySkin.avatar.style} icon={mySkin.avatar.name} size='6x' />
+
+    const userInfo = 
+    <React.Fragment>
+    <Row>
+        {/*---- OUR user info ----*/}
+        <Col sm={4}>
+            <div style={styles.profilePic} className="col d-flex align-items-center justify-content-center">
+                <FontAwesomeIcon  style={mySkin.avatar.style} icon={mySkin.avatar.name} size='6x' />
+            </div>
+            <div className="col d-flex align-items-center justify-content-center">
+                <h3>{myself.username}</h3>
+            </div>
+            <div className="col d-flex align-items-center justify-content-center">
+                <p>WINS: {myWins}</p>
+            </div>
+        </Col>
+        {/*---- central detail pane ----*/}
+        <Col sm={4}>
+            <div className="col d-flex align-items-center justify-content-center">
+                <p style={styles.versus}>Game: {this.state.gameCount}</p>
+            </div>
+            
+            <div className="col d-flex align-items-center justify-content-center">
+                <p style={styles.versus}>VS</p>
+            </div>
+                <Card style={styles.betBox}>
+                    <div className="d-flex align-items-center justify-content-center">
+                        <Card.Body>Pot of AkramBucks: {this.props.location.state.bettingAmount}</Card.Body>
                     </div>
-                    <div className="col d-flex align-items-center justify-content-center">
-                        <h3>ME: {myself.username}</h3>
-                    </div>
-                    <div className="col d-flex align-items-center justify-content-center">
-                        <p>WINS: {myWins}</p>
+                </Card>
+            
+        </Col>
+        {/*---- OPPONENT user info ----*/}
+        <Col sm={4}>
+                <div style={styles.profilePic} className="col d-flex align-items-center justify-content-center">
+                    <FontAwesomeIcon  style={skins[opponentSkin].avatar.style} icon={skins[opponentSkin].avatar.name} size='6x' />
                 </div>
-                </Col>
-                <Col sm={4}>
-                    <div className="col d-flex align-items-center justify-content-center">
-                        <p style={styles.versus}>Game: {this.state.gameCount}</p>
-                    </div>
-                    
-                    <div className="col d-flex align-items-center justify-content-center">
-                        <p style={styles.versus}>VS</p>
-                    </div>
-                        <Card style={styles.betBox}>
-                            <div className="d-flex align-items-center justify-content-center">
-                                <Card.Body>Betting Amount: {this.state.bettingAmount}</Card.Body>
-                            </div>
-                        </Card>
-                    
-                </Col>
-                <Col sm={4}>
-                    <div style={styles.profilePic} className="col d-flex align-items-center justify-content-center">
-                        <FontAwesomeIcon icon={faDragon} size='6x' />
-                    </div>
-                    <div className="col d-flex align-items-center justify-content-center">
-                        <h3>THEM: JARED</h3>
-                    </div>
-                    <div className="col d-flex align-items-center justify-content-center">
-                        <p>WINS: {CPUwins}</p>
-                    </div>
-                </Col>
-            </Row>
-            <Row style={{marginTop:50, marginBottom:50}}>
-                <Col sm={3}>
-                    {
-                        this.state.playerMove == 0 ?
-                        <FontAwesomeIcon icon={faHandRock} size="5x" style={{marginLeft: "70%"}}/> : (
-                            this.state.playerMove == 1 ?
-                            <FontAwesomeIcon icon={faHandPaper} size="5x" style={{marginLeft: "70%"}}/> :(
-                                this.state.playerMove == 2 ?
-                                <FontAwesomeIcon icon={faHandPeace} size="5x" style={{marginLeft: "70%"}}/> :
-                                <div></div>
+                <div className="col d-flex align-items-center justify-content-center">
+                    <h5 style={{margin: 15}}>{opponent.username}</h5>
+                </div>
+                <div className="col d-flex align-items-center justify-content-center">
+                <p>WINS: {opponentWins}</p>
+                </div>
+        </Col>
+    </Row>
+    </React.Fragment>;
+
+    if (this.state.userMustVacate) {
+        return (
+            <Container className="Words" style={{marginTop: '5%'}}>
+                {userInfo}
+                <Row style={{margin:50}}>
+                    <p>Unfortunately, your opponent quit (rage, much?).</p>
+                    <p>All placed bets will be returned to their respective bettors, and no money will change hands.</p>
+                    <p>You're being redirect to the user dashboard - please join a new match from there.</p>
+                </Row>
+            </Container>
+        );
+    }
+    else {
+        return (
+            <Container className="Words" style={{marginTop: '5%'}}>
+                {userInfo}
+                {!this.state.matchOver ?
+                <React.Fragment>
+                <Row style={{marginTop:50, marginBottom:50}}>
+                    <Col sm={3}>
+                        {
+                            this.state.playerMove == 0 ?
+                            <FontAwesomeIcon icon={faHandRock} size="5x" style={{marginLeft: "70%"}}/> : (
+                                this.state.playerMove == 1 ?
+                                <FontAwesomeIcon icon={faHandPaper} size="5x" style={{marginLeft: "70%"}}/> :(
+                                    this.state.playerMove == 2 ?
+                                    <FontAwesomeIcon icon={faHandPeace} size="5x" style={{marginLeft: "70%"}}/> :
+                                    <div></div>
+                                )
                             )
-                        )
-                    }
-                </Col>
-                <Col sm={6}>
-                    <div className="col d-flex align-items-center justify-content-center">
-                        <p style={styles.timer}>Make Your Pick!</p>
-                    </div>
-                    <div className="col d-flex align-items-center justify-content-center" id="CountDown">
-                        <p style={styles.counter}>{this.state.counter}</p>
-                    </div>
-                </Col>
-                <Col sm={3}>
-                    {
-                        this.state.CPUMove == 0 ?
-                        <FontAwesomeIcon icon={faHandRock} size="5x"/> : (
-                            this.state.CPUMove == 1 ?
-                            <FontAwesomeIcon icon={faHandPaper} size="5x"/> :(
-                                this.state.CPUMove == 2 ?
-                                <FontAwesomeIcon icon={faHandPeace} size="5x"/> :
-                                <div></div>
+                        }
+                    </Col>
+                    <Col sm={6}>
+                        <div className="col d-flex align-items-center justify-content-center">
+                            <p style={styles.timer}>Make Your Pick!</p>
+                        </div>
+                        <div className="col d-flex align-items-center justify-content-center" id="CountDown">
+                            <p style={styles.counter}>{this.state.counter}</p>
+                        </div>
+                    </Col>
+                    <Col sm={3}>
+                        {
+                            this.state.opponentMove == 'rock' ?
+                            <FontAwesomeIcon icon={faHandRock} size="5x"/> : (
+                                this.state.opponentMove == 'paper' ?
+                                <FontAwesomeIcon icon={faHandPaper} size="5x"/> :(
+                                    this.state.opponentMove == 'scissors' ?
+                                    <FontAwesomeIcon icon={faHandPeace} size="5x"/> :
+                                    <div></div>
+                                )
                             )
-                        )
-                    }
-                </Col>
-            </Row>
-            <Row style={{margin:25}}>
-                <ButtonToolbar className="col d-flex align-items-center justify-content-center">
-                    <ButtonGroup size="lg" style={{width: '100%'}}>
-                        <Button 
-                            value={"rock"} 
-                            onClick={() => this.onClick(ROCK)} 
-                            style={{marginRight: "1%"}}
-                            disabled={this.state.GameStarted}
-                        >
-                            <FontAwesomeIcon icon={faHandRock}/>
+                        }
+                    </Col>
+                </Row>
+                <Row style={{margin:25}}>
+                    <ButtonToolbar className="col d-flex align-items-center justify-content-center">
+                        <ButtonGroup size="lg" style={{width: '100%'}}>
+                            <Button 
+                                value={"rock"} 
+                                onClick={() => this.onClick(ROCK)} 
+                                style={{marginRight: "1%"}}
+                                disabled={!this.state.GameStarted}
+                            >
+                                <FontAwesomeIcon icon={faHandRock}/>
+                            </Button>
+                            <Button 
+                                value={"paper"} 
+                                onClick={() => this.onClick(PAPER)} 
+                                style={{marginRight: "1%"}}
+                                disabled={!this.state.GameStarted}
+                            >
+                                <FontAwesomeIcon icon={faHandPaper}/>
+                            </Button>
+                            <Button 
+                                value={"scissors"} 
+                                onClick={() => this.onClick(SCISSORS)} 
+                                style={{marginRight: "1%"}}
+                                disabled={!this.state.GameStarted}
+                            >
+                                <FontAwesomeIcon icon={faHandPeace}/>
+                            </Button>
+                        </ButtonGroup>
+                    </ButtonToolbar>
+                </Row>
+                <Row style={{margin:25}}>
+                    <div className="col d-flex align-items-center justify-content-center"
+                    style={{fontFamily: "Bangers, cursive", fontSize: "2em"}}>
+                        {this.state.winnerReceived ? `Winner: ${this.state.winnerName}` : ""}
+                    </div>
+                </Row>
+                <Row>
+                    <div className="col d-flex justify-content-center align-items-center">
+                        <Button variant='danger' className="Buttons" size="lg" onClick={this.Quit} disabled={this.state.matchOver}>
+                            Get Me Out
                         </Button>
-                        <Button 
-                            value={"paper"} 
-                            onClick={() => this.onClick(PAPER)} 
-                            style={{marginRight: "1%"}}
-                            disabled={this.state.GameStarted}
-                        >
-                            <FontAwesomeIcon icon={faHandPaper}/>
-                        </Button>
-                        <Button 
-                            value={"scissors"} 
-                            onClick={() => this.onClick(SCISSORS)} 
-                            style={{marginRight: "1%"}}
-                            disabled={this.state.GameStarted}
-                        >
-                            <FontAwesomeIcon icon={faHandPeace}/>
-                        </Button>
-                    </ButtonGroup>
-                </ButtonToolbar>
-            </Row>
-            <Row style={{margin:25}}>
-                <div className="col d-flex align-items-center justify-content-center"
-                style={{fontFamily: "Bangers, cursive", fontSize: "2em"}}>
-                    {this.state.GameEnded ? this.state.winnerName : ""}
-                </div>
-            </Row>
-            <Row>
-                <div className="col d-flex justify-content-center align-items-center">
-                    <Button variant='danger' className="Buttons" size="lg" onClick={() => {
-                        this.Quit(user.games_won + this.state.myWins, user.games_lost + this.state.CPUwins)
-                    }}>
-                        Get Me Out
-                    </Button>
-                </div>
-            </Row>
-        </Container>
-        </>
-    )
+                    </div>
+                </Row>
+                </React.Fragment>
+            :
+                <React.Fragment>
+                    <div className="col d-flex justify-content-center align-items-center">
+                        <p>Match over!</p>
+                    </div>
+                    <div className="col d-flex justify-content-center align-items-center">
+                        <p>{this.state.myWins > this.state.opponentWins ? 'You won!' : 'You lost!'}</p>
+                    </div>
+                    <div className="col d-flex justify-content-center align-items-center">
+                        <p>All the AkramBucks go to {this.state.myWins > this.state.opponentWins ? 'you' : this.props.location.state.opponent.username}!!</p>
+                    </div>
+                </React.Fragment>
+            }
+            </Container>
+        );
+    }
 }
-}
+};
 
 
 function mapStateToProps (state) {
     const { activeSkin } = state.skins
     const user = state.user.currentUser
-    return { activeSkin, user }
+    const socket = state.socket.socket;
+
+
+    return { activeSkin, user, socket }
 }
 
 const actionCreators = {
-    changeStats: userActions.changeStats,
+    destructSocket: socketActions.destructSocket,
 }
-
 
 export default connect(mapStateToProps, actionCreators)(GamePage);

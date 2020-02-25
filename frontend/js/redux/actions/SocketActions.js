@@ -5,6 +5,7 @@ import { socketConstants } from './types';
 
 export const socketActions = {
     constructSocket,
+    destructSocket,
 }
 
 function constructSocket() {
@@ -30,4 +31,27 @@ function constructSocket() {
     function request() {return { type: socketConstants.CONSTRUCTION_REQUEST }}
     function success(socket) {return { type: socketConstants.CONSTRUCTION_SUCCESS, socket }}
     function failure(error) {return { type: socketConstants.CONSTRUCTION_FAILURE, error }}
+}
+
+function destructSocket() {
+    return (dispatch, getState) => {
+
+        const { socket } =  getState();
+
+        if (this.socket.socket == null) {
+            dispatch(failure("Socket cannot be destructed - it doesn't exist!"));
+        }
+
+        socket.socket.removeAllListeners();
+        socket.socket.close()
+            .then(() => {
+                dispatch(success());
+            })
+            .catch(error => {
+                dispatch(failure(error));
+            })
+    };
+
+    function success() {return { type: socketConstants.DESTRUCTION_SUCCESS }}
+    function failure(error) {return { type: socketConstants.DESTRUCTION_FAILURE, error }}
 }

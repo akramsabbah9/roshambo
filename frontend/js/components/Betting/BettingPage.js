@@ -19,9 +19,6 @@ class Betting extends Component {
             ready: false
 
         }
-        //this.handleContinue = this.handleContinue.bind(this)
-
-        this.handleSignOut = this.handleSignOut.bind(this)
     }
 
     componentDidMount(){
