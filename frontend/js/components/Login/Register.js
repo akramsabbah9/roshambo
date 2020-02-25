@@ -5,17 +5,18 @@ Col, Nav, Row} from 'react-bootstrap';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import './Pages.css';
+import '../Fonts.css';
 import { connect } from 'react-redux';
 import {userActions } from '../../redux/actions/UsersActions';
 
 const schema = yup.object({
     first_name : yup.string()
-    .matches(/\D+/, "firstName cannot contain digits")
+    .matches(/^\D+$/, "firstName can only contains English letters")
     .min(2, "firstName must be at least 2 letters")
     .max(50, "firstName must not be longer than 50 letters")
     .required("Required"),
     last_name : yup.string()
-    .matches(/[A-Za-z0-9]/, "lastName can only contains alphanumeric letters")
+    .matches(/^\D+$/, "lastName can only contains English letters")
     .max(100, "lastName must not be longer than 100 letters")
     .required("Required"),
     email: yup.string()
@@ -23,12 +24,14 @@ const schema = yup.object({
     .max(25, "Email must be less than 25 characters")
     .required("Required"),
     username : yup.string()
-    .matches(/^\D/, "username must start with an alphabet letter")
+    .matches(/^[a-zA-Z]/, "username must start with an alphabet letter")
+    .matches(/^[0-9a-zA-Z!]+$/, "username must contain only alphanumeric letters and !")
     .min(5, "username must be at least 5 characters long")
     .max(30, "username cannot exceed 30 characters")
     .required("Required"),
     password : yup.string()
-    .matches(/^\D/, "password must start with an alphabet letter")
+    .matches(/^[a-zA-Z]/, "password must start with an alphabet letter")
+    .matches(/^[0-9a-zA-Z!]+$/, "password must contain only alphanumeric letters and !")
     .min(8, "password must be at least 8 characters long")
     .max(30, "password cannot exceed 30 characters")
     .required("Required"),
@@ -65,7 +68,7 @@ class Register extends Component{
             <Nav.Link className="sign" href="/">ROSHAMBO</Nav.Link>
           </Nav.Item>
         </Nav>
-        <Container className="main border rounded mid p-3">
+        <Container className="main border rounded mid p-3 Words">
           <Formik
             initialValues={{first_name:"", last_name:"", email:"", username:"", password:"", confirmPassword: ""}}
             onSubmit={(values, {setSubmitting}) => {
@@ -189,7 +192,7 @@ class Register extends Component{
             </Formik>
 
             {/* TODO: need to use buildErrorMessage here */}
-            { error != null ? <h3>{error.message}</h3> : null }
+            { error != null ? <h3 style={{color: "red"}}>{error.message}</h3> : null }
 
         </Container>
         </div>
