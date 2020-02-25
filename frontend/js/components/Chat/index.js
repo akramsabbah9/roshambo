@@ -39,7 +39,7 @@ class Chat extends Component {
     if (json.user == this.props.user.username) {
       return;
     }
-    addResponseMessage(data);
+    addResponseMessage(json.message);
     this.setState({unrepliedMessages: this.state.unrepliedMessages + 1})
   }
   

@@ -19,10 +19,12 @@ from django.conf.urls import include
 from rest_framework import routers
 
 router = routers.DefaultRouter()
+from django.contrib import admin
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('accounts/', include('accounts.urls')),
-    path('matchup/', include('matchup.urls'))
+    path('matchup/', include('matchup.urls')),
+    path('payments/', include('payments.urls')),
 ]

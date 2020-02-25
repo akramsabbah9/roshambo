@@ -1,5 +1,6 @@
 # matchup/model_interactions/handlers.py
 
+from django.apps import apps
 from channels.db import database_sync_to_async
 from django.db.models import Q
 
@@ -11,6 +12,10 @@ from ..utils import evaluate_rps, get_time_seconds
 
 from .utils import get_match, get_user_slot_in_match, RPSMove
 
+Wallet = apps.get_model('accounts', 'Wallet')
+Stats = apps.get_model('accounts', 'Stats')
+Skins = apps.get_model('accounts', 'Skins')
+
 @database_sync_to_async
 def join_match(user_id):
     """
@@ -18,15 +23,19 @@ def join_match(user_id):
     Either way, returns the ID of the joined match.
 
     :param UUID user_id: the id of the user trying to join the match.
-    :rtype: UUID, str
+    :rtype: UUID, str, UUID
     :return: 
         the UUID of the match. Will return the match a user is already a part of if they are part of one.
         a message describing the transaction
+        the UUIID of the opponent. None if there are none in the match at joining.
     """
     already_joined_matches = list(Match.objects.filter(Q(user1=user_id) | Q(user2=user_id)))
     if len(already_joined_matches) > 0:
         match = already_joined_matches[0]
-        return match.id, 'Already joined match {}. Re-sending ID.'.format(already_joined_matches[0].id)
+        opponent = None
+        if match.user_count == 2:
+            opponent = match.user1 if match.user1 != user_id else match.user2
+        return match.id, 'Already joined match {}. Re-sending ID.'.format(already_joined_matches[0].id), opponent
 
     # find a match
     matches = list(Match.objects.filter(user_count__lte=1, lock=False))
@@ -35,14 +44,19 @@ def join_match(user_id):
         match = Match.objects.create(user1=user_id)
     else:
         match = matches[0]
-        match.user2 = user_id
+        if (match.user1 is not None):
+            match.user2 = user_id
+        else:
+            match.user1 = user_id
     # increment user_count of that match
     match.user_count += 1
     # matches are only allowed 2 users; lock ensures someone can't join in the middle of a match if someone else quits
+    opponent = None
     if match.user_count == 2:
         match.lock = True
+        opponent = match.user1 if match.user1 != user_id else match.user2
     match.save()
-    return match.id, 'Joined match {} successfully'.format(match.id)
+    return match.id, 'Joined match {} successfully'.format(match.id), opponent
 
 
 @database_sync_to_async
@@ -52,20 +66,46 @@ def leave_match(match_id, user_id):
 
     :param UUID match_id: the id of the match.
     :param UUID user_id: the id of the user trying to leave the match.
+    :rtype: bool
+    :return: whether or not the now-left exists
     """
     match = get_match(match_id)
+
+    # if we're the only one, delete this match
+    if (match.user_count <= 1):
+        match.delete()
+        return False
     
+    match.user_count -= 1
+
+    user_leaving_has_bet = False
     user_slot = get_user_slot_in_match(match, user_id)
     if user_slot == 1:
+        user_leaving_has_bet = match.user1_bet > 0
         match.user1 = None
     else:
+        user_leaving_has_bet = match.user2_bet > 0
         match.user2 = None
 
-    match.user_count -= 1
-    match.save()
-    if (match.user_count <= 0):
-        match.delete()
+    # no real match stuff has started, so we can have new people join
+    if (not (match.user1_ready and match.user2_ready)) and (not user_leaving_has_bet):
+        match.lock = False
 
+    match.save()
+
+    return True
+
+@database_sync_to_async
+def match_locked(match_id):
+    """
+    Returns whether or not the match is locked.
+
+    :param UUID match_id: the id of the match.
+    :rtype: bool
+    :return: True if match.lock is True, False otherwise.
+    """
+    match = get_match(match_id)
+    return match.lock
 
 @database_sync_to_async
 def round_started(match_id):
@@ -103,10 +143,53 @@ def set_user_move(match_id, user_id, move):
     user_slot = get_user_slot_in_match(match, user_id)
 
     if user_slot == 1:
-        match.user1_choice = RPSMove['move'].value
+        match.user1_choice = RPSMove[move].value
     else:
-        match.user2_choice = RPSMove['move'].value
+        match.user2_choice = RPSMove[move].value
     match.save()
+
+#EXPERIMENTAL
+@database_sync_to_async
+def set_user_bet(match_id, user_id, amount):
+    """
+    Sets the user's bet.
+
+    :param UUID match_id: the id of the match.
+    :param UUID user_id: the id of the user betting.
+    :param int amount: the amount the user wishes to bet.
+    """
+    match = get_match(match_id)
+    user_slot = get_user_slot_in_match(match, user_id)
+
+    if user_slot == 1:
+        match.user1_bet += amount
+    else:
+        match.user2_bet += amount
+    match.save()
+
+@database_sync_to_async
+def get_total_bet(match_id):
+    match = get_match(match_id)
+
+    return match.user1_bet + match.user2_bet
+
+@database_sync_to_async
+def get_wallet_cash(match_id, user_id):
+    match = get_match(match_id)
+    user_slot = get_user_slot_in_match(match, user_id)
+
+    already_bet = None
+    if user_slot == 1:
+        already_bet = match.user1_bet
+    else:
+        already_bet = match.user2_bet
+
+    wallet = Wallet.objects.get(user_id=user_id)
+
+    print("ALREADY BET")
+    print(already_bet)
+    return wallet.cash, already_bet
+
 
 @database_sync_to_async
 def set_user_ready_status(match_id, user_id, ready_status):
@@ -151,47 +234,87 @@ def both_users_ready(match_id):
     return match.user1_ready and match.user2_ready
 
 @database_sync_to_async
-def evaluate_round(match_id):
+def evaluate_round(match_id, user_id):
     """
-    Evaluates the round based on the current state, randomly assigning selections to players if they have not made one.
+    Evaluates the round based on the current state, randomly assigning selections to players if they have not made one. Then deducts bets from cash.
 
     After winner determined: 
         sets user1_choice, user2_choice to None
         increments rounds_finished
         increments the winning user's win count
+        sets user bets back to 0
 
     :param UUID match_id: the id of the match.
-    :rtype: uuid
-    :return: the winner of round. None if no one won.
+    :rtype: uuid, str
+    :return: 
+        the winner of round. None if no one won.
+        opponent move
     """
     match = get_match(match_id)
 
-    if not match.user1_choice:
+    if match.user1_choice is None:
         match.user1_choice = random.randint(0, 2)
-    if not match.user2_choice:
+    if match.user2_choice is None:
         match.user2_choice = random.randint(0, 2)
 
     winner = evaluate_rps(RPSMove(match.user1_choice), RPSMove(match.user2_choice))
 
+    wallet_1 = Wallet.objects.get(user_id=match.user1)
+    wallet_2 = Wallet.objects.get(user_id=match.user2)
+    stats_1 = Stats.objects.get(user_id=match.user1)
+    stats_2 = Stats.objects.get(user_id=match.user2)
+
+    print("USER BETS")
+    print(match.user2_bet)
+    print(match.user1_bet)
+
     # don't count the round if we tied
+    #EXPERIMENTAL if user1 won, then add user2's bet to their money, and vice-versa if user2 won.
     if winner != 0:
         if winner == 1: 
             winner = match.user1
             match.user1_wins += 1
+            if match.user1_wins >= 2:
+                print("user 2 is losing {}".format(match.user2_bet))
+                wallet_1.cash += match.user2_bet
+                wallet_2.cash -= match.user2_bet
+                stats_1.games_won += 1
+                stats_2.games_lost += 1
         else: 
             winner = match.user2
             match.user2_wins += 1
+            if match.user2_wins >= 2:
+                print("user 1 is losing {}".format(match.user1_bet))
+                wallet_2.cash += match.user1_bet
+                wallet_1.cash -= match.user1_bet
+                stats_1.games_lost += 1
+                stats_2.games_won += 1
+
         match.rounds_finished += 1
+        wallet_1.save()
+        wallet_2.save()
+        stats_1.save()
+        stats_2.save()
+
     else:
         winner = None
-    
+
+    user1_choice = match.user1_choice
+    user2_choice = match.user2_choice
+
     match.user1_choice = None
     match.user2_choice = None
     match.started = False # this way the client can again order a new start
 
     match.save()
 
-    return winner
+    return winner, match.user1, match.user2, RPSMove(user1_choice).name.lower(), RPSMove(user2_choice).name.lower()
+
+@database_sync_to_async
+def match_complete(match_id):
+    match = get_match(match_id)
+
+    return match.user1_wins >= 2 or match.user2_wins >= 2
 
 @database_sync_to_async
 def user_first_to_ready(match_id, user_id):
@@ -221,3 +344,18 @@ def get_serialized_user_data(user):
         'guild': user.guild,
         'country_code': user.country_code,
     }
+
+@database_sync_to_async
+def proper_round_time_elapsed(match_id, round_time):
+    """
+    Returns true if it's been round_time since match_id started.
+    """
+    match = get_match(match_id)
+
+    return match.round_start_ts + round_time >= get_time_seconds()
+
+@database_sync_to_async
+def get_user_skin(user_id):
+    skin = Skins.objects.get(user_id=user_id)
+
+    return skin.active_skin.skin

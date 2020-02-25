@@ -10,13 +10,14 @@ import Settings from '../../components/Settings/Settings';
 import Password from '../../components/Settings/Password';
 import Email from '../../components/Settings/Email';
 import BettingPage from '../../components/Betting/BettingPage';
-import Payment from '../../components/Payment/payment';
+import Payment from '../../components/Payment/AkramPayment';
 import OnlineStore from '../../components/Store/Store';
 import Appearance from '../../components/Settings/Appearance';
 import Guild from '../../components/Settings/Guild';;
 import Erehwon from '../../components/404 Page/404page';
 import { PrivateRoute, HomeRoute } from '../../components/PrivateRoute/PrivateRoute';
 import { history } from '../../utils/history';
+
 
 
 
@@ -34,7 +35,6 @@ const App = () => (
         <PrivateRoute exact path="/Settings/Email" component={Email} />    
         <PrivateRoute exact path="/Settings/Skin" component={Appearance} />  
         <PrivateRoute exact path="/Settings/Guild" component={Guild} />  
-        <PrivateRoute exact path="/Betting" component={BettingPage} />
         <PrivateRoute exact path="/Payment" component={Payment} />
         <PrivateRoute exact path="/Store" component={OnlineStore} />
         <Route component={Erehwon}/>
@@ -43,4 +43,3 @@ const App = () => (
 );
 
 export default App;
-

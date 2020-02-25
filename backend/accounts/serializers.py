@@ -42,7 +42,6 @@ class UserSerializer(serializers.ModelSerializer):
         model = RoshamboUser
         fields = ('id', 'username', 'email', 'password', 'country_code', 'guild', 'first_name', 'last_name')
 
-
 class EditUserSerializer(UserSerializer):
     def validate(self, data):
         if hasattr(self, 'initial_data'):
