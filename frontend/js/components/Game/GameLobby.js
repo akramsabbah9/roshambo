@@ -28,6 +28,8 @@ class GameLobby extends Component {
             gameStarted: false,
             betingDisabled: false,
             opponentSkin: null,
+            belaySocketClosing: false,
+            userMustVacate: false,
         }
         this.handleExit = this.handleExit.bind(this);
         this.handleReady = this.handleReady.bind(this);
@@ -43,13 +45,22 @@ class GameLobby extends Component {
     }
 
     componentWillUnmount() {
+        // listeners MUST be removed once the react component is gone, as the socket itself will persists thanks to the redux store
         this.props.socket.removeAllListeners();
+        if (!this.state.belaySocketClosing) {
+            this.props.destructSocket();
+        }
     }
 
     componentDidUpdate() {
         if (this.props.socket && !this.state.socketResponseHandlerAdded) {
             this.props.socket.onMessage.addListener(data => this.handleSocketMessage(data))
             this.setState({socketResponseHandlerAdded: true})
+        }
+        if (this.state.userMustVacate) {
+            setTimeout(() => {
+                this.props.history.push('/userdashboard');
+            }, 4000);
         }
     }
 
@@ -59,16 +70,12 @@ class GameLobby extends Component {
         switch (command) {
             case 'channel':
                 if (json.hasOwnProperty('start')) {
-                    this.setState({gameStarted: true});
+                    this.setState({gameStarted: true, belaySocketClosing: true});
                 }
                 else if (json.hasOwnProperty('user_readied')) {
                     if (json.user_readied != this.props.user.username) {
                         this.setState({otherReady: !this.state.otherReady});
                     }
-                }
-                else if (json.hasOwnProperty('winner')) {
-                    console.log("got winner")
-
                 }
                 else if (json.hasOwnProperty('user_joined')) {
                     console.log(json)
@@ -80,12 +87,17 @@ class GameLobby extends Component {
                         this.setState({bettingAmount: json.total_bet});
                     }
                 }
-                break
-            case 'chat':
-                console.log("got chat msg")
-                break
-            case 'rps':
-                console.log("got rps msg")
+                else if (json.hasOwnProperty('user_left')) {
+                    if (json.user_left.username != this.props.user.username) {
+                        this.setState({opponent: null, matched: false, opponentSkin: null});
+                    }
+                    if (json.hasOwnProperty('lock')) {
+                        if (json.lock)
+                        {
+                            this.setState({userMustVacate: true});
+                        }
+                    }
+                }  
                 break
             case 'bet':
                 console.log("got bet msg")
@@ -133,7 +145,6 @@ class GameLobby extends Component {
 
     handleSignOut(e) {
         e.preventDefault();
-        this.props.socket.close()
         this.props.logout()
     }
 
@@ -164,6 +175,59 @@ class GameLobby extends Component {
                 margin: 10,
             }
         }
+
+    const headerInfo = 
+    <React.Fragment>
+    <Navbar bg="light" className="Buttons"> 
+        <Link to='/userdashboard'>       
+            <Navbar.Brand style={{fontSize: '30px'}}>Roshambo</Navbar.Brand>
+        </Link>  
+        <Navbar.Collapse className="justify-content-end">
+            <Button variant="outline-danger" onClick={this.handleSignOut}>Sign Out</Button>
+        </Navbar.Collapse>
+    </Navbar>
+    <Row>
+        {/*---- OUR user info ----*/}
+        <Col xs={4}>
+            <div style={styles.profilePic} className="col d-flex align-items-center justify-content-center">
+                <FontAwesomeIcon  style={mySkin.avatar.style} icon={mySkin.avatar.name} size='6x' />
+            </div>
+            {this.state.myselfReady ? <div className="col d-flex align-items-center justify-content-center"><h6>READY</h6></div> : null}   
+            <div className="col d-flex align-items-center justify-content-center">
+                <h5 style={{margin: 15}}>{myself.username}</h5>
+            </div>
+        </Col>
+        {/*---- central detail pane ----*/}
+        <Col xs={4}>
+            <div className="col d-flex align-items-center justify-content-center">
+                <p style={styles.versus}>VS</p>
+                </div>
+                <Card style={styles.betBox}>
+                    <div className="d-flex align-items-center justify-content-center">
+                        <Card.Body>Pot of AkramBucks: {this.state.bettingAmount}</Card.Body>
+                    </div>
+                    {this.state.bettingDisabled ? 
+                    <div className="d-flex align-items-center justify-content-center">
+                        <Card.Body>You have fewer than 5 AkramBucks in your account, and can make no more bets on this game.</Card.Body>
+                    </div> : null}
+                </Card>
+        </Col>
+        {/*---- OPPONENT user info ----*/}
+        <Col xs={4}>
+            {this.state.matched ? 
+            <div style={styles.profilePic} className="col d-flex align-items-center justify-content-center">
+                <FontAwesomeIcon  style={skins[this.state.opponentSkin].avatar.style} icon={skins[this.state.opponentSkin].avatar.name} size='6x' />
+            </div>
+            :
+            <div className="col d-flex align-items-center justify-content-center" style={{marginTop: '4em'}}>Searching for an opponent...</div>}
+            {this.state.otherReady && this.state.matched ? <div className="col d-flex align-items-center justify-content-center" style={{marginTop: '0.5em'}}><h6>READY</h6></div> : null}   
+            <div className="col d-flex align-items-center justify-content-center">
+                <h5 style={{margin: 15}}>{this.state.matched ? this.state.opponent.username : <Loading />}</h5>
+            </div>
+        </Col>
+    </Row>
+    </React.Fragment>;
+
         if (this.state.gameStarted) {
             return <Redirect to={{
                 pathname: '/GamePage',
@@ -171,57 +235,26 @@ class GameLobby extends Component {
                 state: { opponent: this.state.opponent, bettingAmount: this.state.bettingAmount, opponentSkin: this.state.opponentSkin }
               }} />;
         }
+        else if (this.state.userMustVacate) {
+            return (
+                <Container className="Words">
+                    {headerInfo}
+                    <Row style={{margin:50}}>
+                        <Loading />
+                    </Row>
+                    <Row style={{margin:50}}>
+                        <p>Unfortunately, your opponent quit after placing a bet, nullifying your game lobby.</p>
+                        <p>All placed bets will be returned to their respective bettors, and no money will change hands.</p>
+                        <p>You're being redirect to the user dashboard - please join a new match from there.</p>
+                    </Row>
+                <Chat />
+                </Container>
+            );
+        }
         else {
         return(
             <Container className="Words">
-                <Navbar bg="light" className="Buttons"> 
-                    <Link to='/userdashboard'>       
-                        <Navbar.Brand style={{fontSize: '30px'}}>Roshambo</Navbar.Brand>
-                    </Link>  
-                    <Navbar.Collapse className="justify-content-end">
-                        <Button variant="outline-danger" onClick={this.handleSignOut}>Sign Out</Button>
-                    </Navbar.Collapse>
-                </Navbar>
-                <Row>
-                    {/*---- OUR user info ----*/}
-                    <Col xs={4}>
-                        <div style={styles.profilePic} className="col d-flex align-items-center justify-content-center">
-                            <FontAwesomeIcon  style={mySkin.avatar.style} icon={mySkin.avatar.name} size='6x' />
-                        </div>
-                        {this.state.myselfReady ? <div className="col d-flex align-items-center justify-content-center"><h6>READY</h6></div> : null}   
-                        <div className="col d-flex align-items-center justify-content-center">
-                            <h5 style={{margin: 15}}>{myself.username}</h5>
-                        </div>
-                    </Col>
-                    {/*---- central detail pane ----*/}
-                    <Col xs={4}>
-                        <div className="col d-flex align-items-center justify-content-center">
-                            <p style={styles.versus}>VS</p>
-                            </div>
-                            <Card style={styles.betBox}>
-                                <div className="d-flex align-items-center justify-content-center">
-                                    <Card.Body>Pot of AkramBucks: {this.state.bettingAmount}</Card.Body>
-                                </div>
-                                {this.state.bettingDisabled ? 
-                                <div className="d-flex align-items-center justify-content-center">
-                                    <Card.Body>You have fewer than 5 AkramBucks in your account, and can make no more bets on this game.</Card.Body>
-                                </div> : null}
-                            </Card>
-                    </Col>
-                    {/*---- OPPONENT user info ----*/}
-                    <Col xs={4}>
-                        {this.state.matched ? 
-                        <div style={styles.profilePic} className="col d-flex align-items-center justify-content-center">
-                            <FontAwesomeIcon  style={skins[this.state.opponentSkin].avatar.style} icon={skins[this.state.opponentSkin].avatar.name} size='6x' />
-                        </div>
-                        :
-                        <div className="col d-flex align-items-center justify-content-center" style={{marginTop: '4em'}}>Searching for an opponent...</div>}
-                        {this.state.otherReady && this.state.matched ? <div className="col d-flex align-items-center justify-content-center" style={{marginTop: '0.5em'}}><h6>READY</h6></div> : null}   
-                        <div className="col d-flex align-items-center justify-content-center">
-                            <h5 style={{margin: 15}}>{this.state.matched ? this.state.opponent.username : <Loading />}</h5>
-                        </div>
-                    </Col>
-                </Row>
+                {headerInfo}
                 <Row style={{margin:50}}>
                     <Col style={{maxWidth: '100%', flex: '0 0 100%', marginLeft: '1em'}}>
                         <Row>
@@ -253,6 +286,7 @@ const actionCreators = {
     logout: userActions.logout,
     getCurrent: userActions.getCurrent,
     constructSocket: socketActions.constructSocket,
+    destructSocket: socketActions.destructSocket,
 }
 
 

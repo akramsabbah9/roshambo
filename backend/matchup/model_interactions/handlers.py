@@ -44,7 +44,10 @@ def join_match(user_id):
         match = Match.objects.create(user1=user_id)
     else:
         match = matches[0]
-        match.user2 = user_id
+        if (match.user1 is not None):
+            match.user2 = user_id
+        else:
+            match.user1 = user_id
     # increment user_count of that match
     match.user_count += 1
     # matches are only allowed 2 users; lock ensures someone can't join in the middle of a match if someone else quits
@@ -63,20 +66,46 @@ def leave_match(match_id, user_id):
 
     :param UUID match_id: the id of the match.
     :param UUID user_id: the id of the user trying to leave the match.
+    :rtype: bool
+    :return: whether or not the now-left exists
     """
     match = get_match(match_id)
+
+    # if we're the only one, delete this match
+    if (match.user_count <= 1):
+        match.delete()
+        return False
     
+    match.user_count -= 1
+
+    user_leaving_has_bet = False
     user_slot = get_user_slot_in_match(match, user_id)
     if user_slot == 1:
+        user_leaving_has_bet = match.user1_bet > 0
         match.user1 = None
     else:
+        user_leaving_has_bet = match.user2_bet > 0
         match.user2 = None
 
-    match.user_count -= 1
-    match.save()
-    if (match.user_count <= 0):
-        match.delete()
+    # no real match stuff has started, so we can have new people join
+    if (not (match.user1_ready and match.user2_ready)) and (not user_leaving_has_bet):
+        match.lock = False
 
+    match.save()
+
+    return True
+
+@database_sync_to_async
+def match_locked(match_id):
+    """
+    Returns whether or not the match is locked.
+
+    :param UUID match_id: the id of the match.
+    :rtype: bool
+    :return: True if match.lock is True, False otherwise.
+    """
+    match = get_match(match_id)
+    return match.lock
 
 @database_sync_to_async
 def round_started(match_id):

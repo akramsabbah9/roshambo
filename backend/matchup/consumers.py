@@ -12,7 +12,7 @@ from .model_interactions.handlers import \
     set_user_ready_status, both_users_ready, evaluate_round, \
     user_first_to_ready, set_round_as_started, get_serialized_user_data, \
     proper_round_time_elapsed, match_complete, get_wallet_cash, get_total_bet, \
-    get_user_skin
+    get_user_skin, match_locked
 from .utils import wait_then_call, get_time_seconds
 
 ROUND_TIMER = 5
@@ -91,7 +91,20 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             # Do nothing if we early-aborted for an unauth'd user
             return
         # Leave match's channel group
-        await leave_match(self.match_id, self.user.id)
+        user_data = await get_serialized_user_data(self.user)
+        left_match_exists = await leave_match(self.match_id, self.user.id)
+        locked = True
+        if left_match_exists:
+            locked = await match_locked(self.match_id)
+        self.user_vacated = True
+        await self.channel_layer.group_send(
+            self.match_group_id,
+            {
+                'type': 'user_left',
+                'user': user_data,
+                'lock': locked
+            }
+        )
         await self.channel_layer.group_discard(
             self.match_group_id,
             self.channel_name
@@ -243,6 +256,8 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         await self._start_a_round()
 
     async def _process_round_end_command(self, data):
+        if self.user_vacated:
+            return
         if not self.seen_round_start:
             return
         if not await round_started(self.match_id):
@@ -311,6 +326,23 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             'active_skin': event['active_skin']
         })
     
+    async def user_left(self, event):
+        """
+        Alert consumers/users that someone has a joined.
+        """
+        user = event['user']
+        lock = event['lock']
+
+        if lock:
+            self.user_vacated = True
+
+        await self._send_channel_message({
+            'command': 'channel',
+            'user_left': user,
+            'lock': lock,
+        })
+
+
     async def chat_message(self, event):
         """
         Send a received chat message to all users.
@@ -549,3 +581,4 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         'end_round': _process_round_end_command
     }
     seen_round_start = False
+    user_vacated = False
