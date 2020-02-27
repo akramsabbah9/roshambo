@@ -29,7 +29,6 @@ class UserSerializer(serializers.ModelSerializer):
     guild = serializers.CharField(max_length=30, required=False)
 
     def create(self, validated_data):
-        print(validated_data)
         if validated_data.get('country_code'):
             user = RoshamboUser.objects.create_user(validated_data['username'], validated_data['email'],
                 validated_data['password'], validated_data['first_name'], validated_data['last_name'], validated_data['country_code'])
