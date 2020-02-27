@@ -14,7 +14,7 @@ ENV PYTHONUNBUFFERED 1
 
 # install dependencies
 RUN pip install --upgrade pip
-COPY backend/requirements.txt $APP_HOME
+COPY /backend/requirements.txt $APP_HOME
 RUN pip install -r requirements.txt
 
 # install netcat - used in entrypoint.sh

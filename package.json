@@ -56,7 +56,6 @@
     "@fortawesome/free-solid-svg-icons": "^5.12.0",
     "@fortawesome/react-fontawesome": "^0.1.8",
     "acorn": "^6.0.0",
-    "axios": "^0.19.2",
     "bootstrap": "^4.4.1",
     "bufferutil": "^4.0.1",
     "canvas": "^2.6.1",

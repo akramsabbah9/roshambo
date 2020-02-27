@@ -50,8 +50,7 @@ class UserDashBoard extends Component {
 
     handleSettings(e) {
         e.preventDefault()
-        history.push('/settings');
-        
+        history.push('/settings'); 
     }
 
     buildOnlineUserTable (users) {

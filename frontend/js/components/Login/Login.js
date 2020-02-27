@@ -43,8 +43,8 @@ class Login extends Component{
 
   handleLogin(values){
     this.setState({submitted: true, changed: false});
-    const { email, password } = values
-    this.props.login(email, password)
+    const { email, password } = values;
+    setTimeout(() => {this.props.login(email, password)}, 500);
   }
 
   render(){

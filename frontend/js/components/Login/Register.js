@@ -73,10 +73,7 @@ class Register extends Component{
             initialValues={{first_name:"", last_name:"", email:"", username:"", password:"", confirmPassword: ""}}
             onSubmit={(values, {setSubmitting}) => {
                 console.log(JSON.stringify(values))
-                this.props.registerUser(values)
-                
-                //this.props.history.push("/Login");
-                //document.body.style.backgroundColor = 'white';
+                setTimeout(() => {this.props.registerUser(values)}, 500)
               }}
             validationSchema={schema}
           >
