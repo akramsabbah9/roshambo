@@ -7,6 +7,7 @@ import { history } from '../../utils/history';
 import { connect } from 'react-redux';
 import { userActions } from '../../redux/actions/UsersActions';
 import "../Fonts.css";
+import {editUserWallet} from '../../utils/api';
 
 /* 
     To Do:
@@ -36,7 +37,7 @@ class OnlineStore extends Component {
     }
 
     handlePurchase(product) {
-        const paymentProps = {
+        /*const paymentProps = {
             type: "Custom Skin",
             description: product.name,
             id: product.id,
@@ -44,6 +45,13 @@ class OnlineStore extends Component {
         }
 
         this.props.history.push('/payment', paymentProps)
+        */
+
+        const data = {
+            amount: 500,
+            stripe_token:"anbeoihgnsriongrs"
+        }
+       editUserWallet(data)
     }
 
     handleSignOut(e) {

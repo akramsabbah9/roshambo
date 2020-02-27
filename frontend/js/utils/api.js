@@ -150,3 +150,14 @@ export const editPurchasedSkins = (data) => {
     body: JSON.stringify(data)
   });
 };
+
+export const editUserWallet = (data) => {
+  return _request('http://localhost:8000/accounts/wallet/', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Token ${localStorage.getItem('token')}`
+    },
+    body: JSON.stringify(data)
+  });
+};
