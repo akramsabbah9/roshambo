@@ -13,10 +13,13 @@ import { connect } from 'react-redux';
 import { userActions } from '../../redux/actions/UsersActions';
 
 const schema = yup.object({
-  password : yup.string().required("Required"),
+  password : yup.string()
+  .matches(/^[a-zA-Z]/, "password must start with an alphabet letter")
+  .matches(/^[0-9a-zA-Z!]+$/, "password must contain only alphanumeric letters and !")
+  .required("Required"),
   email: yup.string()
   .email("Must be a valid email address")
-  .max(50, "Email must be less than 50 characters")
+  .max(30, "Email must be less than 30 characters")
   .required("Required")
 });
 
@@ -40,8 +43,8 @@ class Login extends Component{
 
   handleLogin(values){
     this.setState({submitted: true, changed: false});
-    const { email, password } = values
-    this.props.login(email, password)
+    const { email, password } = values;
+    setTimeout(() => {this.props.login(email, password)}, 500);
   }
 
   render(){

@@ -22,7 +22,6 @@ Roshambo is a full-stack web app, designed to be the premiere destination for hi
 4. `formik` for user form constructions.
 5. `font-awesome` for basic icons and logos on the website.
 6. `yup` for user input validation.
-7. 
 #### Running Commands within the Containers
 
 For some purposes (such as creating a Django superuser temporarily), it's easiest to head into the Docker container's shell to perform actions. This is easy. Follow these steps:
