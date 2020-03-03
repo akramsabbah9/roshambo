@@ -21,13 +21,15 @@ export function users(state = usersInitialState, action) {
         case userConstants.GETALL_REQUEST:
             return {
                 ...state,
-                usersLoading: true
+                usersLoading: true,
+                error: null,
             }
         case userConstants.GETALL_SUCCESS:
             return {
                 ...state,
                 users: action.users,
-                usersLoading: false
+                usersLoading: false,
+                error: null,
             }
         case userConstants.GETALL_FAILURE:
             return {
@@ -46,13 +48,15 @@ export function user(state = userInitialState, action) {
         case userConstants.GETCURRENT_REQUEST:
             return {
                 ...state,
-                userLoading: true
+                userLoading: true,
+                error: null,
             }
         case userConstants.GETCURRENT_SUCCESS:
             return {
                 ...state,
                 currentUser: action.user,
                 userLoading: false,
+                error: null,
             }
         case userConstants.GETCURRENT_FAILURE:
             return {
@@ -65,11 +69,13 @@ export function user(state = userInitialState, action) {
         case userConstants.CHANGE_EMAIL_REQUEST:
             return {
                 ...state,
+                error: null,
             }
         case userConstants.CHANGE_EMAIL_SUCCESS:
             return {
                 ...state,
                 currentUser: action.user,
+                error: null,
             }
         case userConstants.CHANGE_EMAIL_FAILURE:
             return {
@@ -81,10 +87,12 @@ export function user(state = userInitialState, action) {
         case userConstants.CHANGE_PASSWORD_REQUEST:
             return {
                 ...state,
+                error: null,
             }
         case userConstants.CHANGE_PASSWORD_SUCCESS:
             return {
                 ...state,
+                error: null,
             }
         case userConstants.CHANGE_PASSWORD_FAILURE:
             return {
@@ -96,10 +104,12 @@ export function user(state = userInitialState, action) {
         case userConstants.CHANGE_GUILD_REQUEST:
             return {
                 ...state,
+                error: null,
             }
         case userConstants.CHANGE_GUILD_SUCCESS:
             return {
                 ...state,
+                error: null,
             }
         case userConstants.CHANGE_GUILD_FAILURE:
             return {
@@ -118,11 +128,12 @@ export function user(state = userInitialState, action) {
             return {
                 ...state,
                 walletLoading: false,
+                walletError: null,
             }
         case walletConstants.ADD_TO_WALLET_FAILURE:
             return {
                 ...state,
-                error: action.error,
+                walletError: action.error,
             }
     
         default:
