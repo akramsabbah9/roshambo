@@ -66,7 +66,7 @@ class GamePage extends Component {
         if (!this.state.GameStarted && this.state.winnerReceived && !this.state.matchOver) {
             setTimeout(() => {
                 this.props.socket.sendRequest({'command': 'begin_round'});
-            }, 3000);
+            }, 1000);
         }
 
         if (this.state.matchOver || this.state.userMustVacate) {
@@ -115,8 +115,7 @@ class GamePage extends Component {
                     }
 
                     if (json.match_over) {
-                        setTimeout(() => {this.setState({matchOver: true});}, 5000);
-        
+                       setTimeout(() => {this.setState({matchOver: true});}, 2000);
                     }
                 }
                 else if (json.hasOwnProperty('start')) {
@@ -167,10 +166,11 @@ class GamePage extends Component {
         let secs = 5;
         const timerCounter = setInterval(() => {
             this.CountDownEffect();
-            this.setState({counter: secs - 1});
+            this.setState({counter: --secs});
         }, 1000);
         const roundTimer = setTimeout(() => {
             clearInterval(timerCounter);
+            this.setState({counter: 5});
             this.setState({GameStarted: false});
             this.props.socket.sendRequest({
                 'command': 'end_round'
@@ -275,10 +275,12 @@ render() {
             <Container className="Words" style={{marginTop: '5%'}}>
                 {userInfo}
                 <Row style={{margin:50}}>
-                    <p>Unfortunately, your opponent quit (rage, much?).</p>
-                    <p>All placed bets will be returned to their respective bettors, and no money will change hands.</p>
-                    <p>You're being redirect to the user dashboard - please join a new match from there.</p>
-                </Row>
+                    <Col sm={6}>
+                        <p>Unfortunately, your opponent quit (rage, much?).</p>
+                        <p>All placed bets will be returned to their respective bettors, and no money will change hands.</p>
+                        <p>You're being redirect to the user dashboard - please join a new match from there.</p>
+                    </Col>
+                </Row> 
             </Container>
         );
     }
