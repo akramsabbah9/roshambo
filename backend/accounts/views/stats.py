@@ -34,7 +34,3 @@ class Stats(GenericAPIView, UpdateModelMixin):
 
     def get_object(self):
         return self.request.user.stats
-
-    def put(self, request, format='json'):
-        # TODO(benjibrandt): make sure this is only allowed post-winning/losing a game
-        return self.partial_update(request)
