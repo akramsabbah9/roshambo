@@ -19,7 +19,8 @@ export function skins(state=initialState, action) {
         case skinsConstants.CHANGE_REQUEST:
             return {
                 ...state,
-                changeSkinLoading: true
+                changeSkinLoading: true,
+                error: null,
             }
         case skinsConstants.CHANGE_SUCCESS:
             return {
@@ -46,6 +47,7 @@ export function skins(state=initialState, action) {
                 ...state,
                 ownedSkins: action.purchased_skins,
                 addSkinLoading: false,
+                error: null,
             }
         case skinsConstants.ADD_FAILURE:
             return {
@@ -57,7 +59,8 @@ export function skins(state=initialState, action) {
         case skinsConstants.GETACTIVE_REQUEST:
             return {
                 ...state,
-                getActiveSkinLoading: true
+                getActiveSkinLoading: true,
+                error: null,
             }
         case skinsConstants.GETACTIVE_SUCCESS:
             let id = action.id
@@ -77,7 +80,8 @@ export function skins(state=initialState, action) {
         case skinsConstants.GETOWNED_REQUEST:
             return {
                 ...state,
-                getOwnedSkinLoading: true
+                getOwnedSkinLoading: true,
+                error: null,
             }
         case skinsConstants.GETOWNED_SUCCESS:
             return {

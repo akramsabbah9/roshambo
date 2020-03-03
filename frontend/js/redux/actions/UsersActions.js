@@ -50,7 +50,6 @@ function login(email, password) {
 function register(user) {
     return dispatch => {
         dispatch(request(user));
-
         signup(user)
         .then (response => {
             localStorage.setItem('token', response.token)

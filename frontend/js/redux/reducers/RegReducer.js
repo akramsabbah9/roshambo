@@ -11,13 +11,15 @@ export function reg(state=initialState, action) {
         case userConstants.REGISTER_REQUEST:
             return { 
                 ...state,
-                registering: true 
+                registering: true, 
+                error: null,
             }
         case userConstants.REGISTER_SUCCESS:
             return { 
                 ...state,
                 registering: false,
-                success: true 
+                success: true,
+                error: null,
             }
         case userConstants.REGISTER_FAILURE:
             return { 
