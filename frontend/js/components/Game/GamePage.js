@@ -390,8 +390,6 @@ function mapStateToProps (state) {
     const { activeSkin } = state.skins
     const user = state.user.currentUser
     const socket = state.socket.socket;
-
-
     return { activeSkin, user, socket }
 }
 
