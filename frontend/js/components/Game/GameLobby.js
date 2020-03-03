@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Container, Navbar, Button, Row, Col, Card} from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDragon, faThumbsDown } from "@fortawesome/free-solid-svg-icons";
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { skins } from '../Settings/Skins';
@@ -10,7 +9,6 @@ import Loading from '../Loading/Loading';
 import { userActions } from '../../redux/actions/UsersActions';
 import { socketActions } from '../../redux/actions/SocketActions';
 import { Redirect } from 'react-router-dom'
-
 
 import '../Fonts.css';
 
@@ -45,7 +43,8 @@ class GameLobby extends Component {
     }
 
     componentWillUnmount() {
-        // listeners MUST be removed once the react component is gone, as the socket itself will persists thanks to the redux store
+        // listeners MUST be removed once the react component is gone, 
+        // as the socket itself will persists thanks to the redux store
         this.props.socket.removeAllListeners();
         if (!this.state.belaySocketClosing) {
             this.props.destructSocket();
@@ -78,12 +77,10 @@ class GameLobby extends Component {
                     }
                 }
                 else if (json.hasOwnProperty('user_joined')) {
-                    console.log(json)
                     if (json.user_joined.username != this.props.user.username) {
                         this.setState({opponent: json.user_joined, matched: true, opponentSkin: json.active_skin});
                     }
                     if (json.hasOwnProperty('total_bet')) {
-                        console.log("setting total bet!")
                         this.setState({bettingAmount: json.total_bet});
                     }
                 }
@@ -100,7 +97,6 @@ class GameLobby extends Component {
                 }  
                 break
             case 'bet':
-                console.log("got bet msg")
                 if (json.status > 399 && (!this.state.opponent || json.user_betting != this.state.opponent.id)) {
                     this.setState({bettingDisabled: true})
                 }
@@ -231,7 +227,6 @@ class GameLobby extends Component {
         if (this.state.gameStarted) {
             return <Redirect to={{
                 pathname: '/GamePage',
-                //props.location.state.opponent
                 state: { opponent: this.state.opponent, bettingAmount: this.state.bettingAmount, opponentSkin: this.state.opponentSkin }
               }} />;
         }

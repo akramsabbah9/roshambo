@@ -42,7 +42,7 @@ class PurchasePage extends Component {
         this.props.history.goBack()
     }
 
-    onToken = (token, addresses) => {
+    onToken = (token) => {
         this.props.addToWallet(token)
     }
 
@@ -91,10 +91,9 @@ class PurchasePage extends Component {
         }
         const { user } = this.props
         const cash = user.cash 
-        const { id, type, price } = this.state.items[0]
+        const { type } = this.state.items[0]
         const skinPurchase = "Custom Skin"
 
-        console.log(id)
 
         return(
             <Container className="Words">

@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Button, Form, Container,
-Col, Nav, Row} from 'react-bootstrap';
+import { Button, Form, Container,
+         Col, Nav, Row } from 'react-bootstrap';
 import {Formik} from 'formik';
 import * as yup from 'yup';
-import './Pages.css';
-import '../Fonts.css';
 import { connect } from 'react-redux';
 import {userActions } from '../../redux/actions/UsersActions';
+
+import './Pages.css';
+import '../Fonts.css';
 
 const schema = yup.object({
     first_name : yup.string()
@@ -71,13 +72,12 @@ class Register extends Component{
         <Container className="main border rounded mid p-3 Words">
           <Formik
             initialValues={{first_name:"", last_name:"", email:"", username:"", password:"", confirmPassword: ""}}
-            onSubmit={(values, {setSubmitting}) => {
-                console.log(JSON.stringify(values))
+            onSubmit={(values) => {
                 setTimeout(() => {this.props.registerUser(values)}, 500)
               }}
             validationSchema={schema}
           >
-        {({isSubmitting,
+        {({
            errors,
            touched,
            handleChange,
@@ -179,7 +179,7 @@ class Register extends Component{
                 </Form.Group>
                 <Row>
                   <Col className="d-flex justify-content-center align-items-center">
-                    <Button variant="primary" type="submit" className="button" disabled={isSubmitting}>
+                    <Button variant="primary" type="submit" className="button">
                         Submit
                     </Button>
                   </Col>
@@ -188,7 +188,6 @@ class Register extends Component{
             )}
             </Formik>
 
-            {/* TODO: need to use buildErrorMessage here */}
             { error != null ? <h3 style={{color: "red"}}>{error.message}</h3> : null }
 
         </Container>

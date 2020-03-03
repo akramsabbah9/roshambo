@@ -9,7 +9,6 @@ import GamePage from '../../components/Game/GamePage';
 import Settings from '../../components/Settings/Settings';
 import Password from '../../components/Settings/Password';
 import Email from '../../components/Settings/Email';
-import BettingPage from '../../components/Betting/BettingPage';
 import Payment from '../../components/Payment/AkramPayment';
 import OnlineStore from '../../components/Store/Store';
 import Appearance from '../../components/Settings/Appearance';
@@ -17,7 +16,6 @@ import Guild from '../../components/Settings/Guild';;
 import Erehwon from '../../components/404 Page/404page';
 import { PrivateRoute, HomeRoute } from '../../components/PrivateRoute/PrivateRoute';
 import { history } from '../../utils/history';
-
 
 
 

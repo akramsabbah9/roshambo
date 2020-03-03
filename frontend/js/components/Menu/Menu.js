@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Container, Col, Row, Image} from 'react-bootstrap';
+import { Container, Col, Row } from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHandPaper, faHandRock, faHandPeace } from '@fortawesome/free-regular-svg-icons';

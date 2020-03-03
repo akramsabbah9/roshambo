@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Container, Row, Col, Card, 
          ButtonToolbar, Button, ButtonGroup} from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMehRollingEyes, faDragon, faHandPaper, faHandScissors, faHandRock, faHandPeace } from "@fortawesome/free-solid-svg-icons";
+import { faHandPaper, faHandRock, faHandPeace } from "@fortawesome/free-solid-svg-icons";
 import { socketActions } from '../../redux/actions/SocketActions';
 import { history } from '../../utils/history';
 import { connect } from 'react-redux';
@@ -52,7 +52,8 @@ class GamePage extends Component {
     }
 
     componentWillUnmount() {
-        // listeners MUST be removed once the react component is gone, as the socket itself will persists thanks to the redux store
+        // listeners MUST be removed once the react component is gone, 
+        // as the socket itself will persists thanks to the redux store
         this.props.socket.removeAllListeners();
         if (!this.state.belaySocketClosing) {
             this.props.destructSocket();

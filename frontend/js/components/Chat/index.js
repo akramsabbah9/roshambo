@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import { Widget, addResponseMessage } from 'react-chat-widget';
 import 'react-chat-widget/lib/styles.css';
 import { connect } from 'react-redux';
-import { socketActions } from '../../redux/actions/SocketActions';
 import { userActions } from '../../redux/actions/UsersActions';
 
 

@@ -1,7 +1,5 @@
 import { socketConstants } from '../actions/types';
 
-import WebSocketAsPromised from 'websocket-as-promised';
-
 const socketInitialState = {
     socketLoading: true,
     error: null,

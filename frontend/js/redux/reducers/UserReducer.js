@@ -1,5 +1,4 @@
 import { userConstants, walletConstants } from '../actions/types';
-import { activeUsers } from '../../utils/api';
 
 const usersInitialState = {
     usersLoading: true,
