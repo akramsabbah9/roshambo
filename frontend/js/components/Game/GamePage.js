@@ -275,11 +275,11 @@ render() {
             <Container className="Words" style={{marginTop: '5%'}}>
                 {userInfo}
                 <Row style={{margin:50}}>
-                    <Col sm={6}>
-                        <p>Unfortunately, your opponent quit (rage, much?).</p>
-                        <p>All placed bets will be returned to their respective bettors, and no money will change hands.</p>
-                        <p>You're being redirect to the user dashboard - please join a new match from there.</p>
-                    </Col>
+                    <div className="col col-sm-6 offset-sm-3 d-flex align-items-center justify-content-center" style={{fontSize: '20px'}}>
+                        <p>Unfortunately, your opponent quit (rage, much?).
+                        All placed bets will be returned to their respective bettors, and no money will change hands.
+                        You're being redirect to the user dashboard - please join a new match from there.</p>
+                    </div>
                 </Row> 
             </Container>
         );
@@ -371,7 +371,7 @@ render() {
                 </Row>
                 </React.Fragment>
             :
-                <React.Fragment>
+                <React.Fragment  style={{fontSize: '20px'}}>
                     <div className="col d-flex justify-content-center align-items-center">
                         <p>Match over!</p>
                     </div>
