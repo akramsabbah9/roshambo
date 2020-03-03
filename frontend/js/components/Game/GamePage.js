@@ -9,9 +9,9 @@ import { connect } from 'react-redux';
 import { skins } from '../Settings/Skins';
 import "../Fonts.css";
 
-const ROCK = 0;
-const PAPER = 1;
-const SCISSORS = 2;
+const ROCK = 'rock';
+const PAPER = 'paper';
+const SCISSORS = 'scissors';
 
 class GamePage extends Component {
     constructor(props){
@@ -83,10 +83,12 @@ class GamePage extends Component {
             case 'channel':
                 if (json.hasOwnProperty('winner')) {
                     const opponentMove = this.props.location.state.opponent.id == json.user1 ? json.user1_move : json.user2_move;
+                    const playerMove = this.props.location.state.opponent.id == json.user1 ? json.user2_move : json.user1_move;
                     if (json.winner == 'None') {
                         this.setState({
                             winnerName: 'No one!', 
                             opponentMove: opponentMove,
+                            playerMove: playerMove,
                             winnerReceived: true,
                             rounds: this.state.rounds+1,
                         });
@@ -96,6 +98,7 @@ class GamePage extends Component {
                             winnerName: this.props.user.username, 
                             myWins: this.state.myWins+1, 
                             opponentMove: opponentMove,
+                            playerMove: playerMove,
                             winnerReceived: true,
                             rounds: this.state.rounds+1
                         });
@@ -105,6 +108,7 @@ class GamePage extends Component {
                             winnerName: this.props.location.state.opponent.username, 
                             opponentWins: this.state.opponentWins+1,
                             opponentMove: opponentMove,
+                            playerMove: playerMove,
                             winnerReceived: true,
                             rounds: this.state.rounds+1,
                         });
@@ -290,11 +294,11 @@ render() {
                 <Row style={{marginTop:50, marginBottom:50}}>
                     <Col sm={3}>
                         {
-                            this.state.playerMove == 0 ?
+                            this.state.playerMove == ROCK ?
                             <FontAwesomeIcon icon={faHandRock} size="5x" style={{marginLeft: "70%"}}/> : (
-                                this.state.playerMove == 1 ?
+                                this.state.playerMove == PAPER ?
                                 <FontAwesomeIcon icon={faHandPaper} size="5x" style={{marginLeft: "70%"}}/> :(
-                                    this.state.playerMove == 2 ?
+                                    this.state.playerMove == SCISSORS ?
                                     <FontAwesomeIcon icon={faHandPeace} size="5x" style={{marginLeft: "70%"}}/> :
                                     <div></div>
                                 )
@@ -311,11 +315,11 @@ render() {
                     </Col>
                     <Col sm={3}>
                         {
-                            this.state.opponentMove == 'rock' ?
+                            this.state.opponentMove == ROCK ?
                             <FontAwesomeIcon icon={faHandRock} size="5x"/> : (
-                                this.state.opponentMove == 'paper' ?
+                                this.state.opponentMove == PAPER ?
                                 <FontAwesomeIcon icon={faHandPaper} size="5x"/> :(
-                                    this.state.opponentMove == 'scissors' ?
+                                    this.state.opponentMove == SCISSORS ?
                                     <FontAwesomeIcon icon={faHandPeace} size="5x"/> :
                                     <div></div>
                                 )
