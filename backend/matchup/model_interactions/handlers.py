@@ -69,10 +69,17 @@ def leave_match(match_id, user_id):
     :rtype: bool
     :return: whether or not the now-left exists
     """
-    match = get_match(match_id)
+    try:
+        match = get_match(match_id)
+    except ExistError:
+        # if the match doesn't exist by the time we get here, 
+        # our counterpart deleted it, and we have nothing left to do
+        return False
+
 
     # if we're the only one, delete this match
-    if (match.user_count <= 1):
+    # if the match is over because win threshholds reached, end the match
+    if (match.user_count <= 1 or match.user1_wins >= 2 or match.user2_wins >= 2):
         match.delete()
         return False
     
@@ -83,9 +90,21 @@ def leave_match(match_id, user_id):
     if user_slot == 1:
         user_leaving_has_bet = match.user1_bet > 0
         match.user1 = None
+        match.user1_choice = None
+        match.user1_ready = False
+        if match.first_to_ready == user_id:
+            match.first_to_ready = match.user2 if match.user2_ready else None
+        match.user1_wins = 0
+        match.user1_ts = 0
     else:
         user_leaving_has_bet = match.user2_bet > 0
         match.user2 = None
+        match.user2_choice = None
+        match.user2_ready = False
+        if match.first_to_ready == user_id:
+            match.first_to_ready = match.user1 if match.user1_ready else None
+        match.user2_wins = 0
+        match.user2_ts = 0
 
     # no real match stuff has started, so we can have new people join
     if (not (match.user1_ready and match.user2_ready)) and (not user_leaving_has_bet):
