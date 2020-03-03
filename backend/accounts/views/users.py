@@ -126,7 +126,10 @@ class Register(APIView):
                 return Response(json, status=status.HTTP_201_CREATED)
             else:
                 return Response({'error': 'User creation failed due to an internal server error. Try again later.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        error_message = {}
+        for key, value in serializer.errors.items():
+            error_message['error'] = '{}: {}'.format(key, value[0])
+        return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
 
     def _add_default_skin(self, user):
         skin = SkinsInventory.objects.get(skin=0)

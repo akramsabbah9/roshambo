@@ -128,7 +128,7 @@ class Login extends Component{
       </Form>
       )}
       </Formik>  
-      {error != null && !this.state.changed ? <h3 className="Words" style={{fontSize: '17.5px', color: 'red', marginTop: '5%'}}>{error.response.status == 404 ? 'Username and/or password are incorrect.' : error.response.error}</h3> : null}    
+      {error != null && !this.state.changed ? <h3 className="Words" style={{fontSize: '17.5px', color: 'red', marginTop: '5%'}}>{error.message}</h3> : null}    
     </Container>
     </div>
   );

@@ -2,9 +2,10 @@ const checkFetchResponse = (response) => {
   if (response.status >= 200 && response.status < 300) {
     return response;
   }
-  const error = new Error(response.statusText);
-  error.response = response;
-  throw error;
+  return response.json().then(data => {
+    const error = new Error(data.error);
+    throw error;
+  });
 };
 
 const _request = (url, options = {}) => {

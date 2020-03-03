@@ -41,7 +41,7 @@ class WalletAPI(GenericAPIView, UpdateModelMixin):
 
         # context = super().get_context_data(**kwargs)
         # context['key'] = settings.STRIPE_PUBLISHABLE_KEY
-        # stripe.api_key = "sk_test_cpnWw7EDAwNoJN89JVde1DXY002fOniVkX"
+        stripe.api_key = "sk_test_cpnWw7EDAwNoJN89JVde1DXY002fOniVkX"
 
         # result = stripe.Token.create(
         #     card={
