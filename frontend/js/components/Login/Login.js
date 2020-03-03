@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Button, Form, Container,
-Col, Row, Nav} from 'react-bootstrap';
+import { Button, Form, Container,
+         Col, Row, Nav } from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import {Formik} from 'formik';
 import * as yup from 'yup';
@@ -65,7 +65,7 @@ class Login extends Component{
         }}
         validationSchema={schema}
       >
-        {({isSubmitting,
+        {({
            errors,
            touched,
            handleChange,

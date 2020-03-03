@@ -1,14 +1,14 @@
 import React, {Component} from 'react';
 import {Navbar, Button, Container, Row, Col, Card } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './Settings.css';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { userActions } from '../../redux/actions/UsersActions';
 import { skinsActions } from '../../redux/actions/SkinsActions';
-import '../Fonts.css';
 import { skins } from '../Settings/Skins';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './Settings.css';
+import '../Fonts.css';
 
 class Settings extends Component{
     constructor(props){
@@ -52,7 +52,7 @@ class Settings extends Component{
                             <Card.Title style={{textAlign: 'Center'}}>User Profile</Card.Title>
                             <FontAwesomeIcon  style={styles.profilePic} icon={mySkin.avatar.name} size='6x' />
                             <Card.Text style={{marginLeft: '25%'}}>
-                            Welcome {user.username}!
+                                Welcome {user.username}!
                             </Card.Text>
                         </Card.Body>
                         </Card>

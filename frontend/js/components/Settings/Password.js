@@ -39,24 +39,18 @@ class Email extends Component{
                 <p style={{textAlign:"center", fontFamily: "Bangers, cursive", fontSize: "300%"}}>Password Change</p>
                 <Formik
                   initialValues={{password:"", confirmPassword: ""}}
-                  onSubmit={(values, {setSubmitting}) => {
-                    /*var pw = ""
-                    for(var x = 0; x < values.password.length; x++)
-                        pw = pw.concat("*");
-                    this.props.history.push("/userdashboard", {password: pw});
-                    document.body.style.backgroundColor = 'white';
-                    */
+                  onSubmit={(values) => {
                    this.handleChangePassword(values.password)
                   }}
                   validationSchema={schema}
                 >
-                {({isSubmitting,
-                errors,
-                touched,
-                handleChange,
-                handleSubmit,
-                values,
-                handleBlur
+                {({
+                    errors,
+                    touched,
+                    handleChange,
+                    handleSubmit,
+                    values,
+                    handleBlur
                 }) => (
                     <Form onSubmit={handleSubmit}>
                         <Form.Group controlId="formChangePassword">

@@ -16,11 +16,9 @@ function change(id) {
 
         editActiveSkin(id)
         .then ( response =>{
-            console.log(response.active_skin)
             dispatch(success(response.active_skin))
         })
         .catch( error => {
-            console.log(error)
             dispatch(failure(error))
         })
     }
@@ -43,7 +41,6 @@ function add(id) {
             history.push('/userdashboard')
         })
         .catch( error => {
-            console.log(error)
             dispatch(failure(error))
         })
     }
@@ -61,7 +58,6 @@ function getOwnedSkins() {
             dispatch(success(response.purchased_skins))
         })
         .catch( error => {
-            console.log(error)
             dispatch(failure(error))
         })
     }
@@ -79,7 +75,6 @@ function getActiveSkin() {
             dispatch(success(response.active_skin))
         })
         .catch( error => {
-            console.log(error)
             dispatch(failure(error))
         })
     }

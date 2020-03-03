@@ -35,20 +35,18 @@ class Guild extends Component{
                 <p style={{textAlign:"center", fontFamily: "Bangers, cursive", fontSize: "300%"}}>Guild Change</p>
                 <Formik
                   initialValues={{guild:""}}
-                  onSubmit={(values, {setSubmitting}) => {
-
-                    //document.body.style.backgroundColor = 'white';
+                  onSubmit={(values) => {
                     this.handleGuildChange(values.guild)
                   }}
                   validationSchema={schema}
                 >
-                {({isSubmitting,
-                errors,
-                touched,
-                handleChange,
-                handleSubmit,
-                values,
-                handleBlur
+                {({
+                    errors,
+                    touched,
+                    handleChange,
+                    handleSubmit,
+                    values,
+                    handleBlur
                 }) => (
                     <Form onSubmit={handleSubmit}>
                         <Form.Group controlId="formChangeGuild">

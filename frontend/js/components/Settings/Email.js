@@ -35,20 +35,19 @@ class Email extends Component{
                 <p style={{textAlign:"center", fontFamily: "Bangers, cursive", fontSize: "300%"}}>Email Change</p>
                 <Formik
                   initialValues={{email:""}}
-                  onSubmit={(values, {setSubmitting}) => {
+                  onSubmit={(values) => {
 
-                    //document.body.style.backgroundColor = 'white';
                     this.handleEmailChange(values.email)
                   }}
                   validationSchema={schema}
                 >
-                {({isSubmitting,
-                errors,
-                touched,
-                handleChange,
-                handleSubmit,
-                values,
-                handleBlur
+                {({
+                    errors,
+                    touched,
+                    handleChange,
+                    handleSubmit,
+                    values,
+                    handleBlur
                 }) => (
                     <Form onSubmit={handleSubmit}>
                         <Form.Group controlId="formChangeEmail">

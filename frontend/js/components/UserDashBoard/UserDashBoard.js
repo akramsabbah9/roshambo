@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Container, Navbar, Button, Row, Col, ListGroup, Card, ButtonGroup, } from 'react-bootstrap';
 import Table from 'react-bootstrap/Table';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { Link } from 'react-router-dom';
 import { history } from '../../utils/history';
 import { userActions } from '../../redux/actions/UsersActions';
@@ -10,6 +9,7 @@ import { skinsActions } from '../../redux/actions/SkinsActions';
 import Loading from '../Loading/Loading';
 import { connect } from 'react-redux';
 import { skins } from '../Settings/Skins';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import '../Fonts.css'
 
 
@@ -26,8 +26,7 @@ class UserDashBoard extends Component {
 
     componentDidMount() {
         document.body.style.backgroundColor = "white";
-        // add functionality for rendering custom skins
-        // call api to load all states
+
         this.props.getCurrent()
         this.props.getAll()  
         this.props.getActiveSkin()
@@ -83,9 +82,7 @@ class UserDashBoard extends Component {
     render() {
         const { user, users, activeSkin, getActiveSkinLoading, userLoading, usersLoading } = this.props
         const mySkin = skins[activeSkin]
-        const cash = user.cash 
-        
-        //const mySkin = skins[0]
+
         const styles = {
             profilePic: {
                 marginTop: 30,

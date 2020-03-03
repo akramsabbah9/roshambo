@@ -50,7 +50,6 @@ function login(email, password) {
 function register(user) {
     return dispatch => {
         dispatch(request(user));
-
         signup(user)
         .then (response => {
             localStorage.setItem('token', response.token)
@@ -125,7 +124,6 @@ function changeEmail(email) {
         
         editUser(data)
         .then(response => {
-            console.log(response)
             dispatch(success(response))
             history.push('/userdashboard')
         })
@@ -149,7 +147,6 @@ function changePassword(password) {
         
         editUser(data)
         .then(response => {
-            console.log(response)
             dispatch(success(response))
             history.push('/userdashboard')
         })
@@ -173,7 +170,6 @@ function changeGuild(guild) {
         
         editUser(data)
         .then(response => {
-            console.log(response)
             dispatch(success(response))
             history.push('/userdashboard')
         })
@@ -188,7 +184,6 @@ function changeGuild(guild) {
 }
 
 function addToWallet(token) {
-    console.log(token)
     const data = {
         stripe_token: token.id,
         amount: 500
@@ -199,7 +194,6 @@ function addToWallet(token) {
         
         editUserWallet(data)
         .then(response => {
-            console.log(response)
             dispatch(success(response))
             history.push('/userdashboard')
         })
