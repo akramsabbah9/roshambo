@@ -1,5 +1,4 @@
 import { userConstants, walletConstants } from '../actions/types';
-import { activeUsers } from '../../utils/api';
 
 const usersInitialState = {
     usersLoading: true,
@@ -43,7 +42,6 @@ export function users(state = usersInitialState, action) {
 
 export function user(state = userInitialState, action) {
     switch(action.type) {
-        // Get Current User
         case userConstants.GETCURRENT_REQUEST:
             return {
                 ...state,
@@ -62,7 +60,6 @@ export function user(state = userInitialState, action) {
                 userLoading: false,
             }
 
-        // Change Email 
         case userConstants.CHANGE_EMAIL_REQUEST:
             return {
                 ...state,
@@ -78,7 +75,6 @@ export function user(state = userInitialState, action) {
                 error: action.error,
             }
 
-        // Change Password
         case userConstants.CHANGE_PASSWORD_REQUEST:
             return {
                 ...state,
@@ -93,7 +89,6 @@ export function user(state = userInitialState, action) {
                 error: action.error,
             }
 
-        // Change Guild
         case userConstants.CHANGE_GUILD_REQUEST:
             return {
                 ...state,
@@ -108,7 +103,6 @@ export function user(state = userInitialState, action) {
                 error: action.error,
             }
 
-        // Add to Wallet
         case walletConstants.ADD_TO_WALLET_REQUEST:
             return {
                 ...state,

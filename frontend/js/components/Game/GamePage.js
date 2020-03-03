@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Container, Row, Col, Card, 
          ButtonToolbar, Button, ButtonGroup} from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMehRollingEyes, faDragon, faHandPaper, faHandScissors, faHandRock, faHandPeace } from "@fortawesome/free-solid-svg-icons";
+import { faHandPaper, faHandRock, faHandPeace } from "@fortawesome/free-solid-svg-icons";
 import { socketActions } from '../../redux/actions/SocketActions';
 import { history } from '../../utils/history';
 import { connect } from 'react-redux';
@@ -52,7 +52,6 @@ class GamePage extends Component {
     }
 
     componentWillUnmount() {
-        // listeners MUST be removed once the react component is gone, as the socket itself will persists thanks to the redux store
         this.props.socket.removeAllListeners();
         if (!this.state.belaySocketClosing) {
             this.props.destructSocket();
@@ -110,7 +109,8 @@ class GamePage extends Component {
                     }
 
                     if (json.match_over) {
-                        this.setState({matchOver: true});
+                        setTimeout(() => {this.setState({matchOver: true});}, 5000);
+        
                     }
                 }
                 else if (json.hasOwnProperty('start')) {
@@ -161,11 +161,10 @@ class GamePage extends Component {
         let secs = 5;
         const timerCounter = setInterval(() => {
             this.CountDownEffect();
-            this.setState({counter: --secs});
+            this.setState({counter: secs - 1});
         }, 1000);
         const roundTimer = setTimeout(() => {
             clearInterval(timerCounter);
-            this.setState({counter: 5});
             this.setState({GameStarted: false});
             this.props.socket.sendRequest({
                 'command': 'end_round'
@@ -225,7 +224,6 @@ render() {
     const userInfo = 
     <React.Fragment>
     <Row>
-        {/*---- OUR user info ----*/}
         <Col sm={4}>
             <div style={styles.profilePic} className="col d-flex align-items-center justify-content-center">
                 <FontAwesomeIcon  style={mySkin.avatar.style} icon={mySkin.avatar.name} size='6x' />
@@ -237,7 +235,6 @@ render() {
                 <p>WINS: {myWins}</p>
             </div>
         </Col>
-        {/*---- central detail pane ----*/}
         <Col sm={4}>
             <div className="col d-flex align-items-center justify-content-center">
                 <p style={styles.versus}>Game: {this.state.gameCount}</p>
@@ -253,7 +250,6 @@ render() {
                 </Card>
             
         </Col>
-        {/*---- OPPONENT user info ----*/}
         <Col sm={4}>
                 <div style={styles.profilePic} className="col d-flex align-items-center justify-content-center">
                     <FontAwesomeIcon  style={skins[opponentSkin].avatar.style} icon={skins[opponentSkin].avatar.name} size='6x' />

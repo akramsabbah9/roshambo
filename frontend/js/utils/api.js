@@ -1,7 +1,5 @@
 import _request from './request';
 
-// TODO(benjibrandt): make http://localhost:8000 enviro variable based, not hardcoded
-
 //-------------------------------------------------------------
 // POST Methods
 //-------------------------------------------------------------

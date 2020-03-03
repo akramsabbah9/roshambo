@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {Navbar, Button, Container, Row, Col, Card } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import placeHolder from 'file-loader!../src/placeholder.png';
 import './Settings.css';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -101,9 +100,3 @@ const actionCreators = {
 }
 
 export default connect(mapStateToProps, actionCreators)(Settings);
-
-/*
-
-<Card.Img src={placeHolder} style={{width: '12rem', height: '12rem', marginLeft:"13.5%"}} alt="Card image" />
-
-*/

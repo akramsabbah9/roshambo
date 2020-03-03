@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Container, Navbar, Button, Row, Col, Card} from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDragon, faThumbsDown } from "@fortawesome/free-solid-svg-icons";
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { skins } from '../Settings/Skins';
@@ -187,7 +186,6 @@ class GameLobby extends Component {
         </Navbar.Collapse>
     </Navbar>
     <Row>
-        {/*---- OUR user info ----*/}
         <Col xs={4}>
             <div style={styles.profilePic} className="col d-flex align-items-center justify-content-center">
                 <FontAwesomeIcon  style={mySkin.avatar.style} icon={mySkin.avatar.name} size='6x' />
@@ -197,7 +195,6 @@ class GameLobby extends Component {
                 <h5 style={{margin: 15}}>{myself.username}</h5>
             </div>
         </Col>
-        {/*---- central detail pane ----*/}
         <Col xs={4}>
             <div className="col d-flex align-items-center justify-content-center">
                 <p style={styles.versus}>VS</p>
@@ -212,7 +209,6 @@ class GameLobby extends Component {
                     </div> : null}
                 </Card>
         </Col>
-        {/*---- OPPONENT user info ----*/}
         <Col xs={4}>
             {this.state.matched ? 
             <div style={styles.profilePic} className="col d-flex align-items-center justify-content-center">
@@ -231,7 +227,6 @@ class GameLobby extends Component {
         if (this.state.gameStarted) {
             return <Redirect to={{
                 pathname: '/GamePage',
-                //props.location.state.opponent
                 state: { opponent: this.state.opponent, bettingAmount: this.state.bettingAmount, opponentSkin: this.state.opponentSkin }
               }} />;
         }

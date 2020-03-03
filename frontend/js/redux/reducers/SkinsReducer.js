@@ -15,7 +15,6 @@ const initialState = {
 
 export function skins(state=initialState, action) {
     switch(action.type) {
-        // CHANGE ACTIVE SKIN
         case skinsConstants.CHANGE_REQUEST:
             return {
                 ...state,
@@ -53,7 +52,6 @@ export function skins(state=initialState, action) {
                 error: action.error
             }
         
-        // GET ACTIVE SKIN
         case skinsConstants.GETACTIVE_REQUEST:
             return {
                 ...state,
@@ -73,7 +71,6 @@ export function skins(state=initialState, action) {
                 error: action.error
             }
         
-        // GET OWNED SKINS
         case skinsConstants.GETOWNED_REQUEST:
             return {
                 ...state,
