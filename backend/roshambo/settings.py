@@ -167,5 +167,5 @@ CORS_ORIGIN_WHITELIST = (
         'http://localhost:8000',
     )
     
-STRIPE_SECRET_KEY = 'sk_test_cpnWw7EDAwNoJN89JVde1DXY002fOniVkX'
+STRIPE_API_KEY = 'sk_test_cpnWw7EDAwNoJN89JVde1DXY002fOniVkX'
 STRIPE_PUBLISHABLE_KEY = 'pk_test_Ux3dsI7uw62rLZ2Ni5TvoSV400Pjv0N2Sn'

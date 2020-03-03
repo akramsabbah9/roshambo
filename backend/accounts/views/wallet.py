@@ -37,25 +37,17 @@ class WalletAPI(GenericAPIView, UpdateModelMixin):
 
     def put(self, request, format='json', **kwargs):
         self._validate_put_request(request)
+
         amountToAdd = request.data['amount']
 
-        # context = super().get_context_data(**kwargs)
-        # context['key'] = settings.STRIPE_PUBLISHABLE_KEY
-        stripe.api_key = "sk_test_cpnWw7EDAwNoJN89JVde1DXY002fOniVkX"
+        stripe.api_key = getattr(settings, "STRIPE_API_KEY", None)
+        if stripe.api_key is None:
+            raise NotImplementedError({'error': 'Stripe API key has not been set!'})
 
-        # result = stripe.Token.create(
-        #     card={
-        #         "number": "4242424242424242",
-        #         "exp_month": 2,
-        #         "exp_year": 2021,
-        #         "cvc": "314",
-        #     },
-        # )
         charge = stripe.Charge.create(
             amount=amountToAdd,
             currency='usd',
             description='A Django charge',
-            #source="tok_1GB6R3D5Fk025o69wbzJ34jr"
             source=request.data['stripe_token']
         )
         if charge.outcome.network_status == 'approved_by_network' and charge.outcome.type == "authorized":
@@ -67,17 +59,18 @@ class WalletAPI(GenericAPIView, UpdateModelMixin):
 
             return Response(updated_wallet.data, status=status.HTTP_200_OK)
         else: 
-            raise ValidationError({'error': 'charge did not go through'})
+            # seller_message is a human-readable reason for the denial... not intended for customers, as per the docs, but oh well
+            raise Response({'error': charge.outcome.seller_message}, status=status.HTTP_402_PAYMENT_REQUIRED)
 
     def _validate_put_request(self, request):
         if not request.data:
             raise ValidationError({'error': 'request is empty'}, code='invalid')
 
-        #if 'amount' not in request.data or 'action' not in request.data:
-        #    raise ValidationError({'error': 'request must specify amount and action (add, sub).'})
-
-        wallet_fields = [field.name for field in Wallet._meta.get_fields()]
-        # check_for_edit_validation_errors(set(['amount', 'action']), set(['amount', 'action']), set(request.data.keys()))
+        if 'amount' not in request.data:
+           raise ValidationError({'error': 'request must specify amount.'})
+        
+        if 'stripe_token' not in request.data:
+           raise ValidationError({'error': 'request must specify a valid Stripe token.'})
 
     def get_context_data(self, **kwargs): 
         context = super().get_context_data(**kwargs)
