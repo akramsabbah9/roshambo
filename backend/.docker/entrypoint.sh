@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [ $DJANGO_ENV != "development" ]
+then
+  # the below should only be executed for dev environments
+  exit 0
+fi
+
 if [ "$DATABASE" = "postgres" ]
 then
     echo "Waiting for postgres..."
