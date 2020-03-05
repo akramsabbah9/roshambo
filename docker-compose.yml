@@ -46,7 +46,7 @@ services:
     container_name: roshambo_frontend
     environment:
       - NODE_ENV=development
-      - CHOKIDAR_USEPOLLING=true
+      - CHOKIDAR_USEPOLLING=false
     ports:
       - 3000:3000
     volumes:
