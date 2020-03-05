@@ -9,6 +9,7 @@ import Loading from '../Loading/Loading';
 import { userActions } from '../../redux/actions/UsersActions';
 import { socketActions } from '../../redux/actions/SocketActions';
 import { Redirect } from 'react-router-dom'
+import { skinsActions } from '../../redux/actions/SkinsActions'
 
 import '../Fonts.css';
 
@@ -40,6 +41,7 @@ class GameLobby extends Component {
     
     componentDidMount(){
         this.props.getCurrent()
+        this.props.getActiveSkin()
     }
 
     componentWillUnmount() {
@@ -275,6 +277,7 @@ function mapStateToProps (state) {
 }
 
 const actionCreators = {
+    getActiveSkin: skinsActions.getActiveSkin,
     logout: userActions.logout,
     getCurrent: userActions.getCurrent,
     constructSocket: socketActions.constructSocket,
