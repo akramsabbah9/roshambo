@@ -20,10 +20,11 @@ class UserSerializer(serializers.ModelSerializer):
         max_length=32,
         validators=[UniqueValidator(queryset=RoshamboUser.objects.all())]
     )
-    password = serializers.CharField(
-        required=True,
+    password = serializers.RegexField(
+        "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",
+        max_length=None,
         min_length=8, 
-        write_only=True
+        allow_blank=False
     )
     country_code = serializers.IntegerField(required=False)
     guild = serializers.CharField(max_length=30, required=False)
