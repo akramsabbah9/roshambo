@@ -31,8 +31,8 @@ const schema = yup.object({
     .max(30, "username cannot exceed 30 characters")
     .required("Required"),
     password : yup.string()
-    .matches(/^[a-zA-Z]/, "password must start with an alphabet letter")
-    .matches(/^[0-9a-zA-Z!]+$/, "password must contain only alphanumeric letters and !")
+    //.matches(/^[a-zA-Z]/, "password must start with an alphabet letter")
+    //.matches(/^[0-9a-zA-Z!]+$/, "password must contain only alphanumeric letters and !")
     .min(8, "password must be at least 8 characters long")
     .max(30, "password cannot exceed 30 characters")
     .required("Required"),
