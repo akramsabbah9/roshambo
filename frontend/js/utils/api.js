@@ -1,13 +1,11 @@
 import _request from './request';
 
-// TODO(benjibrandt): make http://localhost:8000 enviro variable based, not hardcoded
-
 //-------------------------------------------------------------
 // POST Methods
 //-------------------------------------------------------------
 
 export const login = (data) => {
-  return _request('http://localhost:8000/accounts/login/', {
+  return _request(`${process.env.API_URL}/accounts/login/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -17,7 +15,7 @@ export const login = (data) => {
 };
 
 export const logout = () => {
-  return _request('http://localhost:8000/accounts/logout/', {
+  return _request(`${process.env.API_URL}/accounts/logout/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -27,7 +25,7 @@ export const logout = () => {
 };
 
 export const signup = (data) => {
-  return _request('http://localhost:8000/accounts/signup/', {
+  return _request(`${process.env.API_URL}/accounts/signup/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -41,7 +39,7 @@ export const signup = (data) => {
 //-------------------------------------------------------------
 
 export const currentUser = () => {
-  return _request('http://localhost:8000/accounts/users/current/', {
+  return _request(`${process.env.API_URL}/accounts/users/current/`, {
     headers: {
       'Content-Type': 'application/json',
        Authorization: `Token ${localStorage.getItem('token')}`
@@ -50,7 +48,7 @@ export const currentUser = () => {
 };
 
 export const allUsers = () => {
-  return _request('http://localhost:8000/accounts/users/', {
+  return _request(`${process.env.API_URL}/accounts/users/`, {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Token ${localStorage.getItem('token')}`
@@ -59,7 +57,7 @@ export const allUsers = () => {
 };
 
 export const activeUsers = () => {
-  return _request('http://localhost:8000/accounts/users/active/', {
+  return _request(`${process.env.API_URL}/accounts/users/active/`, {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Token ${localStorage.getItem('token')}`
@@ -68,7 +66,7 @@ export const activeUsers = () => {
 };
 
 export const getActiveSkin = () => {
-  return _request('http://localhost:8000/accounts/skins/active/', {
+  return _request(`${process.env.API_URL}/accounts/skins/active/`, {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Token ${localStorage.getItem('token')}`
@@ -77,7 +75,7 @@ export const getActiveSkin = () => {
 };
 
 export const getAvailableSkins = () => {
-  return _request('http://localhost:8000/accounts/skins/', {
+  return _request(`${process.env.API_URL}/accounts/skins/`, {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Token ${localStorage.getItem('token')}`
@@ -86,7 +84,7 @@ export const getAvailableSkins = () => {
 };
 
 export const getPurchasedSkins = () => {
-  return _request('http://localhost:8000/accounts/skins/purchased/', {
+  return _request(`${process.env.API_URL}/accounts/skins/purchased/`, {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Token ${localStorage.getItem('token')}`
@@ -95,7 +93,7 @@ export const getPurchasedSkins = () => {
 };
 
 export const getStats = () => {
-  return _request('http://localhost:8000/accounts/stats/', {
+  return _request(`${process.env.API_URL}/accounts/stats/`, {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Token ${localStorage.getItem('token')}`
@@ -108,7 +106,7 @@ export const getStats = () => {
 //-------------------------------------------------------------
 
 export const editUser = (data) => {
-  return _request('http://localhost:8000/accounts/users/edit/', {
+  return _request(`${process.env.API_URL}/accounts/users/edit/`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -119,7 +117,7 @@ export const editUser = (data) => {
 };
 
 export const editStats = (data) => {
-  return _request('http://localhost:8000/accounts/stats/', {
+  return _request(`${process.env.API_URL}/accounts/stats/`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -130,7 +128,7 @@ export const editStats = (data) => {
 };
 
 export const editActiveSkin = (data) => {
-  return _request('http://localhost:8000/accounts/skins/active/', {
+  return _request(`${process.env.API_URL}/accounts/skins/active/`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -141,7 +139,7 @@ export const editActiveSkin = (data) => {
 };
 
 export const editPurchasedSkins = (data) => {
-  return _request('http://localhost:8000/accounts/skins/purchased/', {
+  return _request(`${process.env.API_URL}/accounts/skins/purchased/`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -152,7 +150,7 @@ export const editPurchasedSkins = (data) => {
 };
 
 export const editUserWallet = (data) => {
-  return _request('http://localhost:8000/accounts/wallet/', {
+  return _request(`${process.env.API_URL}/accounts/wallet/`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
