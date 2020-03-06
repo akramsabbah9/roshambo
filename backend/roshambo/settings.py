@@ -171,7 +171,7 @@ CHANNEL_LAYERS = {
 
 # we whitelist localhost:3000 because that's where frontend will be served
 CORS_ORIGIN_WHITELIST = \
-    ('https://roshambo.herokuapp.com',) if DJANGO_ENV == 'production' \
+    ('https://roshambo-ucla.herokuapp.com',) if DJANGO_ENV == 'production' \
     else (
         'http://localhost:3000',
         'http://localhost:8000',
