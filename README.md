@@ -40,6 +40,10 @@ For some purposes (such as creating a Django superuser temporarily), it's easies
 
 Out of the box, when run locally, Stripe purchases will not work - we can't commit real secrets! To test Stripe functionality, either visit the live Heroku-deployed app, or reach out to our team to get the Stripe secret key.
 
+#### Browser Compatibility
+
+Please note, we only support Google Chrome! No testing has been done for other browsers, so use them at your own peril.
+
 ## Tech Stack Description
 
 Roshambo is built using Django and React. Django incorporates Django Channels, and the Django Rest Framework. React utilizes React Bootstrap.
