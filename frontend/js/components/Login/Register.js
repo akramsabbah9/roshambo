@@ -33,6 +33,7 @@ const schema = yup.object({
     password : yup.string()
     .matches(/^[a-zA-Z]/, "password must start with an alphabet letter")
     .matches(/^[0-9a-zA-Z!@#$%^]+$/, "password must contain only alphanumeric letters or !@#$%^")
+    .matches(/[!@#$%^]+/, "password must contain at least one special characters: !@#$%^")
     .matches(/[A-Z]+/, "password must contain at least one Capital letter")
     .matches(/[0-9]+/, "password must contain at least one number")
     .min(8, "password must be at least 8 characters long")
