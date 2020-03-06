@@ -17,26 +17,26 @@ const bowerComponents = path.resolve(__dirname, 'bower_components');
 //------------------------
 // Env Variables
 //------------------------
-// const envName = process.env.NODE_ENV == "production" ? "prod" : "dev";
-// const envPath = path.resolve(__dirname, `./frontend/${envName}.env`);
-// // call dotenv and it will return an Object with a parsed key 
-// const env = dotenv.config({ path: envPath }).parsed;
-// let envKeys;
-// if (env == null) {
-//   // reduce it to a nice object, the same as before
-//   envKeys = Object.keys(env).reduce((prev, next) => {
-//     prev[`process.env.${next}`] = JSON.stringify(env[next]);
-//     return prev;
-//   }, {});
-// }
-const plugins = //env == null ?
-  // [
-  //   new CleanWebpackPlugin(["frontend/scaffold/bundle"]),
-  // ]
-  // :
+const envName = process.env.NODE_ENV == "production" ? "prod" : "dev";
+const envPath = path.resolve(__dirname, `./frontend/${envName}.env`);
+// call dotenv and it will return an Object with a parsed key 
+const env = dotenv.config({ path: envPath }).parsed;
+let envKeys;
+if (env != null) {
+  // reduce it to a nice object, the same as before
+  envKeys = Object.keys(env).reduce((prev, next) => {
+    prev[`process.env.${next}`] = JSON.stringify(env[next]);
+    return prev;
+  }, {});
+}
+const plugins = env == null ?
+  [
+    new CleanWebpackPlugin(["frontend/scaffold/bundle"]),
+  ]
+  :
   [
     new CleanWebpackPlugin(["scaffold/bundle"]),
-    // new webpack.DefinePlugin(envKeys)
+    new webpack.DefinePlugin(envKeys)
   ];
 
 //------------------------
