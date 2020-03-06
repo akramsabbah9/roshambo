@@ -1,4 +1,4 @@
-import { userConstants } from '../actions/types';
+import { gameConstants } from '../actions/types';
 
 const initialState = {
     gameEnded: false
@@ -6,10 +6,15 @@ const initialState = {
 
 export function game(state=initialState, action) {
     switch(action.type) {
-        case userConstants.ENDGAME: 
+        case gameConstants.ENDGAME: 
             return {
                 ...state,
                 gameEnded: true,
+            }
+        case gameConstants.UNENDGAME:
+            return {
+                ...state,
+                gameEnded: false,
             }
         default:
             return state

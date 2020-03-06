@@ -4,6 +4,7 @@ import { Container, Row, Col, Card,
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHandPaper, faHandRock, faHandPeace } from "@fortawesome/free-solid-svg-icons";
 import { socketActions } from '../../redux/actions/SocketActions';
+//import { gameActions } from '../../redux/actions/GameActions';
 import { history } from '../../utils/history';
 import { connect } from 'react-redux';
 import { skins } from '../Settings/Skins';
@@ -27,9 +28,9 @@ class GamePage extends Component {
             opponentMove: null,
             winnerReceived: false,
             rounds: 1,
-            matchOver: false,
+            matchOver: localStorage.getItem('matchOver') || false,
             belaySocketClosing: false,
-            userMustVacate: false,
+            userMustVacate: localStorage.getItem('userMustVacate') || false,
             roundTimer: null,
             timerCounter: null,
         }
@@ -48,6 +49,19 @@ class GamePage extends Component {
         if (this.state.rounds == 1) {
             this.setState({GameStarted: true})
             this.CountDown();
+        }
+        console.log("work it baby\n");
+        /*console.log(this.props);
+        if (this.props.gameEnded == true) {
+            setTimeout(() => {
+                history.push('/userdashboard');
+            }, 2000);
+        }*/
+
+        if (this.state.matchOver || this.state.userMustVacate) {
+            setTimeout(() => {
+                history.push('/userdashboard');
+            }, 4500);
         }
     }
 
@@ -115,7 +129,9 @@ class GamePage extends Component {
                     }
 
                     if (json.match_over) {
-                       setTimeout(() => {this.setState({matchOver: true});}, 2000);
+                        localStorage.setItem('matchOver', true);
+                        setTimeout(() => {this.setState({matchOver: true});}, 2000);
+                        //this.props.end_the_game(); //experimental
                     }
                 }
                 else if (json.hasOwnProperty('start')) {
@@ -129,7 +145,9 @@ class GamePage extends Component {
                     this.CountDown();
                 }
                 else if (json.hasOwnProperty('user_left')) {
+                    localStorage.setItem('userMustVacate', true);
                     this.setState({userMustVacate: true})
+                    //this.props.end_the_game(); //experimental
                 }  
                 break
         }
@@ -399,6 +417,7 @@ function mapStateToProps (state) {
 
 const actionCreators = {
     destructSocket: socketActions.destructSocket,
+    //end_the_game: gameActions.end_the_game,
 }
 
 export default connect(mapStateToProps, actionCreators)(GamePage);

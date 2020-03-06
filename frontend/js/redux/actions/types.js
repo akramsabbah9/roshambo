@@ -71,4 +71,5 @@ export const socketConstants = {
 
 export const gameConstants = {
     ENDGAME: 'END_GAME',
+    UNENDGAME: 'UNEND_GAME',
 }
