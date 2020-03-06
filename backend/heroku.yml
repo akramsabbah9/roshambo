@@ -1,0 +1,16 @@
+setup:
+ addons:
+   - plan: heroku-postgresql
+   - plan: heroku-redis
+build:
+ docker:
+   web: ./Dockerfile
+ config:
+   REQUIREMENTS_FILENAME: heroku.yml
+release:
+ image: web
+ command:
+   - ./.heroku/release.sh
+run:
+ web: python manage.py runserver 0.0.0.0:$PORT
+  # yes, nEvEr uSe dEv sErVer iN pRod. This is simpler, I don't have time to deal with nginx rn. Sue me.

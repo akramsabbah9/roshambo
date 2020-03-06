@@ -205,8 +205,8 @@ def get_wallet_cash(match_id, user_id):
 
     wallet = Wallet.objects.get(user_id=user_id)
 
-    print("ALREADY BET")
-    print(already_bet)
+    
+    
     return wallet.cash, already_bet
 
 
@@ -283,9 +283,9 @@ def evaluate_round(match_id, user_id):
     stats_1 = Stats.objects.get(user_id=match.user1)
     stats_2 = Stats.objects.get(user_id=match.user2)
 
-    print("USER BETS")
-    print(match.user2_bet)
-    print(match.user1_bet)
+    
+    
+    
 
     # don't count the round if we tied
     #EXPERIMENTAL if user1 won, then add user2's bet to their money, and vice-versa if user2 won.
@@ -294,7 +294,7 @@ def evaluate_round(match_id, user_id):
             winner = match.user1
             match.user1_wins += 1
             if match.user1_wins >= 2:
-                print("user 2 is losing {}".format(match.user2_bet))
+                
                 wallet_1.cash += match.user2_bet
                 wallet_2.cash -= match.user2_bet
                 stats_1.games_won += 1
@@ -303,7 +303,7 @@ def evaluate_round(match_id, user_id):
             winner = match.user2
             match.user2_wins += 1
             if match.user2_wins >= 2:
-                print("user 1 is losing {}".format(match.user1_bet))
+                
                 wallet_2.cash += match.user1_bet
                 wallet_1.cash -= match.user1_bet
                 stats_1.games_lost += 1

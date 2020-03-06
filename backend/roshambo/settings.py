@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import dj_database_url
+
+DJANGO_ENV = os.environ.get("DJANGO_ENV", "production")
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -81,16 +84,21 @@ WSGI_APPLICATION = 'roshambo.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
-        "NAME": os.environ.get("SQL_DATABASE", os.path.join(BASE_DIR, "db.sqlite3")),
-        "USER": os.environ.get("SQL_USER", "user"),
-        "PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
-        "HOST": os.environ.get("SQL_HOST", "localhost"),
-        "PORT": os.environ.get("SQL_PORT", "5432"),
+DATABASES = {}
+
+if DJANGO_ENV == 'production':
+    DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
+            "NAME": os.environ.get("SQL_DATABASE", os.path.join(BASE_DIR, "db.sqlite3")),
+            "USER": os.environ.get("SQL_USER", "user"),
+            "PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
+            "HOST": os.environ.get("SQL_HOST", "localhost"),
+            "PORT": os.environ.get("SQL_PORT", "5432"),
+        }
     }
-}
 
 
 # Password validation
@@ -156,16 +164,18 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("roshambo_redis", 6379)],
+            "hosts": [os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379')] if DJANGO_ENV == 'production' else [(os.environ.get("REDIS_URL"), 6379)],
         },
     },
 }
 
 # we whitelist localhost:3000 because that's where frontend will be served
-CORS_ORIGIN_WHITELIST = (
+CORS_ORIGIN_WHITELIST = \
+    ('https://roshambo-ucla.herokuapp.com',) if DJANGO_ENV == 'production' \
+    else (
         'http://localhost:3000',
         'http://localhost:8000',
     )
     
-STRIPE_SECRET_KEY = 'sk_test_cpnWw7EDAwNoJN89JVde1DXY002fOniVkX'
+STRIPE_API_KEY = os.environ.get('STRIPE_API_KEY')
 STRIPE_PUBLISHABLE_KEY = 'pk_test_Ux3dsI7uw62rLZ2Ni5TvoSV400Pjv0N2Sn'

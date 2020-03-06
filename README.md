@@ -7,20 +7,17 @@ Roshambo is a full-stack web app, designed to be the premiere destination for hi
 
  - [Docker 19.03.5+ & docker-compose 1.24.1+](https://medium.com/@yutafujii_59175/a-complete-one-by-one-guide-to-install-docker-on-your-mac-os-using-homebrew-e818eb4cfc3)
 
-## Usage
+## Live Site
+
+Visit https://roshambo-ucla.herokuapp.com to play Roshambo today!
+
+## Local Usage
 
 1.  From the root of the repo, run `docker-compose build` to build the docker containers.
 2. To run them, use `docker-compose up`.
 2. From there, http://localhost:8000 will link to the API, and http://localhost:3000 will link to the frontend.
 4. Refer to `docker-compose` documentation for further options, such as running in detached mode.
 
-## Frontend Descriptions
-
-1. `react-bootstrap` for the main frontend developement
-2. `react-redux` for state management.
-3. `formik` for user form constructions.
-4. `font-awesome` for basic icons and logos on the website.
-5. `yup` for user input validation.
 #### Running Commands within the Containers
 
 For some purposes (such as creating a Django superuser temporarily), it's easiest to head into the Docker container's shell to perform actions. This is easy. Follow these steps:
@@ -28,12 +25,6 @@ For some purposes (such as creating a Django superuser temporarily), it's easies
 1. After starting the containers via `docker-compose up`, run `docker ps` to see the name of the available containers. Roshambo's should be named `roshambo_backend` and `roshambo_frontend`.
 2. Run `docker exec -it <mycontainer> bash` to obtain shell access to the container.
 3. Voila.
-
-## Testing
-
--  To test frontend components, run `npm run test`.
--  To test backend components, run `TODO: fill this in`.
--  TODO: travis ci.
 
 ## Cleanup
 
@@ -45,6 +36,28 @@ For some purposes (such as creating a Django superuser temporarily), it's easies
 4. To completely clear everything Docker-related: `docker system prune`.
 5. Consult the Docker documentation for further options beyond these.
 
+## Known Issues
+
+Out of the box, when run locally, Stripe purchases will not work - we can't commit real secrets! To test Stripe functionality, either visit the live Heroku-deployed app, or reach out to our team to get the Stripe secret key.
+
 ## Tech Stack Description
 
-Roshambo is built using Django and React. Django incorporates Django Channels, and the Django Rest Framework. React utilizes React Bootstrap. Refer to `backend/requirements.txt` for specific packages used in the backend, and to `package.json` for specific packages used in the frontend.
+Roshambo is built using Django and React. Django incorporates Django Channels, and the Django Rest Framework. React utilizes React Bootstrap.
+
+#### Frontend Main Packages
+
+1. `react-bootstrap` for the main frontend developement
+2. `react-redux` for state management.
+3. `formik` for user form constructions.
+4. `font-awesome` for basic icons and logos on the website.
+5. `yup` for user input validation.
+
+#### Backend Main Packages
+
+1. `django` for the primary backend service.
+2. `django rest framework` for RESTful resources.
+3. `django channels` for matchmaking and websocket communications.
+
+#### Summary
+
+Refer to `backend/requirements.txt` for specific packages used in the backend, and to `frontend/package.json` for specific packages used in the frontend.

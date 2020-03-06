@@ -20,43 +20,35 @@ services:
       - 6379:6379
 
   backend:
-    build:
-      context: .
-      dockerfile: backend/Dockerfile
-    command: python manage.py runserver 0.0.0.0:8000
+    build: ./backend
+    command: /roshambo/.docker/entrypoint.sh
     container_name: roshambo_backend
     depends_on:
       - db
       - redis
     env_file:
-      - backend/.env.dev
+      - ./backend/dev.env
     expose:
       - 8000
     ports:
       - 8000:8000
     volumes:
-      - ./backend/:/roshambo
+      - ./backend:/roshambo
     links:
       - redis
 
   frontend:
-    build:
-      context: .
-      dockerfile: frontend/Dockerfile
+    build: ./frontend
+    command: /roshambo-ui/.docker/entrypoint.sh
     container_name: roshambo_frontend
-    environment:
-      - NODE_ENV=development
-      - CHOKIDAR_USEPOLLING=false
+    env_file:
+      - ./frontend/dev.env
     ports:
       - 3000:3000
     volumes:
-      - .:/roshambo-ui/
-      - /roshambo-ui/node_modules
+      - ./frontend:/roshambo-ui/
+      - roshambo-node-modules:/roshambo-ui/node_modules
     
-
 volumes:
   postgres:
-  backend:
-
-
-  
+  roshambo-node-modules:

@@ -72,7 +72,6 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         )
 
         if opponent is not None:
-            print("{} requesting info!".format(self.user.username))
             await self.channel_layer.group_send(
             self.match_group_id,
             {
@@ -119,7 +118,6 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             return
 
         command = data['command']
-        print('validated {}'.format(command))
         await self.dispatch_command[command](self, data)
 
     #------------------------------------------------------------------
@@ -172,7 +170,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         """
         # because we validated, we can make assumptions like else will be the other command for rps
         if 'move' in data:
-            print('move in data')
+            
             if not await round_started(self.match_id):
                 await self._send_response({
                     'error': 'rps move request cannot be made until both players have readied up, and the match has started.'
@@ -181,7 +179,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             await set_user_move(self.match_id, self.user.id, move)
             await self._send_response(status=status.HTTP_204_NO_CONTENT, id=data['id'])
         else: # 'ready' in data
-            print('in ready state')
+            
             ready_status = data['ready']
             await set_user_ready_status(self.match_id, self.user.id, ready_status)
 
@@ -198,7 +196,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             # This way, we incentivize faster readying, as you become the 'host'
             if await both_users_ready(self.match_id):
                 if await user_first_to_ready(self.match_id, self.user.id):
-                    print("bothj users ready, {} is the first!".format(self.user.username))
+                    
                     # Send message to match group
                     await self.channel_layer.group_send(
                         self.match_group_id,
@@ -208,7 +206,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                         }
                     )
                 else:
-                    print("both users ready, {} is not the first!".format(self.user.username))
+                    
                     await self.channel_layer.group_send(
                         self.match_group_id,
                         {
@@ -361,7 +359,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         Alert all users that a round has started.
         """
         start_time = event['start']
-        print("{} sending channel start_time message!".format(self.user.username))
+        
         await self._send_channel_message({
             'command': 'channel',
             'start': start_time
@@ -386,7 +384,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         allowed_order_start, _ = await self._order_start_allowed()
         if not allowed_order_start:
             return
-        print("{} is starting the round!".format(self.user.username))
+        
         await self._start_a_round()
 
 
@@ -408,12 +406,12 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
 
     async def request_info(self, event):
         user_id = event['user_id']
-        print("{} got info send request!".format(self.user.username))
+        
         
         if str(self.user.id) != user_id:
             return
 
-        print("{} sending info!".format(self.user.username))
+        
         user_data = await get_serialized_user_data(self.user)
         skin = await get_user_skin(self.user.id)
 
@@ -431,7 +429,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         if str(user_data['id']) == self.user.id:
             return
 
-        print("{} got info!".format(self.user.username))
+        
 
         await self._send_channel_message({
             'command': 'channel',
@@ -506,7 +504,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                 elif command_group == 'rps':
                     if command == 'ready':
                         if not isinstance(data[command], bool):
-                            print("no bool")
+                            
                             await self._send_response({
                             'error': 'rps ready request must include a bool value for key \'ready\'.'
                         }, status=status.HTTP_400_BAD_REQUEST, id=data['id'])

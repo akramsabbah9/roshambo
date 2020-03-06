@@ -40,7 +40,7 @@ def wait_then_call(time_to_take, callback):
     :param func callback: the function to call when time_to_take has been taken.
     """
     timer = Timer(time_to_take, callback)
-    print("TIMER STARTED")
+    
     timer.start()
 
 def get_time_seconds():

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Form, Container,
-         Col, Nav, Row } from 'react-bootstrap';
+         Col, Nav, Row, ProgressBar } from 'react-bootstrap';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import { connect } from 'react-redux';
@@ -26,13 +26,16 @@ const schema = yup.object({
     .required("Required"),
     username : yup.string()
     .matches(/^[a-zA-Z]/, "username must start with an alphabet letter")
-    .matches(/^[0-9a-zA-Z!]+$/, "username must contain only alphanumeric letters and !")
+    .matches(/^[0-9a-zA-Z!@#$%!]+$/, "username must contain only alphanumeric letters or !@#$%^")
     .min(5, "username must be at least 5 characters long")
     .max(30, "username cannot exceed 30 characters")
     .required("Required"),
     password : yup.string()
     .matches(/^[a-zA-Z]/, "password must start with an alphabet letter")
-    .matches(/^[0-9a-zA-Z!]+$/, "password must contain only alphanumeric letters and !")
+    .matches(/^[0-9a-zA-Z!@#$%^]+$/, "password must contain only alphanumeric letters or !@#$%^")
+    .matches(/[!@#$%^]+/, "password must contain at least one special characters: !@#$%^")
+    .matches(/[A-Z]+/, "password must contain at least one Capital letter")
+    .matches(/[0-9]+/, "password must contain at least one number")
     .min(8, "password must be at least 8 characters long")
     .max(30, "password cannot exceed 30 characters")
     .required("Required"),
@@ -44,6 +47,17 @@ const schema = yup.object({
 class Register extends Component{
     constructor(props){
       super();
+      this.state = {
+        password_result : 0,
+        password_trigger : false,
+        password_meter : {
+          0 : 'danger',
+          1 : 'danger',
+          2 : 'warning',
+          3 : 'success',
+          4 : 'success',
+        },
+      }
     }
     componentDidMount() {
         document.body.style.backgroundColor = '#fcc092';
@@ -58,10 +72,10 @@ class Register extends Component{
         </React.Fragment>
       )
   }
-    render(){
 
+    render(){
     const { error } = this.props 
-    
+
     return (
       <div>
         <Nav variant="pills" onSelect={this.onSelect}>
@@ -83,7 +97,7 @@ class Register extends Component{
            handleChange,
            handleSubmit,
            values,
-           handleBlur
+           handleBlur,
           }) => (
             <Form onSubmit={handleSubmit}>
             <p className="sign">Register</p>
@@ -154,13 +168,55 @@ class Register extends Component{
                     name="password"
                     className="inputbox"
                     value={values.password}
-                    onChange={handleChange}
+                    onChange={
+                      (e) => {
+                        handleChange(e)
+                        touched.password = true
+                        values.password = e.target.value
+                        if(e.target.value == 0){
+                          this.setState({
+                            password_trigger : false,
+                        })}
+                        else{
+                          this.setState({
+                            password_result : zxcvbn(values.password),
+                            password_trigger : true,
+                          })
+                        }
+                      }
+                    }
                     onBlur={handleBlur}
-                    isInvalid={touched.password && errors.password}
+                    isInvalid={touched.password && (errors.password || this.state.password_result.score < 3)}
+                    isValid={touched.password && !(errors.password || this.state.password_result.score < 3)}
                     />
-                    <Form.Control.Feedback type="invalid">
-                        {errors.password}
-                    </Form.Control.Feedback>
+                    {
+                      this.state.password_trigger
+                      ?
+                      <ProgressBar>
+                        <ProgressBar min={-1} max={4} now={this.state.password_result.score} variant={this.state.password_meter[this.state.password_result.score]}/>
+                      </ProgressBar>
+                      :
+                      <div></div>
+                    }
+                    {
+                      this.state.password_result.score < 3 && this.state.password_trigger ? (
+                         <Form.Control.Feedback type="invalid">
+                           {this.state.password_result.feedback.warning + " " + this.state.password_result.feedback.suggestions}
+                         </Form.Control.Feedback>
+                      ) : (
+                        errors.password ?
+                      <Form.Control.Feedback type="invalid">
+                          {errors.password}
+                      </Form.Control.Feedback>
+                      :
+                      <Form.Control.Feedback type="valid">
+                        Your Password is Good to Go
+                      </Form.Control.Feedback>
+                      )
+                    }
+                    <div style={{fontSize : '15px', fontWeight : 'bold'}}>
+                      Password must be at least 8 characters, containing at least one Capital letter, one number, and a special character.
+                    </div>
                 </Form.Group>
                 <Form.Group controlId="formConfirmPassword">
                     <Form.Control 
@@ -188,7 +244,7 @@ class Register extends Component{
             )}
             </Formik>
 
-            { error != null ? <h3 style={{color: "red"}}>{error.message}</h3> : null }
+            { error != null ? <h3 style={{color: "red", fontSize: '20px', fontWeight:'bold'}}>{error.message}</h3> : null }
 
         </Container>
         </div>
