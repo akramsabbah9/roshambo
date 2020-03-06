@@ -30,9 +30,7 @@ ENV APP_SERVE /app
 RUN mkdir $APP_SERVE
 WORKDIR $APP_SERVE
 
-RUN --from=builder ls -lah $APP_HOME
-RUN --from=builder ls -lah $APP_HOME/scaffold
-RUN --from=builder ls -lah $APP_HOME/scaffold/bundle
+RUN ls -lah $APP_HOME
 
 COPY --from=builder $APP_HOME/scaffold/bundle $APP_SERVE
 RUN npm install -g serve
