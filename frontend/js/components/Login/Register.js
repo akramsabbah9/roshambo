@@ -214,7 +214,7 @@ class Register extends Component{
                       )
                     }
                     <div style={{fontSize : '15px', fontWeight : 'bold'}}>
-                      Password must be at least 8 characters, containing at least one Capital letter and one number 
+                      Password must be at least 8 characters, containing at least one Capital letter, one number, and a special character.
                     </div>
                 </Form.Group>
                 <Form.Group controlId="formConfirmPassword">
