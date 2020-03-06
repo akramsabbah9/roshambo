@@ -17,7 +17,7 @@ const bowerComponents = path.resolve(__dirname, 'bower_components');
 //------------------------
 // Env Variables
 //------------------------
-const envName = process.env.NODE_ENV == "production" ? "prod" : "dev";
+const envName = process.env.NODE_ENV == "dev" ? "dev" : "prod";
 const envPath = path.resolve(__dirname, `./${envName}.env`);
 // call dotenv and it will return an Object with a parsed key 
 const env = dotenv.config({ path: envPath }).parsed;
