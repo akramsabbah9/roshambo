@@ -32,7 +32,6 @@ var/
 
 # Frontend Stuff
 node_modules/
-frontend/scaffold/bundle/
 
 # PyInstaller
 # Usually these files are written by a python script from a template
