@@ -26,5 +26,5 @@ ENV APP_SERVE /app
 RUN mkdir $APP_SERVE
 WORKDIR $APP_SERVE
 
-COPY --from=builder $APP_HOME/scaffold/build $APP_SERVE
+COPY --from=builder $APP_HOME/scaffold/bundle $APP_SERVE
 RUN npm install -g serve
