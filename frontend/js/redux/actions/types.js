@@ -68,3 +68,7 @@ export const socketConstants = {
 
     SOCKET_URL: 'ws://localhost:8000/ws/match/',
 }
+
+export const gameConstants = {
+    ENDGAME: 'END_GAME',
+}
