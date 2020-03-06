@@ -8,7 +8,6 @@ WORKDIR $APP_HOME
 
 # Folders
 COPY js $APP_HOME/js
-COPY scaffold $APP_HOME/scaffold
 
 # Files
 COPY package.json $APP_HOME
@@ -16,6 +15,8 @@ COPY package-lock.json $APP_HOME
 COPY webpack.config.js $APP_HOME
 COPY .babelrc $APP_HOME
 COPY prod.env $APP_HOME
+COPY scaffold/icon.png $APP_HOME/scaffold
+COPY scaffold/index-heroku.html $APP_HOME/scaffold/index.html
 
 RUN npm install
 RUN npm run build
