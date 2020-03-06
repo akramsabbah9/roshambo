@@ -66,7 +66,7 @@ class GamePage extends Component {
         if (!this.state.GameStarted && this.state.winnerReceived && !this.state.matchOver) {
             setTimeout(() => {
                 this.props.socket.sendRequest({'command': 'begin_round'});
-            }, 3000);
+            }, 1000);
         }
 
         if (this.state.matchOver || this.state.userMustVacate) {
@@ -115,7 +115,7 @@ class GamePage extends Component {
                     }
 
                     if (json.match_over) {
-                        this.setState({matchOver: true});
+                       setTimeout(() => {this.setState({matchOver: true});}, 2000);
                     }
                 }
                 else if (json.hasOwnProperty('start')) {
@@ -230,7 +230,6 @@ render() {
     const userInfo = 
     <React.Fragment>
     <Row>
-        {/*---- OUR user info ----*/}
         <Col sm={4}>
             <div style={styles.profilePic} className="col d-flex align-items-center justify-content-center">
                 <FontAwesomeIcon  style={mySkin.avatar.style} icon={mySkin.avatar.name} size='6x' />
@@ -242,7 +241,6 @@ render() {
                 <p>WINS: {myWins}</p>
             </div>
         </Col>
-        {/*---- central detail pane ----*/}
         <Col sm={4}>
             <div className="col d-flex align-items-center justify-content-center">
                 <p style={styles.versus}>Game: {this.state.gameCount}</p>
@@ -258,7 +256,6 @@ render() {
                 </Card>
             
         </Col>
-        {/*---- OPPONENT user info ----*/}
         <Col sm={4}>
                 <div style={styles.profilePic} className="col d-flex align-items-center justify-content-center">
                     <FontAwesomeIcon  style={skins[opponentSkin].avatar.style} icon={skins[opponentSkin].avatar.name} size='6x' />
@@ -278,10 +275,12 @@ render() {
             <Container className="Words" style={{marginTop: '5%'}}>
                 {userInfo}
                 <Row style={{margin:50}}>
-                    <p>Unfortunately, your opponent quit (rage, much?).</p>
-                    <p>All placed bets will be returned to their respective bettors, and no money will change hands.</p>
-                    <p>You're being redirect to the user dashboard - please join a new match from there.</p>
-                </Row>
+                    <div className="col col-sm-6 offset-sm-3 d-flex align-items-center justify-content-center" style={{fontSize: '20px'}}>
+                        <p>Unfortunately, your opponent quit (rage, much?).
+                        All placed bets will be returned to their respective bettors, and no money will change hands.
+                        You're being redirect to the user dashboard - please join a new match from there.</p>
+                    </div>
+                </Row> 
             </Container>
         );
     }
@@ -372,7 +371,7 @@ render() {
                 </Row>
                 </React.Fragment>
             :
-                <React.Fragment>
+                <React.Fragment  style={{fontSize: '20px'}}>
                     <div className="col d-flex justify-content-center align-items-center">
                         <p>Match over!</p>
                     </div>
@@ -395,8 +394,6 @@ function mapStateToProps (state) {
     const { activeSkin } = state.skins
     const user = state.user.currentUser
     const socket = state.socket.socket;
-
-
     return { activeSkin, user, socket }
 }
 

@@ -9,6 +9,7 @@ import Loading from '../Loading/Loading';
 import { userActions } from '../../redux/actions/UsersActions';
 import { socketActions } from '../../redux/actions/SocketActions';
 import { Redirect } from 'react-router-dom'
+import { skinsActions } from '../../redux/actions/SkinsActions'
 
 import '../Fonts.css';
 
@@ -40,6 +41,7 @@ class GameLobby extends Component {
     
     componentDidMount(){
         this.props.getCurrent()
+        this.props.getActiveSkin()
     }
 
     componentWillUnmount() {
@@ -183,7 +185,6 @@ class GameLobby extends Component {
         </Navbar.Collapse>
     </Navbar>
     <Row>
-        {/*---- OUR user info ----*/}
         <Col xs={4}>
             <div style={styles.profilePic} className="col d-flex align-items-center justify-content-center">
                 <FontAwesomeIcon  style={mySkin.avatar.style} icon={mySkin.avatar.name} size='6x' />
@@ -193,7 +194,6 @@ class GameLobby extends Component {
                 <h5 style={{margin: 15}}>{myself.username}</h5>
             </div>
         </Col>
-        {/*---- central detail pane ----*/}
         <Col xs={4}>
             <div className="col d-flex align-items-center justify-content-center">
                 <p style={styles.versus}>VS</p>
@@ -208,7 +208,6 @@ class GameLobby extends Component {
                     </div> : null}
                 </Card>
         </Col>
-        {/*---- OPPONENT user info ----*/}
         <Col xs={4}>
             {this.state.matched ? 
             <div style={styles.profilePic} className="col d-flex align-items-center justify-content-center">
@@ -278,6 +277,7 @@ function mapStateToProps (state) {
 }
 
 const actionCreators = {
+    getActiveSkin: skinsActions.getActiveSkin,
     logout: userActions.logout,
     getCurrent: userActions.getCurrent,
     constructSocket: socketActions.constructSocket,

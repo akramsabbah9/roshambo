@@ -125,7 +125,7 @@ class UserDashBoard extends Component {
                             
                         </div>
                         <Card>
-                            <ListGroup variant="flush">
+                            <ListGroup variant="flush" size='sm'>
                                 {
                                 userLoading ? 
                                     <Loading/>
@@ -144,14 +144,14 @@ class UserDashBoard extends Component {
                             </ListGroup>
 
                         </Card>
-                        <div className="d-flex flex-column" style={{marginTop: '15%', marginLeft: '2%'}}>
+                        <div className="d-flex flex-column" style={{marginTop: '15%', marginRight: '2%'}}>
                             <ButtonGroup className="Buttons">
                                 <Button variant="outline-info" onClick={this.handleSettings}>Settings</Button>
                                 <Button variant="outline-info" onClick={this.handleStore.bind(this)}>Store</Button>
                             </ButtonGroup>
                         </div>
                     </Col>
-                    <Col xs={9} >
+                    <Col xs={9}>
                         <Card style={styles.tableCard}>
                             <Card.Title style={styles.title}>Top Users</Card.Title>
                             <Card.Body>
