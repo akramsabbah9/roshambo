@@ -66,5 +66,5 @@ export const socketConstants = {
     DESTRUCTION_SUCCESS: 'SOCKET_DESTRUCTION_SUCCESS',
     DESTRUCTION_FAILURE: 'SOCKET_DESTRUCION_FAILURE',
 
-    SOCKET_URL: 'ws://localhost:8000/ws/match/',
+    SOCKET_URL: process.env.SOCKET_URL,
 }

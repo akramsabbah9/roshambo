@@ -16,4 +16,4 @@ python manage.py migrate matchup zero
 python manage.py migrate
 python manage.py loaddata skins_inventory.json
 
-exec "$@"
+python manage.py runserver 0.0.0.0:8000
