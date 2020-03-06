@@ -17,21 +17,33 @@ const bowerComponents = path.resolve(__dirname, 'bower_components');
 //------------------------
 // Env Variables
 //------------------------
-const envName = process.env.NODE_ENV == "production" ? "prod" : "dev";
-const envPath = path.resolve(__dirname, `./frontend/${envName}.env`);
-// call dotenv and it will return an Object with a parsed key 
-const env = dotenv.config({ path: envPath }).parsed;
-// reduce it to a nice object, the same as before
-const envKeys = Object.keys(env).reduce((prev, next) => {
-  prev[`process.env.${next}`] = JSON.stringify(env[next]);
-  return prev;
-}, {});
+// const envName = process.env.NODE_ENV == "production" ? "prod" : "dev";
+// const envPath = path.resolve(__dirname, `./frontend/${envName}.env`);
+// // call dotenv and it will return an Object with a parsed key 
+// const env = dotenv.config({ path: envPath }).parsed;
+// let envKeys;
+// if (env == null) {
+//   // reduce it to a nice object, the same as before
+//   envKeys = Object.keys(env).reduce((prev, next) => {
+//     prev[`process.env.${next}`] = JSON.stringify(env[next]);
+//     return prev;
+//   }, {});
+// }
+const plugins = //env == null ?
+  // [
+  //   new CleanWebpackPlugin(["frontend/scaffold/bundle"]),
+  // ]
+  // :
+  [
+    new CleanWebpackPlugin(["scaffold/bundle"]),
+    // new webpack.DefinePlugin(envKeys)
+  ];
 
 //------------------------
 // Common Configurations
 //------------------------
 const common = {
-  entry: "./frontend/js/index.js",
+  entry: "./js/index.js",
   module: {
     rules: [
       {
@@ -62,12 +74,9 @@ const common = {
     ]
   },
   resolve: { extensions: ["*", ".js", ".jsx"] },
-  plugins: [
-    new CleanWebpackPlugin(["frontend/scaffold/bundle"]),
-    new webpack.DefinePlugin(envKeys)
-  ],
+  plugins: plugins,
   output: {
-    path: path.resolve(__dirname, "frontend/scaffold/bundle/"),
+    path: path.resolve(__dirname, "/scaffold/bundle/"),
     publicPath: "/",
     filename: "bundle.js"
   },
@@ -97,7 +106,7 @@ switch (process.env.NODE_ENV) {
       mode: "development",
       devtool: "inline-source-map",
       devServer: {
-        contentBase: path.join(__dirname, "frontend/scaffold/"),
+        contentBase: path.join(__dirname, "/scaffold/"),
         port: 3000,
         hotOnly: true
       }

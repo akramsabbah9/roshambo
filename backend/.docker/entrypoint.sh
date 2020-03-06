@@ -1,11 +1,5 @@
 #!/bin/bash
 
-if [ $DJANGO_ENV != "development" ]
-then
-  # the below should only be executed for dev environments
-  exit 0
-fi
-
 if [ "$DATABASE" = "postgres" ]
 then
     echo "Waiting for postgres..."
@@ -22,4 +16,4 @@ python manage.py migrate matchup zero
 python manage.py migrate
 python manage.py loaddata skins_inventory.json
 
-exec "$@"
+python manage.py runserver 0.0.0.0:8000

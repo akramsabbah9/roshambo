@@ -14,14 +14,11 @@ ENV PYTHONUNBUFFERED 1
 
 # install dependencies
 RUN pip install --upgrade pip
-COPY /backend/requirements.txt $APP_HOME
+COPY ./requirements.txt $APP_HOME
 RUN pip install -r requirements.txt
 
 # install netcat - used in entrypoint.sh
 RUN apt-get update && apt-get install -y netcat
 
 # copy project
-COPY backend $APP_HOME
-COPY backend/.docker/entrypoint.sh $APP_HOME
-
-ENTRYPOINT ["/roshambo/.docker/entrypoint.sh"]
+COPY . $APP_HOME
