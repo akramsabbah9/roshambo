@@ -68,7 +68,7 @@ const common = {
     new webpack.DefinePlugin(envKeys)
   ],
   output: {
-    path: path.resolve(__dirname, "/scaffold/bundle/"),
+    path: path.join(__dirname, "/scaffold/bundle"),
     publicPath: "/",
     filename: "bundle.js"
   },

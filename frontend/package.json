@@ -20,7 +20,7 @@
     "test": "npm run lint && jest",
     "nolint-test": "jest",
     "start": "webpack-dev-server --mode development --config webpack.config.js --open --hot --host 0.0.0.0",
-    "build": "webpack --mode production --config webpack.config.js"
+    "build": "webpack -p --config webpack.config.js"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.2",
