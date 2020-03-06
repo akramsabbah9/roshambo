@@ -20,17 +20,6 @@ COPY prod.env $APP_HOME
 RUN npm install
 RUN npm run build
 
-RUN ls -lah $APP_HOME
-RUN ls -lah $APP_HOME/scaffold
-RUN ls -lah $APP_HOME/scaffold/bundle
+RUN cp $APP_HOME/scaffold/bundle/bundle.js $APP_HOME
 
-FROM node:${VERSION} as final
-
-ENV APP_SERVE /app
-RUN mkdir $APP_SERVE
-WORKDIR $APP_SERVE
-
-RUN ls -lah $APP_HOME
-
-COPY --from=builder $APP_HOME/scaffold/bundle $APP_SERVE
 RUN npm install -g serve
