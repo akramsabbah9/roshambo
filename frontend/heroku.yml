@@ -2,4 +2,4 @@ build:
   docker:
     web: heroku.Dockerfile
 run:
-  web: serve -l $PORT
+  web: serve bundle -l $PORT
