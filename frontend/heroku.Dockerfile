@@ -20,6 +20,8 @@ COPY prod.env $APP_HOME
 RUN npm install
 RUN npm run build
 
-RUN cp $APP_HOME/scaffold/bundle/bundle.js $APP_HOME/bundle
+RUN mv $APP_HOME/scaffold/bundle/bundle.js $APP_HOME/scaffold/bundle.js
+
+WORKDIR $APP_HOME/scaffold
 
 RUN npm install -g serve
