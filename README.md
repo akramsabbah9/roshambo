@@ -18,20 +18,6 @@ Visit https://roshambo-ucla.herokuapp.com to play Roshambo today!
 2. From there, http://localhost:8000 will link to the API, and http://localhost:3000 will link to the frontend.
 4. Refer to `docker-compose` documentation for further options, such as running in detached mode.
 
-## Frontend Main Packages
-
-1. `react-bootstrap` for the main frontend developement
-2. `react-redux` for state management.
-3. `formik` for user form constructions.
-4. `font-awesome` for basic icons and logos on the website.
-5. `yup` for user input validation.
-
-## Backend Main Packages
-
-1. `django` for the primary backend service.
-2. `django rest framework` for RESTful resources.
-3. `django channels` for matchmaking and websocket communications.
-
 #### Running Commands within the Containers
 
 For some purposes (such as creating a Django superuser temporarily), it's easiest to head into the Docker container's shell to perform actions. This is easy. Follow these steps:
@@ -50,6 +36,28 @@ For some purposes (such as creating a Django superuser temporarily), it's easies
 4. To completely clear everything Docker-related: `docker system prune`.
 5. Consult the Docker documentation for further options beyond these.
 
+## Known Issues
+
+Out of the box, when run locally, Stripe purchases will not work - we can't commit real secrets! To test Stripe functionality, either visit the live Heroku-deployed app, or reach out to our team to get the Stripe secret key.
+
 ## Tech Stack Description
 
-Roshambo is built using Django and React. Django incorporates Django Channels, and the Django Rest Framework. React utilizes React Bootstrap. Refer to `backend/requirements.txt` for specific packages used in the backend, and to `package.json` for specific packages used in the frontend.
+Roshambo is built using Django and React. Django incorporates Django Channels, and the Django Rest Framework. React utilizes React Bootstrap.
+
+#### Frontend Main Packages
+
+1. `react-bootstrap` for the main frontend developement
+2. `react-redux` for state management.
+3. `formik` for user form constructions.
+4. `font-awesome` for basic icons and logos on the website.
+5. `yup` for user input validation.
+
+#### Backend Main Packages
+
+1. `django` for the primary backend service.
+2. `django rest framework` for RESTful resources.
+3. `django channels` for matchmaking and websocket communications.
+
+#### Summary
+
+Refer to `backend/requirements.txt` for specific packages used in the backend, and to `frontend/package.json` for specific packages used in the frontend.
