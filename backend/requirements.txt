@@ -15,7 +15,7 @@ daphne==2.4.1
 dj-database-url==0.5.0
 Django==3.1.12
 django-cors-headers==3.2.1
-djangorestframework==3.11.0
+djangorestframework==3.11.2
 hiredis==1.0.1
 hyperlink==19.0.0
 idna==2.8
