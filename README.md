@@ -1,7 +1,13 @@
 Roshambo
 ========================
 
-Roshambo is a full-stack web app, designed to be the premiere destination for high-stakes games of rock-paper-scissors. 
+## Description
+
+Roshambo is a full-stack web app, designed to be the premiere destination for high-stakes games of rock-paper-scissors. In this version of Roshambo, two users duke it out in a no-holds-barred contest with AkramBucks on the line. The winner takes it all... but are you cool enough to play for keeps?
+
+Users can create an account, log in, and begin playing against opponents immediately. They can also spend money to buy the game's premium currency, AkramBucks, with stripe-authenticated transactions. Players can join guilds and chat with other members. Roshambo uses a React-Bootstrap frontend, while Django Channels is used on the backend to connect two players to each other by websocket. This app uses docker containerization.
+
+![userpage-screenshot](https://user-images.githubusercontent.com/59624292/123029037-55eb3d80-d395-11eb-90e2-fc9f6c3b4a1d.png)
 
 ## Prerequisites
 
